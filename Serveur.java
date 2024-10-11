@@ -41,6 +41,9 @@ public class Serveur {
                 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+                // Crée un nouveau thread pour gérer la communication avec ce client
+                new Thread(new Client(clientSocket)).start();
+
                 reader.close();
 
                 System.out.println(reader.readLine());
