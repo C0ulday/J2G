@@ -5,9 +5,12 @@
  * 
  */
 
+import java.io.PrintWriter;
 import java.net.Socket;
 
-/* La classe Client implémente Runnable afin d'avoir une méthode Run et un Thread par Client */
+ /* Implémentation de la classe Runnable afin d'utiliser des Threads et d'utiliser séparément plusieurs fonctionnalités de la classe
+  * client sans soucis
+  */
 public class Client implements Runnable {
     
     private String hostname;
@@ -16,6 +19,10 @@ public class Client implements Runnable {
     
 
     public Client(String hostname,int PORT){
+
+        this.hostname = hostname;
+        this.PORT = PORT;
+
         try { 
             clientSocket = new Socket(hostname,PORT);
         } catch (Exception e) {
@@ -43,6 +50,18 @@ public class Client implements Runnable {
         return hostname;
     }
 
+    /*Le client envoie ses informations au serveur  */
+    public boolean CONNECTION(){
+        System.out.print("Je suis prêt à jouer");
+        return true;
+    }
+
+    /*Le client dit au serveur qu' il est prêt à jouer */
+    public boolean READY(){
+        System.out.println("Je suis prêt à jouer");
+        return true;
+    }
+
 
 
     @Override
@@ -53,10 +72,14 @@ public class Client implements Runnable {
         try{
             /*Le client se connecte au serveur */
             System.out.println("Je suis le client, je me connecte au réseau");
+
+            // Crée un PrintWriter pour envoyer des messages au client
+            PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+ 
     
             for(int i=0; i<10; i++){
                 Thread.sleep(500);
-                System.out.println("nombre" + i);
+                writer.println("nombre" + i);
             }
 
         } catch(Exception e){
@@ -70,12 +93,13 @@ public class Client implements Runnable {
                 System.out.println("erreur" + e);
             }
         }
-        
     }
 
     public static void main(String[] args) {
         Client client = new Client("localhost",8585);
-        client.run();
+        Thread clientThread = new Thread(client);
+        clientThread.start();
+
     }
 
 }
