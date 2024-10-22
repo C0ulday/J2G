@@ -8,6 +8,7 @@
 import java.io.PrintWriter;
 import java.net.Socket;
 
+
  /* Implémentation de la classe Runnable afin d'utiliser des Threads et d'utiliser séparément plusieurs fonctionnalités de la classe
   * client sans soucis
   */
@@ -16,6 +17,8 @@ public class Client implements Runnable {
     private String hostname;
     private int PORT;
     private Socket clientSocket;
+
+    private Joueur joueur;
     
 
     public Client(String hostname,int PORT){
@@ -50,10 +53,17 @@ public class Client implements Runnable {
         return hostname;
     }
 
+    public String JSONInfos(){
+        
+        return "{"
+            + "\"nom\": \"" + joueur.getNom() + "\", "
+            + "\"couleur\": " + joueur.getCouleur() + "\", "
+            + "}";
+    }
+
     /*Le client envoie ses informations au serveur  */
-    public boolean CONNECTION(){
-        System.out.print("Je suis prêt à jouer");
-        return true;
+    public void CONNECTION(){
+        System.out.print("Envoie des éléments de connexion");
     }
 
     /*Le client dit au serveur qu' il est prêt à jouer */
