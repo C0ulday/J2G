@@ -1,10 +1,11 @@
-public class piece {
+private static final int SIZE = 8; // Taille du plateau (8x8)
+public class piece extends Plateau{
     String name;        //nom de la piece
     String Couleur;      //couleur de la piece                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     int positionX; // coordonnée horizontale
     int positionY;  // coordonnée verticale
     //constructeur
-    public piece(Strin name, int positionX,int positionY,String Couleur)
+    public piece(String name, int positionX,int positionY,String Couleur)
     {
         this.name  = name;
         this.positionX = positionX;
@@ -31,7 +32,7 @@ public class piece {
     {
         return this.name;
     }
-
+re
     public void Setname(String name)
     {
         this.name = name;
@@ -49,31 +50,22 @@ public class piece {
 
     public int GetPositionX()
     {
-        return this.PositionX;
+        return this.positionX;
     }
 
     public void SetPositionX(int PositionX)
     {
-        this.PositionX=PositionX;
+        this.positionX=PositionX;re
     }
 
     public int GetPositionY()
     {
-        return this.PositionY;
+        return this.positionX;
     }
 
     public void SetPositionY(int PositionY)
     {
-        this.PositionY = PositionY;
+        this.positionY = PositionY;
     }
     
-
-
-
-
-
-
-
-
-
 }
