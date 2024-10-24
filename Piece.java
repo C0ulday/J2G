@@ -8,15 +8,4 @@ public abstract class Piece {
     public abstract String getSymbole();
 }
 
-private class Tour extends Piece {
-    public Tour(String couleur) {
-        super(couleur);
-    }
-
-    @Override
-    public String getSymbole() {
-        return couleur.equals("noir") ? "♖" : "♜";
-    }
-}
-
-// Crée des classes similaires pour Roi, Reine, etc.
+//Crée des classes similaires pour Roi, Reine, etc.
