@@ -53,7 +53,7 @@ class cavalier extends piece implements regles
     //fonction qui permet le premier déplacmement de la piece
     public boolean PremierdeplacementPiece(int positionX,int positionY)
     {
-        return true;
+       
     }
 
     public boolean estVide(int x, int y)
