@@ -7,7 +7,7 @@ class cavalier extends piece implements regles
         super("CAVALIER",x,y,couleur);
     }
     
-        public boolean verifCoup(int coordX,int coordY)
+    public boolean verifCoup(int coordX,int coordY)
     {
         if(x == coordX+1 && y == coordY +2)
         {

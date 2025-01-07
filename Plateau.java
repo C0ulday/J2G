@@ -21,8 +21,8 @@ public class Plateau
     {
         plateau.get(x * SIZE + y).name = "NULL";
         plateau.get(x * SIZE + y).Couleur = "NULL";
-        plateau.get(x * SIZE + y).PositionXinit = -1;
-        plateau.get(x * SIZE + y).PositionYinit = -1;
+        plateau.get(x * SIZE + y).setPositionXinit(-1);
+        plateau.get(x * SIZE + y).setPositionXinit(-1);
     }
 
 
@@ -48,10 +48,12 @@ public class Plateau
     // Méthode pour vérifier si les coordonnées sont dans les limites du plateau
     public boolean estDansLesLimites(int x, int y) {
         return (x >= 0 && x < this.SIZE && y >= 0 && y < this.SIZE);
+
+        
     } 
     public void deplacementPiece(int xactu, int yactu,int xnew,int ynew)
     {
-        if(!estDansLesLimites(xnew, ynew) ) // verification que le ocup est poàçssible 
+        if(!estDansLesLimites(xnew, ynew) ) // verification que le ocup est possible 
         {
             System.out.println("Déplacement hors des limites du plateau !");
         }
@@ -59,9 +61,9 @@ public class Plateau
         {
             // on prend les info de l'ancienne case, et on les places dans la nouvelles case
             plateau.get(ynew * SIZE + xnew).name = plateau.get(yactu * SIZE + xactu).name;
-            plateau.get(ynew * SIZE + xnew).Couleur = plateau.get(yactu * SIZE + xactu).Couleur;!
-            plateau.get(ynew * SIZE + xnew).PositionXinit = plateau.get(yactu * SIZE + xactu).PositionXinit;
-            plateau.get(ynew * SIZE + xnew).PositionYinit = plateau.get(yactu * SIZE + xactu).PositionYinit;
+            plateau.get(ynew * SIZE + xnew).Couleur = plateau.get(yactu * SIZE + xactu).Couleur;
+            plateau.get(ynew * SIZE + xnew).setPositionXinit(plateau.get(yactu * SIZE + xactu).getPositionXinit());
+            plateau.get(ynew * SIZE + xnew).setPositionYinit(plateau.get(yactu * SIZE + xactu).getPositionYinit());
 
             //supprime les info de la case terminé
             viderCase(xactu,yactu);

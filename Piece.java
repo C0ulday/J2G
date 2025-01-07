@@ -1,56 +1,49 @@
-
 import java.util.List;
-import java.util.ArrayList;
-import java.util.List;
-public class Piece extends Plateau{
-    String name;        //nom de la piece
-    String Couleur;      //couleur de la piece                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-    int positionXinit; // coordonnée horizontale
-    int positionYinit;  // coordonnée verticale */
 
-    //constructeur
-    public Piece(String name, int positionXinit, int positionYinit, String Couleur)
-    {
-        this.name  = name;
+public class Piece {
+    String name;        // Nom de la pièce
+    String Couleur;     // Couleur de la pièce
+    int positionXinit;  // Coordonnée horizontale initiale
+    int positionYinit;  // Coordonnée verticale initiale
+
+    // Constructeur
+    public Piece(String name, int positionXinit, int positionYinit, String Couleur) {
+        this.name = name;
         this.positionXinit = positionXinit;
         this.positionYinit = positionYinit;
         this.Couleur = Couleur;
     }
-    public String Getname() 
-    {
+
+    // Getters et Setters
+    public String getName() {
         return this.name;
     }
-    public void Setname(String name)
-    {
+
+    public void setName(String name) {
         this.name = name;
     }
-    public String GetCouleur()
-    {
+
+    public String getCouleur() {
         return this.Couleur;
     }
-    public void SetCouleur(String Couleur)
-    {
+
+    public void setCouleur(String Couleur) {
         this.Couleur = Couleur;
     }
 
-    public int GetPositionXinit()
-    {
+    public int getPositionXinit() {
         return this.positionXinit;
     }
 
-    public void SetPositionXinit(int PositionXinit)
-    {
-        this.positionXinit=PositionXinit;
+    public void setPositionXinit(int positionXinit) {
+        this.positionXinit = positionXinit;
     }
 
-    public int GetPositionYinit()
-    {
+    public int getPositionYinit() {
         return this.positionYinit;
     }
 
-    public void SetPositionYinit(int PositionYinit)
-    {
-        this.positionYinit = PositionYinit;
+    public void setPositionYinit(int positionYinit) {
+        this.positionYinit = positionYinit;
     }
-    
 }
