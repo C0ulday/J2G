@@ -1,76 +1,78 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// row = x, col = y 
-public class Plateau
-{                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+public class Plateau {
     private List<Piece> plateau;
     private int SIZE;
 
-
-    public Plateau(int SIZE){
+    public Plateau(int SIZE) {
         this.SIZE = SIZE;
         plateau = new ArrayList<Piece>(SIZE * SIZE);
-        for (int i = 0; i < SIZE * SIZE; i++) 
-        {
-            plateau.add(new Piece("NULL", i / SIZE, i % SIZE, "NULL"));    
+        for (int i = 0; i < SIZE * SIZE; i++) {
+            plateau.add(new Piece("NULL", i / SIZE, i % SIZE, i / SIZE, i % SIZE, "NULL", this));
         }
     }
 
-    public void viderCase(int x, int y)
-    {
-        plateau.get(x * SIZE + y).name = "NULL";
-        plateau.get(x * SIZE + y).Couleur = "NULL";
-        plateau.get(x * SIZE + y).setPositionXinit(-1);
-        plateau.get(x * SIZE + y).setPositionXinit(-1);
+    public void viderCase(int x, int y) {
+        // Remplace la pièce à la position donnée par une pièce neutre ("NULL")
+        plateau.set(x * SIZE + y, new Piece("NULL", -1, -1, -1, -1, "NULL", this));
     }
-
-
-    List<Piece> PieceNoir; // Liste de piece noir
-    List<Piece> PieceBlanc; // Liste de pièce Blanche
-
-    public String casse(int x, int y)
-    {
-        int index = x * SIZE + y;
-        if("NULL".equals(plateau.get(index).Couleur)) // si la piece à la case index n'a pas de couleur -> pas de piece
-        {
-            return "NULL";
-        }   
-        else if("BLANC".equals(plateau.get(index).Couleur)) // sinon, si la pièce sur la case de coordonnée x,y du plateau est blanche, on retourne blanc
-        {
-            return "BLANC";
+    
+    public Piece getPiece(int x, int y) {
+        if (estDansLesLimites(x, y)) {
+            return plateau.get(x * SIZE + y);
         }
-        else // sinon, c'est qu'elle est noir
-        {
-            return "NOIR";
-        }  
+        return null; // Retourne null si les coordonnées sont en dehors des limites
     }
-    // Méthode pour vérifier si les coordonnées sont dans les limites du plateau
-    public boolean estDansLesLimites(int x, int y) {
-        return (x >= 0 && x < this.SIZE && y >= 0 && y < this.SIZE);
-
+    
+    public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
+        if (!estDansLesLimites(xnew, ynew)) { // Vérifie si le déplacement est possible
+            System.out.println("Déplacement interdit !");
+            return;
+        }
+    
+        // Récupère la pièce à déplacer
+        Piece piece = plateau.get(xactu * SIZE + yactu);
+    
+        if (piece == null || "NULL".equals(piece.getName())) {
+            System.out.println("Aucune pièce à déplacer à cette position !");
+            return;
+        }
         
-    } 
-    public void deplacementPiece(int xactu, int yactu,int xnew,int ynew)
-    {
-        if(!estDansLesLimites(xnew, ynew) ) // verification que le ocup est possible 
-        {
-            System.out.println("Déplacement hors des limites du plateau !");
+        if (!piece.coupPossible(xnew, ynew)) {
+            System.out.println("Déplacement impossible !");
+            return;
         }
-        else
-        {
-            // on prend les info de l'ancienne case, et on les places dans la nouvelles case
-            plateau.get(ynew * SIZE + xnew).name = plateau.get(yactu * SIZE + xactu).name;
-            plateau.get(ynew * SIZE + xnew).Couleur = plateau.get(yactu * SIZE + xactu).Couleur;
-            plateau.get(ynew * SIZE + xnew).setPositionXinit(plateau.get(yactu * SIZE + xactu).getPositionXinit());
-            plateau.get(ynew * SIZE + xnew).setPositionYinit(plateau.get(yactu * SIZE + xactu).getPositionYinit());
 
-            //supprime les info de la case terminé
-            viderCase(xactu,yactu);
+        // Met à jour les coordonnées actuelles de la pièce
+        piece.setPosition(xnew, ynew);
+    
+        // Place la pièce à la nouvelle position dans le plateau
+        placerPiece(piece, xnew, ynew);
+    
+        // Vide l'ancienne case
+        viderCase(xactu, yactu);
 
-            System.out.println("Déplacement réussi !");
-        }
+
+        System.out.println("Déplacement réussi !");
+    }
+    
+
+    public boolean estDansLesLimites(int x, int y) {
+        return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
+    }
+
+    public boolean isCaseOccupee(int x, int y, String couleur) {
+        Piece piece = plateau.get(x * SIZE + y);
+        return piece != null && piece.getCouleur().equals(couleur);
+    }
+
+    public void placerPiece(Piece piece, int x, int y) {
+        plateau.set(x * SIZE + y, piece);
+    }
+
+    public boolean coupPossible(int x, int y) {
+        return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" pour ignorer la couleur ici
     }
 
 }
-
