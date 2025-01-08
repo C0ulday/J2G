@@ -24,7 +24,11 @@ public class Plateau {
         }
         return null; // Retourne null si les coordonnées sont en dehors des limites
     }
-    
+    /*
+    jouer permet de jouer
+    */
+    //public void jouer(){
+    //}
     public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
         if (!estDansLesLimites(xnew, ynew)) { // Vérifie si le déplacement est possible
             System.out.println("Déplacement interdit !");
@@ -70,9 +74,7 @@ public class Plateau {
     public void placerPiece(Piece piece, int x, int y) {
         plateau.set(x * SIZE + y, piece);
     }
-
     public boolean coupPossible(int x, int y) {
         return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" pour ignorer la couleur ici
     }
-
 }

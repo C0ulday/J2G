@@ -88,11 +88,6 @@ class pion extends piece implements regles
         }
     }
     @Override
-    public String non_vide(int x, int y)
-    {
-        
-        return case(x,y);
-        
-    }
+
 
 }

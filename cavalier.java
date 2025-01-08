@@ -1,63 +1,100 @@
-class cavalier extends piece implements regles
-{
-    int x;
-    int y;
-    /*constructeur */
-    public cavalier(int x,int y,String couleur){
-        super("CAVALIER",x,y,couleur);
+import java.util.ArrayList;
+
+class cavalier extends Piece implements regles {
+    int xactu, xinit;
+    int yactu, yinit;
+    private Plateau plateau;
+
+    /* Constructeur 
+     * public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) 
+    */
+    public cavalier(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
+        super("CAVALIER", xinit, yinit, xactu, yactu, couleur, plateau);
+        this.xactu = xactu;
+        this.yactu = yactu;
+        this.xinit = xinit;
+        this.yinit = yinit;
+        this.plateau = plateau;
     }
-    
-    public boolean verifCoup(int coordX,int coordY)
+
+    /**
+     * Verifie si le deplacement est possible
+     * @param x L'abscisse d'arrive = les lettres
+     * @param y l'ordonnee d'arrive = les chiffres
+     * @return resultat du test
+     */
+    public boolean verifCoup(int xnew, int ynew) //xactu yactu à mettre 
     {
-        if(x == coordX+1 && y == coordY +2)
-        {
+        if (this.xactu == xnew + 1 && this.yactu == ynew + 2) {
             return true;
         }
-        if(x == coordX-1 && y == coordY +2)
-        {
+        if (this.xactu == xnew - 1 && this.yactu == ynew + 2) {
             return true;
         }
-        if(x == coordX-2 && y == coordY -1)
-        {
+        if (this.xactu == xnew - 2 && this.yactu == ynew - 1) {
             return true;
         }
-        if(x == coordX -2 && y == coordY + 1)
-        {
+        if (this.xactu == xnew - 2 && this.yactu == ynew + 1) {
             return true;
         }
-        if(x == coordX +2 && y == coordY -1)
-        {
+        if (this.xactu == xnew + 2 && this.yactu == ynew - 1) {
             return true;
         }
-        if(x == coordX +2 && y == coordY + 1)
-        {
+        if (this.xactu == xnew + 2 && this.yactu == ynew + 1) {
             return true;
         }
-        if(x == coordX+1 && y == coordY -2)
-        {
+        if (this.xactu == xnew + 1 && this.yactu == ynew - 2) {
             return true;
         }
-        if(x == coordX-1 && y == coordY -2)
-        {
+        if (this.xactu == xnew - 1 && this.yactu == ynew - 2) {
             return true;
         }
         return false;
     }
-    	
-    public void deplacementPiece(int positionX,int positionY)
-    {
-        /* */
-    }
-    
-    
-    //fonction qui permet le premier déplacmement de la piece
-    public boolean PremierdeplacementPiece(int positionX,int positionY)
-    {
-       
+
+    /*
+     *** La fonction prend en entrée les positions actuelles de la pièce
+     * Vérifie les limites
+     * Les déplacements
+     * Vérifie si la case qu'on veut aller est nulle ou contient une pièce adverse
+     * Les types de déplacements de la pièce
+     * On ne peut pas sauter une pièce adverse
+     *** La fonction retourne les coordonnées possibles où on peut aller 
+     */
+    public ArrayList<coordonnee> casesPossibles_Jouable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = new ArrayList<coordonnee>();
+        
+        // Déplacements possibles pour le cavalier
+        int[][] deplacements = {
+            {-2, -1}, {-2, 1}, {2, -1}, {2, 1},
+            {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
+        };
+
+        for (int[] deplacement : deplacements) {
+            int newX = xactu + deplacement[0];
+            int newY = yactu + deplacement[1];
+
+            if (plateau.estDansLesLimites(newX, newY)) {
+                Piece piece = plateau.getPiece(newX, newY);
+                if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
+                    coords.add(new coordonnee(newX, newY));
+                }
+            }
+        }
+    return coords;
     }
 
-    public boolean estVide(int x, int y)
-    {
+    // Fonction qui permet le premier déplacement de la pièce
+    public boolean PremierdeplacementPiece(int positionX, int positionY) {
         return true;
+    }
+
+    public boolean estVide(int x, int y) {
+        return plateau.getPiece(x, y) == null;
+    }
+    public void PrisePiece(int x, int y) {
+        if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {
+            plateau.viderCase(x, y);
+        }
     }
 }

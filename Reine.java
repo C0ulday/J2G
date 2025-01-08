@@ -1,4 +1,4 @@
-class Reine extends piece implements regles
+class Reine extends Piece implements regles
 {
     
 }

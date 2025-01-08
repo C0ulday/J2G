@@ -6,7 +6,7 @@ public class Piece {
     private int positionX;
     private int positionY;
     private Plateau plateau;
-
+ 
     public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) {
         this.name = name;
         this.positionXinit = positionXinit;
@@ -15,16 +15,17 @@ public class Piece {
         this.positionY = positionY;
         this.couleur = couleur;
         this.plateau = plateau;
+
     }
 
     public int getPositionXinit() {
+
         return this.positionXinit;
     }
 
     public int getPositionYinit() {
         return this.positionYinit;
     }
-
     public int getPositionX() {
         return this.positionX;
     }
@@ -53,18 +54,7 @@ public class Piece {
     public void setCouleur(String couleur) {
         this.couleur = couleur;
     }
-
-    public boolean deplacer(int x, int y) {
-        if (coupPossible(x, y)) {
-            plateau.viderCase(this.positionX, this.positionY);
-            plateau.placerPiece(this, x, y);
-            this.setPosition(x, y);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean coupPossible(int x, int y) {
+    public boolean coupPossible(int x, int y){
     boolean dansLesLimites = plateau.estDansLesLimites(x, y);
     boolean caseOccupee = plateau.isCaseOccupee(x, y, this.couleur);
     System.out.println("coupPossible -> Dans les limites : " + dansLesLimites + ", Case occupée : " + caseOccupee);
