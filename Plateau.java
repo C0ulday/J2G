@@ -5,7 +5,8 @@ public class Plateau {
     private List<Piece> plateau;
     private int SIZE;
 
-    public Plateau(int SIZE) {
+    public Plateau(int SIZE) 
+    {
         this.SIZE = SIZE;
         plateau = new ArrayList<Piece>(SIZE * SIZE);
         for (int i = 0; i < SIZE * SIZE; i++) {
@@ -13,13 +14,16 @@ public class Plateau {
         }
     }
 
-    public void viderCase(int x, int y) {
+    public void viderCase(int x, int y) 
+    {
         // Remplace la pièce à la position donnée par une pièce neutre ("NULL")
         plateau.set(x * SIZE + y, new Piece("NULL", -1, -1, -1, -1, "NULL", this));
     }
     
-    public Piece getPiece(int x, int y) {
-        if (estDansLesLimites(x, y)) {
+    public Piece getPiece(int x, int y) 
+    {
+        if (estDansLesLimites(x, y)) 
+        {
             return plateau.get(x * SIZE + y);
         }
         return null; // Retourne null si les coordonnées sont en dehors des limites
@@ -27,8 +31,9 @@ public class Plateau {
     /*
     jouer permet de jouer
     */
-    //public void jouer(){
-    //}
+    public void jouerPiece()
+    {
+    }
     public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
         if (!estDansLesLimites(xnew, ynew)) { // Vérifie si le déplacement est possible
             System.out.println("Déplacement interdit !");
@@ -62,17 +67,29 @@ public class Plateau {
     }
     
 
-    public boolean estDansLesLimites(int x, int y) {
+    public boolean estDansLesLimites(int x, int y) 
+    {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
     }
 
-    public boolean isCaseOccupee(int x, int y, String couleur) {
+    public boolean isCaseOccupee(int x, int y, String couleur) 
+    {
         Piece piece = plateau.get(x * SIZE + y);
         return piece != null && piece.getCouleur().equals(couleur);
     }
 
-    public void placerPiece(Piece piece, int x, int y) {
-        plateau.set(x * SIZE + y, piece);
+    public void placerPiece(Piece piece, int x, int y) 
+    {
+        if (estDansLesLimites(x,y))
+        {
+            plateau.set(x * SIZE + y, piece);
+            System.out.println("Pièce placee avec succes");
+        }
+        else
+        {
+            System.out.println("coordonnées invalide");
+        }
+        
     }
     public boolean coupPossible(int x, int y) {
         return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" pour ignorer la couleur ici

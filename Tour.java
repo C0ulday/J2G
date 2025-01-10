@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-class cavalier extends Piece implements regles {
+public class Tour extends Piece{
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -8,8 +8,8 @@ class cavalier extends Piece implements regles {
     /* Constructeur 
      * public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) 
     */
-    public cavalier(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
-        super("CAVALIER", xinit, yinit, xactu, yactu, couleur, plateau);
+    public Tour(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
+        super("TOUR", xinit, yinit, xactu, yactu, couleur, plateau);
         this.xactu = xactu;
         this.yactu = yactu;
         this.xinit = xinit;
@@ -71,32 +71,3 @@ class cavalier extends Piece implements regles {
         }
     }
 }
-
-/*    public boolean verifCoup(int xnew, int ynew) //xactu yactu à mettre 
-    {
-        if (this.xactu == xnew + 1 && this.yactu == ynew + 2) {
-            return true;
-        }
-        if (this.xactu == xnew - 1 && this.yactu == ynew + 2) {
-            return true;
-        }
-        if (this.xactu == xnew - 2 && this.yactu == ynew - 1) {
-            return true;
-        }
-        if (this.xactu == xnew - 2 && this.yactu == ynew + 1) {
-            return true;
-        }
-        if (this.xactu == xnew + 2 && this.yactu == ynew - 1) {
-            return true;
-        }
-        if (this.xactu == xnew + 2 && this.yactu == ynew + 1) {
-            return true;
-        }
-        if (this.xactu == xnew + 1 && this.yactu == ynew - 2) {
-            return true;
-        }
-        if (this.xactu == xnew - 1 && this.yactu == ynew - 2) {
-            return true;
-        }
-        return false;
-    } */
