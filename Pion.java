@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Pion extends Piece{
+public class Pion extends Piece implements regle_Piece {
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -40,12 +40,12 @@ public class Pion extends Piece{
         // création de la pièce 
 
         Piece pion = plateau.getPiece(xactu, yactu);
+        int dir = (this.getCouleur().equals("NOIR")) ? -1 : 1;
 
-        if (pion.getCouleur()=="BLANC")
-        {
-            if(plateau.isCaseOccupee(xactu, yactu+1, "NULL"))
+
+        if(plateau.isCaseOccupee(xactu, yactu+1, "NULL"))
             {
-                coords.add(new coordonnee(xactu, yactu+1));
+                coords.add(new coordonnee(xactu, yactu+dir));
                 if(pion.getPositionXinit()==xactu && pion.getPositionYinit()==yactu && plateau.isCaseOccupee(xactu, yactu+2, "NULL"))
                 {
                     coords.add(new coordonnee(xactu, yactu+2));
@@ -61,28 +61,7 @@ public class Pion extends Piece{
             {
                 coords.add(new coordonnee(xactu+1, yactu+1));
             }
-        }
-        else if(pion.getCouleur()=="NOIR")
-        {
-            if(plateau.isCaseOccupee(xactu, yactu-1, "NULL"))
-            {
-                coords.add(new coordonnee(xactu, yactu-1));
-                if(pion.getPositionXinit()==xactu && pion.getPositionYinit()==yactu && plateau.isCaseOccupee(xactu, yactu-2, "NULL"))
-                {
-                    coords.add(new coordonnee(xactu, yactu-2));
-                }
-            }
-
-            if(plateau.isCaseOccupee(xactu+1, yactu-1, "NOIR"))
-            {
-                coords.add(new coordonnee(xactu+1, yactu-1));
-            }
-
-            if(plateau.isCaseOccupee(xactu-1, yactu-1, "NOIR"))
-            {
-                coords.add(new coordonnee(xactu+1, yactu-1));
-            }
-        }
+        
         else
         {
             System.out.println("problème de génération de la pièce");
@@ -90,7 +69,18 @@ public class Pion extends Piece{
         
         return coords;
     }
+
+
+   
     
+
+
+    /* TODO: gérer la promotion ???
+    public boolean Promotion(int xactu) {
+        int derniereLigne = (this.getCouleur().equals("blanc")) ? plateau.SIZE() - 1 : 0;
+        return xactu == derniereLigne;
+    }
+    */
 
     public void PrisePiece(int x, int y) {
         if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {

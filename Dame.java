@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Dame extends Piece{
+public class Dame extends Piece implements regle_Piece {
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;

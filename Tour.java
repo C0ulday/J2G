@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Tour extends Piece{
+public class Tour extends Piece implements regle_Piece{
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -44,42 +44,43 @@ public class Tour extends Piece{
             {0, -1}, // Gauche
             {0, 1}   // Droite
         };
-        
+    
         for (int[] direction : directions) {
-            
-            boolean valide = true;
+            boolean valide = true; // La tour peut se déplacer tant que cette variable est vraie
             int Y = direction[0];
             int X = direction[1];
-            
+    
             int xnew = xactu;
             int ynew = yactu;
-            
+    
+            // Parcours dans une direction jusqu'à la limite ou un obstacle
             while (valide) {
-                // Avancer dans la direction
                 xnew += Y;
                 ynew += X;
-                
-                // On vérifie si la pièce sort des limites
+    
+                // Vérifier si la case est hors limites
                 if (!plateau.estDansLesLimites(xnew, ynew)) {
-                    valide = false;
+                    valide = false; // Arrêt si hors des limites
                 }
-                
-                // Si elle sort pas, on vérifie si la case est libre
+    
+                // Récupérer la pièce sur la case
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece == null) {
+                if (piece == null && valide == true)  // il y a un pb ici avec le piece = null
+                {
                     // Case vide, ajoutée aux mouvements possibles
                     coords.add(new coordonnee(xnew, ynew));
                 } else if (!piece.getCouleur().equals(this.getCouleur())) {
-                    // Case occupée par une pièce adverse
+                    // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
                     coords.add(new coordonnee(xnew, ynew));
-                    valide = false;
+                    valide = false; // La direction est bloquée après la capture
                 } else {
                     // Case occupée par une pièce alliée
-                    valide = false;
+                    valide = false; // La direction est bloquée
+                    break;
                 }
             }
         }
-        
+    
         return coords;
     }
     

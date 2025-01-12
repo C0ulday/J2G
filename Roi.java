@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 
-public class Fou extends Piece implements regle_Piece {
+//TODO : Retirer les cases avec Echec
+
+public class Roi extends Piece implements regle_Piece {
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -8,8 +10,8 @@ public class Fou extends Piece implements regle_Piece {
     /* Constructeur 
      * public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) 
     */
-    public Fou(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
-        super("FOU", xinit, yinit, xactu, yactu, couleur, plateau);
+    public Roi(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
+        super("Roi", xinit, yinit, xactu, yactu, couleur, plateau);
         this.xactu = xactu;
         this.yactu = yactu;
         this.xinit = xinit;
@@ -37,7 +39,7 @@ public class Fou extends Piece implements regle_Piece {
     public ArrayList<coordonnee> casesPossibles_Jouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
-        // Directions de déplacement du fou dans les coordonnées X et Y
+        // Directions de déplacement de la dame dans les coordonnées X et Y
         // X = de gauche à droite
         // Y = de haut en bas 
 
@@ -45,7 +47,11 @@ public class Fou extends Piece implements regle_Piece {
             {1, -1}, // haut gauche
             {1, 1},  // haut droite
             {-1, -1}, // bas  gauche
-            {-1, 1}   // bas  droite
+            {-1, 1},  // bas  droite
+            {-1, 0}, // Haut
+            {1, 0},  // Bas
+            {0, -1}, // Gauche
+            {0, 1}   // Droite
         };
         
         for (int[] direction : directions) {
