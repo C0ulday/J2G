@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Tour extends Piece{
+public class Dame extends Piece{
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -8,8 +8,8 @@ public class Tour extends Piece{
     /* Constructeur 
      * public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) 
     */
-    public Tour(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
-        super("TOUR", xinit, yinit, xactu, yactu, couleur, plateau);
+    public Dame(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
+        super("DAME", xinit, yinit, xactu, yactu, couleur, plateau);
         this.xactu = xactu;
         this.yactu = yactu;
         this.xinit = xinit;
@@ -37,8 +37,15 @@ public class Tour extends Piece{
     public ArrayList<coordonnee> casesPossibles_Jouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
-        // Directions de déplacement de la tour dans les coordonnées X et Y
+        // Directions de déplacement de la dame dans les coordonnées X et Y
+        // X = de gauche à droite
+        // Y = de haut en bas 
+
         int[][] directions = {
+            {1, -1}, // haut gauche
+            {1, 1},  // haut droite
+            {-1, -1}, // bas  gauche
+            {-1, 1},  // bas  droite
             {-1, 0}, // Haut
             {1, 0},  // Bas
             {0, -1}, // Gauche
@@ -89,19 +96,9 @@ public class Tour extends Piece{
         return true;
     }
 
-
     public void PrisePiece(int x, int y) {
         if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {
             plateau.viderCase(x, y);
         }
     }
 }
-
-
-
-/*
-    public boolean estVide(int x, int y) 
-    {
-        return plateau.getPiece(x, y) == null;
-    }
- */

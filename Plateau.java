@@ -41,7 +41,8 @@ public class Plateau {
         }
     
         // Récupère la pièce à déplacer
-        Piece piece = plateau.get(xactu * SIZE + yactu);
+        Piece piece  = plateau.get(xactu * SIZE + yactu);
+        Piece piece2 = plateau.get(xnew * SIZE + ynew);
     
         if (piece == null || "NULL".equals(piece.getName())) {
             System.out.println("Aucune pièce à déplacer à cette position !");
@@ -51,6 +52,13 @@ public class Plateau {
         if (!piece.coupPossible(xnew, ynew)) {
             System.out.println("Déplacement impossible !");
             return;
+        }
+
+        //plateau.isCaseOccupee(xactu-1, yactu-1, "NOIR"))
+
+        if( piece.getCouleur() != piece2.getCouleur() && !isCaseOccupee(xnew,ynew,"NULL") )
+        {
+            PrisePiece(xnew,ynew);
         }
 
         // Met à jour les coordonnées actuelles de la pièce
@@ -75,7 +83,7 @@ public class Plateau {
     public boolean isCaseOccupee(int x, int y, String couleur) 
     {
         Piece piece = plateau.get(x * SIZE + y);
-        return piece != null && piece.getCouleur().equals(couleur);
+        return piece != null && piece.getCouleur().equals(couleur); //NULL si on veut vérifier si une case est vide
     }
 
     public void placerPiece(Piece piece, int x, int y) 
@@ -91,7 +99,17 @@ public class Plateau {
         }
         
     }
+
+    public void PrisePiece(int x, int y)
+    {
+        //TODO réaliser la fonction
+
+        Piece piece = getPiece(x,y);
+
+    }
+
+
     public boolean coupPossible(int x, int y) {
-        return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" pour ignorer la couleur ici
+        return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" si on veut vérifier si une case est vide
     }
 }
