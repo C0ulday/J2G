@@ -9,25 +9,10 @@ public class TestPlateau
         //Cavalier cavalierBlanc = new Cavalier(9, 7, 9, 7, "BLANC", plateau);
         Roi roi = new Roi(4, 4, 4, 4, "BLANC", plateau);
         plateau.placerPiece(roi, 4, 4);
-
-        // Placement de quelques pièces adverses et alliées
-        Piece TourNoir = new Tour(5, 5, 5, 5, "NOIR", plateau);
-        //Piece pionBlanc = new Pion(3, 5, 3, 5, "BLANC", plateau);
-        
-        plateau.placerPiece(TourNoir, 4, 5);
-        //plateau.placerPiece(pionBlanc, 3, 5);
-
-
-        // Test des mouvements possibles
-        ArrayList<coordonnee> mouvements = roi.casesPossiblesJouable(4, 4);
-
-        // Affichage des résultats
-        System.out.println("Mouvements possibles pour la roi en (4, 4) :");
-
         System.out.println("Coordonnées jouables initiales roi : " + roi.casesPossiblesJouable(4, 4));
-
-
-        
+        plateau.deplacementPiece(4, 4, 4, 7);
+        Piece caseVide = plateau.getPiece(4, 4); // Case initiale du Cavalier, désormais vide
+        System.out.println("case : " + (caseVide != null ? caseVide.getName() : "Vide"));   
     }
 }
 

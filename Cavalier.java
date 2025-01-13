@@ -68,6 +68,14 @@ class Cavalier extends Piece implements regle_Piece {
             plateau.viderCase(x, y);
         }
     }
+    public void afficherCoordsPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPossiblesJouable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour le Roi :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
 }
 
 /*    public boolean verifCoup(int xnew, int ynew) //xactu yactu à mettre 

@@ -92,34 +92,59 @@ public class Roi extends Piece implements regle_Piece {
      */
     public boolean DéplacementSécurisé(Piece roi, int xnew, int ynew){
         ArrayList<Piece> atester = plateau.getPlateauPiece();
-
+        int x,y;
         for(Piece pi : atester){
-            
-            int x = pi.getPositionX();
-            int y = pi.getPositionY(); // TODO : finir le roi
-            
-            
-            pi.casesPossiblesJouable(pi.getPositionX(),pi.getPositionY());
-            
-            
-            if(pi.casesPossiblesJouable(pi.getPositionX(),pi.getPositionY()) == roi.casesPossiblesJouable(xnew,ynew)){
-                if(this.getCouleur().equals("BLANC") && pi.getCouleur().equals("NOIR")){
-                    return true;
-                }
-                if(this.getCouleur().equals("NOIR") && pi.getCouleur().equals("BLANC")){
-                    return true;
-                }
+            x = pi.getPositionX();
+            y = pi.getPositionY();
+    
+            ArrayList<coordonnee> casesAccessibles;
+
+            if(pi instanceof Tour)
+            {
+                casesAccessibles =  ((Tour) pi).casesPossiblesJouable(x, y);
+            }
+            else if(pi instanceof Dame)
+            {
+                casesAccessibles = ((Dame) pi).casesPossiblesJouable(x, y);
+            }
+            else if(pi instanceof Fou)
+            {
+                casesAccessibles = ((Fou) pi).casesPossiblesJouable(x, y);
+            }
+            else if(pi instanceof Pion)
+            {
+                casesAccessibles = ((Pion) pi).casesPossiblesJouable(x, y);
+            }
+            else if(pi instanceof Cavalier)
+            {
+                casesAccessibles = ((Cavalier) pi).casesPossiblesJouable(x, y);
+            }
+            else{
+                continue;
             }
 
+            // Vérifie si le roi se trouvera dans une case accessible par l'adversaire
+            for (coordonnee coord : casesAccessibles) {
+                if (coord.getX() == xnew && coord.getY() == ynew) {
+                    return false; // Le déplacement met le roi en échec
+                }
+            }
         }
-        return false;
-
+        return true;
     }
-
+    public void afficherCoordsPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPossiblesJouable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour le Roi :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+    /*/
     public boolean Roque(int x, int y)
     {
         // TODO: créer la fonction roque si on a le temps
 
         return true;
-    }
+    }*/
 }
