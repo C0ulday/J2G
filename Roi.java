@@ -36,7 +36,7 @@ public class Roi extends Piece implements regle_Piece {
      * On ne peut pas sauter une pièce adverse
      *** La fonction retourne les coordonnées possibles où on peut aller 
      */
-    public ArrayList<coordonnee> casesPossibles_Jouable(int xactu, int yactu) {
+    public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
         // Directions de déplacement de la dame dans les coordonnées X et Y
@@ -54,38 +54,29 @@ public class Roi extends Piece implements regle_Piece {
             {0, 1}   // Droite
         };
         
-        for (int[] direction : directions) {
+        Piece origin = plateau.getPiece(xactu, yactu);
+
+        for (int[] direction : directions) 
+        {
             
-            boolean valide = true;
             int Y = direction[0];
             int X = direction[1];
             
             int xnew = xactu;
             int ynew = yactu;
             
-            while (valide) {
-                // Avancer dans la direction
-                xnew += Y;
-                ynew += X;
-                
-                // On vérifie si la pièce sort des limites
-                if (!plateau.estDansLesLimites(xnew, ynew)) {
-                    valide = false;
-                }
-                
-                // Si elle sort pas, on vérifie si la case est libre
+            // Avancer dans la direction
+            xnew += Y;
+            ynew += X;
+            
+            // On vérifie si la pièce sort des limites
+            if (plateau.estDansLesLimites(xnew, ynew)) 
+            {
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece == null) {
-                    // Case vide, ajoutée aux mouvements possibles
+                if (piece.getCouleur() != origin.getCouleur() && DéplacementSécurisé(xnew,ynew)) 
+                {
                     coords.add(new coordonnee(xnew, ynew));
-                } else if (!piece.getCouleur().equals(this.getCouleur())) {
-                    // Case occupée par une pièce adverse
-                    coords.add(new coordonnee(xnew, ynew));
-                    valide = false;
-                } else {
-                    // Case occupée par une pièce alliée
-                    valide = false;
-                }
+                } 
             }
         }
         
@@ -93,14 +84,40 @@ public class Roi extends Piece implements regle_Piece {
     }
     
 
-    // Fonction qui permet le premier déplacement de la pièce
-    public boolean PremierdeplacementPiece(int positionX, int positionY) {
-        return true;
+    // Fonction qui permet de savoir si le déplacement du roi n'entraine pas un échec c-a-d le roi ne sera pas mangé par une piece adverse
+        /**
+     * Test si le roi est en echec
+     * @return resultat du test
+     */
+    public boolean estEchec(){
+        ArrayList<Piece> atester = plateau.getPlateauPiece();
+        for(Piece pi : atester){
+            
+            int x = pi.getPositionX();
+            int y = pi.getPositionY(); // TODO : finir le roi
+            
+            
+            casesPossiblesJouable(xactu, yactu);
+            
+            
+            if(Roque(xactu,yactu)){
+                if(this.getCouleur().equals("BLANC") && pi.getCouleur().equals("NOIR")){
+                    return true;
+                }
+                if(this.getCouleur().equals("NOIR") && pi.getCouleur().equals("BLANC")){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+
     }
 
-    public void PrisePiece(int x, int y) {
-        if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {
-            plateau.viderCase(x, y);
-        }
+    public boolean Roque(int x, int y)
+    {
+        // TODO: créer la fonction roque si on a le temps
+
+        return true;
     }
 }

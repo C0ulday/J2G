@@ -44,12 +44,15 @@ public class Tour extends Piece implements regle_Piece{
             {0, -1}, // Gauche
             {0, 1}   // Droite
         };
-    
+        
+        Piece origin = plateau.getPiece(xactu, yactu);
+
         for (int[] direction : directions) {
-            boolean valide = true; // La tour peut se déplacer tant que cette variable est vraie
+            
+            boolean valide = true; // La piece peut se déplacer tant que cette variable est vraie
             int Y = direction[0];
             int X = direction[1];
-    
+            
             int xnew = xactu;
             int ynew = yactu;
     
@@ -61,22 +64,22 @@ public class Tour extends Piece implements regle_Piece{
                 // Vérifier si la case est hors limites
                 if (!plateau.estDansLesLimites(xnew, ynew)) {
                     valide = false; // Arrêt si hors des limites
+                    break; // sortir de la boucle sans créer de pièce
                 }
     
                 // Récupérer la pièce sur la case
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece == null && valide == true)  // il y a un pb ici avec le piece = null
+                if (piece.getCouleur() == "NULL")  // si la case est vide
                 {
                     // Case vide, ajoutée aux mouvements possibles
                     coords.add(new coordonnee(xnew, ynew));
-                } else if (!piece.getCouleur().equals(this.getCouleur())) {
+                } else if (!piece.getCouleur().equals(origin.getCouleur())) {
                     // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
                     coords.add(new coordonnee(xnew, ynew));
                     valide = false; // La direction est bloquée après la capture
                 } else {
                     // Case occupée par une pièce alliée
                     valide = false; // La direction est bloquée
-                    break;
                 }
             }
         }

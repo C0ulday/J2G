@@ -109,7 +109,32 @@ public class Plateau {
     }
 
 
-    public boolean coupPossible(int x, int y) {
+    public boolean coupPossible(int x, int y) 
+    {
         return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" si on veut vérifier si une case est vide
     }
+
+
+
+     /**
+     * Recupere une liste de toutes les pieces
+     * @return une liste
+     */
+    public ArrayList<Piece> getPlateauPiece()
+    {
+        ArrayList<Piece> p = new ArrayList<Piece>();
+        
+        int x,y;
+
+        for(int i=0; i<SIZE*SIZE;i++)
+        {
+            x = i / SIZE;
+            y = i % SIZE;
+            if(this.getPiece(x,y) != null)
+            p.add(this.getPiece(x, y));
+   
+        }
+        return p;
+    }
+    
 }

@@ -48,18 +48,18 @@ public class Pion extends Piece implements regle_Piece {
                 coords.add(new coordonnee(xactu, yactu+dir));
                 if(pion.getPositionXinit()==xactu && pion.getPositionYinit()==yactu && plateau.isCaseOccupee(xactu, yactu+2, "NULL"))
                 {
-                    coords.add(new coordonnee(xactu, yactu+2));
+                    coords.add(new coordonnee(xactu, yactu+2*dir));
                 }
             }
 
-            if(plateau.isCaseOccupee(xactu+1, yactu+1, "NOIR"))
+            if(plateau.isCaseOccupee(xactu+1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
             {
-                coords.add(new coordonnee(xactu+1, yactu+1));
+                coords.add(new coordonnee(xactu+1, yactu+dir));
             }
 
-            if(plateau.isCaseOccupee(xactu-1, yactu+1, "NOIR"))
+            if(plateau.isCaseOccupee(xactu-1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
             {
-                coords.add(new coordonnee(xactu+1, yactu+1));
+                coords.add(new coordonnee(xactu+1, yactu+dir));
             }
         
         else

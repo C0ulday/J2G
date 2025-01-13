@@ -17,12 +17,6 @@ public class Dame extends Piece implements regle_Piece {
         this.plateau = plateau;
     }
 
-    /**
-     * Verifie si le deplacement est possible
-     * @param x L'abscisse d'arrive = les lettres
-     * @param y l'ordonnee d'arrive = les chiffres
-     * @return resultat du test
-     */
 
 
     /*
@@ -52,41 +46,45 @@ public class Dame extends Piece implements regle_Piece {
             {0, 1}   // Droite
         };
         
+        Piece origin = plateau.getPiece(xactu, yactu);
+
         for (int[] direction : directions) {
             
-            boolean valide = true;
+            boolean valide = true; // La piece peut se déplacer tant que cette variable est vraie
             int Y = direction[0];
             int X = direction[1];
             
             int xnew = xactu;
             int ynew = yactu;
-            
+    
+            // Parcours dans une direction jusqu'à la limite ou un obstacle
             while (valide) {
-                // Avancer dans la direction
                 xnew += Y;
                 ynew += X;
-                
-                // On vérifie si la pièce sort des limites
+    
+                // Vérifier si la case est hors limites
                 if (!plateau.estDansLesLimites(xnew, ynew)) {
-                    valide = false;
+                    valide = false; // Arrêt si hors des limites
+                    break; // sortir de la boucle sans créer de pièce
                 }
-                
-                // Si elle sort pas, on vérifie si la case est libre
+    
+                // Récupérer la pièce sur la case
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece == null) {
+                if (piece.getCouleur() == "NULL")  // si la case est vide
+                {
                     // Case vide, ajoutée aux mouvements possibles
                     coords.add(new coordonnee(xnew, ynew));
-                } else if (!piece.getCouleur().equals(this.getCouleur())) {
-                    // Case occupée par une pièce adverse
+                } else if (!piece.getCouleur().equals(origin.getCouleur())) {
+                    // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
                     coords.add(new coordonnee(xnew, ynew));
-                    valide = false;
+                    valide = false; // La direction est bloquée après la capture
                 } else {
                     // Case occupée par une pièce alliée
-                    valide = false;
+                    valide = false; // La direction est bloquée
                 }
             }
         }
-        
+    
         return coords;
     }
     
