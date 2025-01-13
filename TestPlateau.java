@@ -7,24 +7,24 @@ public class TestPlateau
         Plateau plateau = new Plateau(8); // Crée un plateau de 8x8
         // Crée un Cavalier
         //Cavalier cavalierBlanc = new Cavalier(9, 7, 9, 7, "BLANC", plateau);
-        Pion PionO = new Pion(4, 4, 4, 4, "BLANC", plateau);
-        plateau.placerPiece(PionO, 4, 4);
+        Roi roi = new Roi(4, 4, 4, 4, "BLANC", plateau);
+        plateau.placerPiece(roi, 4, 4);
 
         // Placement de quelques pièces adverses et alliées
-        Piece pionNoir = new Pion(5, 5, 5, 5, "NOIR", plateau);
-        Piece pionBlanc = new Pion(3, 5, 3, 5, "BLANC", plateau);
+        Piece TourNoir = new Tour(5, 5, 5, 5, "NOIR", plateau);
+        //Piece pionBlanc = new Pion(3, 5, 3, 5, "BLANC", plateau);
         
-        plateau.placerPiece(pionNoir, 4, 5);
-        plateau.placerPiece(pionBlanc, 3, 5);
+        plateau.placerPiece(TourNoir, 4, 5);
+        //plateau.placerPiece(pionBlanc, 3, 5);
 
 
         // Test des mouvements possibles
-        ArrayList<coordonnee> mouvements = PionO.casesPossibles_Jouable(4, 4);
+        ArrayList<coordonnee> mouvements = roi.casesPossiblesJouable(4, 4);
 
         // Affichage des résultats
-        System.out.println("Mouvements possibles pour la PionO en (4, 4) :");
+        System.out.println("Mouvements possibles pour la roi en (4, 4) :");
 
-        System.out.println("Coordonnées jouables initiales PionO : " + PionO.casesPossibles_Jouable(4, 4));
+        System.out.println("Coordonnées jouables initiales roi : " + roi.casesPossiblesJouable(4, 4));
 
 
         
@@ -50,13 +50,13 @@ public class TestPlateau
 /*
 // Place le Cavalier sur le plateau
         plateau.placerPiece(cavalierBlanc, 9, 7);
-        plateau.placerPiece(PionO, 3, 3);
+        plateau.placerPiece(roi, 3, 3);
         // Affiche la position initiale
         System.out.println("Position initiale Cavalier : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")");
-        System.out.println("Coordonnées jouables initiales : " + cavalierBlanc.casesPossibles_Jouable(3, 2));
+        System.out.println("Coordonnées jouables initiales : " + cavalierBlanc.casesPossiblesJouable(3, 2));
 
         // Vérification des cases jouables après déplacement
-        System.out.println("Coordonnées jouables après déplacement : " + cavalierBlanc.casesPossibles_Jouable(cavalierBlanc.getPositionX(), cavalierBlanc.getPositionY()));
+        System.out.println("Coordonnées jouables après déplacement : " + cavalierBlanc.casesPossiblesJouable(cavalierBlanc.getPositionX(), cavalierBlanc.getPositionY()));
 
         // Test d'une prise de pièce
         Piece pionNoir = new Piece("PION", 1, 1, 1, 1, "NOIR", plateau);
@@ -68,7 +68,7 @@ public class TestPlateau
         System.out.println("Coordonnées jouables après déplacement pion blanc: " + pionBlanc.getPositionX() + " "+ pionBlanc.getPositionY());
 
         //plateau.deplacementPiece(5, 3, 6, 1);
-        System.out.println("Coordonnées jouables après déplacement  Cavalier: " + cavalierBlanc.casesPossibles_Jouable(cavalierBlanc.getPositionX(), cavalierBlanc.getPositionY()));
+        System.out.println("Coordonnées jouables après déplacement  Cavalier: " + cavalierBlanc.casesPossiblesJouable(cavalierBlanc.getPositionX(), cavalierBlanc.getPositionY()));
 
-        System.out.println("Coordonnées jouables initiales Tour : " + PionO.casesPossibles_Jouable(3, 3));
+        System.out.println("Coordonnées jouables initiales Tour : " + roi.casesPossiblesJouable(3, 3));
 */

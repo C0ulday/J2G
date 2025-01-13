@@ -8,7 +8,7 @@ public  interface regle_Piece {  // notre interface à repecter pour créer une 
     // Entrée : coordonnées de la pièce
     // Sortie : liste de coup possible selon les déplacement de la pièce
 
-    public ArrayList<coordonnee> casesPossibles_Jouable(int xactu, int yactu);
+    public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu);
 
 
 

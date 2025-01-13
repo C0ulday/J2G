@@ -11,7 +11,7 @@ public class Roi extends Piece implements regle_Piece {
      * public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) 
     */
     public Roi(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
-        super("Roi", xinit, yinit, xactu, yactu, couleur, plateau);
+        super("ROI", xinit, yinit, xactu, yactu, couleur, plateau);
         this.xactu = xactu;
         this.yactu = yactu;
         this.xinit = xinit;
@@ -39,7 +39,7 @@ public class Roi extends Piece implements regle_Piece {
     public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
-        // Directions de déplacement de la dame dans les coordonnées X et Y
+        // Directions de déplacement du roi dans les coordonnées X et Y
         // X = de gauche à droite
         // Y = de haut en bas 
 
@@ -73,7 +73,7 @@ public class Roi extends Piece implements regle_Piece {
             if (plateau.estDansLesLimites(xnew, ynew)) 
             {
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece.getCouleur() != origin.getCouleur() && DéplacementSécurisé(xnew,ynew)) 
+                if (piece.getCouleur() != origin.getCouleur() )//&& DéplacementSécurisé(origin,xnew,ynew)) 
                 {
                     coords.add(new coordonnee(xnew, ynew));
                 } 
@@ -84,23 +84,25 @@ public class Roi extends Piece implements regle_Piece {
     }
     
 
-    // Fonction qui permet de savoir si le déplacement du roi n'entraine pas un échec c-a-d le roi ne sera pas mangé par une piece adverse
+    // Fonction qui permet de savoir si le déplacement du roi n'entraine pas un éche
+    // c-a-d le roi ne sera pas mangé par une piece adverse
         /**
      * Test si le roi est en echec
      * @return resultat du test
      */
-    public boolean estEchec(){
+    public boolean DéplacementSécurisé(Piece roi, int xnew, int ynew){
         ArrayList<Piece> atester = plateau.getPlateauPiece();
+
         for(Piece pi : atester){
             
             int x = pi.getPositionX();
             int y = pi.getPositionY(); // TODO : finir le roi
             
             
-            casesPossiblesJouable(xactu, yactu);
+            pi.casesPossiblesJouable(pi.getPositionX(),pi.getPositionY());
             
             
-            if(Roque(xactu,yactu)){
+            if(pi.casesPossiblesJouable(pi.getPositionX(),pi.getPositionY()) == roi.casesPossiblesJouable(xnew,ynew)){
                 if(this.getCouleur().equals("BLANC") && pi.getCouleur().equals("NOIR")){
                     return true;
                 }

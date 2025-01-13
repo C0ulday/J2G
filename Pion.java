@@ -34,7 +34,7 @@ public class Pion extends Piece implements regle_Piece {
      * On ne peut pas sauter une pièce adverse
      *** La fonction retourne les coordonnées possibles où on peut aller 
      */
-    public ArrayList<coordonnee> casesPossibles_Jouable(int xactu, int yactu) {
+    public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
         // création de la pièce 
