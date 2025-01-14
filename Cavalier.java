@@ -32,6 +32,8 @@ class Cavalier extends Piece implements regle_Piece {
      * On ne peut pas sauter une pièce adverse
      *** La fonction retourne les coordonnées possibles où on peut aller 
      */
+
+    @Override
     public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<coordonnee>();
         

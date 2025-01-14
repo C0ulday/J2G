@@ -34,6 +34,8 @@ public class Tour extends Piece implements regle_Piece{
      * On ne peut pas sauter une pièce adverse
      *** La fonction retourne les coordonnées possibles où on peut aller 
      */
+
+    @Override
     public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
@@ -87,12 +89,6 @@ public class Tour extends Piece implements regle_Piece{
         return coords;
     }
     
-
-    // Fonction qui permet le premier déplacement de la pièce
-    public boolean PremierdeplacementPiece(int positionX, int positionY) {
-        return true;
-    }
-
 
     public void PrisePiece(int x, int y) {
         if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {

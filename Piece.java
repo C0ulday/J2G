@@ -1,4 +1,6 @@
-public class Piece {
+import java.util.ArrayList;
+
+public class Piece{
     private String name;
     private String couleur;
     private int positionXinit;
