@@ -70,10 +70,11 @@ class Cavalier extends Piece implements regle_Piece {
             plateau.viderCase(x, y);
         }
     }
+    @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossiblesJouable(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Roi :");
+        System.out.println("Coordonnées possibles pour le Cavalier :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }

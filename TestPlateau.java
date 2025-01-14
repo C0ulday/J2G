@@ -14,6 +14,8 @@ public class TestPlateau
         plateau.placerPiece(tour, 5, 5);
         plateau.placerPiece(cav, 7, 6);
         roi.afficherCoordsPossibles(4, 4);
+        cav.afficherCoordsPossibles(7, 6);
+        
 
         // Remplir le plateau avec les pièces des deux joueurs
         plateau.remplirPlateau();

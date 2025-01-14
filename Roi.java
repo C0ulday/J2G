@@ -37,52 +37,30 @@ public class Roi extends Piece implements regle_Piece{
      *** La fonction retourne les coordonnées possibles où on peut aller 
      */
     @Override
-    public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = new ArrayList<>();
-        
-        // Directions de déplacement du roi dans les coordonnées X et Y
-        // X = de gauche à droite
-        // Y = de haut en bas 
+public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
+    ArrayList<coordonnee> coords = new ArrayList<>();
+    int[][] directions = {
+        {-1, -1}, {-1, 0}, {-1, 1},
+        {0, -1},          {0, 1},
+        {1, -1}, {1, 0}, {1, 1}
+    };
 
-        int[][] directions = {
-            {1, 1}, // haut gauche
-            {1, 0},  // haut droite
-            {1, -1}, // bas  gauche
-            {0,-1},  // bas  droite
-            {-1, -1}, // Haut
-            {-1, 0},  // Bas
-            {-1, 1}, // Gauche
-            {0, 1}   // Droite
-        };
-        
-        Piece roi = plateau.getPiece(xactu, yactu);
+    for (int[] direction : directions) {
+        int xnew = xactu + direction[0];
+        int ynew = yactu + direction[1];
 
-        for (int[] direction : directions) 
-        {
-            
-            int Y = direction[0];
-            int X = direction[1];
-            
-            int xnew = xactu;
-            int ynew = yactu;
-            
-            // Avancer dans la direction
-            xnew += Y;
-            ynew += X;
-            
-            // On vérifie si la pièce sort des limites
-            if (plateau.estDansLesLimites(xnew, ynew)) 
-            {
-                Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece.getCouleur() != roi.getCouleur() && deplacementSecurise(roi,xnew,ynew)) 
-                {
-                    coords.add(new coordonnee(xnew, ynew));
-                } 
+        if (plateau.estDansLesLimites(xnew, ynew)) {
+            Piece piece = plateau.getPiece(xnew, ynew);
+            if ((piece == null || !piece.getCouleur().equals(this.getCouleur())) &&
+                deplacementSecurise(this, xnew, ynew)) {
+                coords.add(new coordonnee(xnew, ynew));
             }
         }
-        
-        return coords;
     }
+
+    return coords;
+}
+
     
     /*Roi : 
     faire les deplacements du Roi au cas ou on a un adversaire au tour de lui
@@ -90,26 +68,7 @@ public class Roi extends Piece implements regle_Piece{
     on recupere la liste avec toute les pieces adverses et on recupere toutes  les deplacements des pieces adverces
     et toutes les deplacements du roi et des pieces adverses qu'ils ont en commun sont interdites
     la fonction retournera les deplacents ou il n y a pas de danger */
-
-    /*    public boolean deplacementSecurise(Piece roi, int xnew, int ynew) {
-        ArrayList<Piece> piecesAdverses = plateau.getPlateauPiece();
-    
-        for (Piece pieceAdverse : piecesAdverses) {
-            if (!pieceAdverse.getCouleur().equals(roi.getCouleur())) {
-                // Appel polymorphique : chaque pièce utilise sa propre version de casesPossiblesJouable
-                ArrayList<coordonnee> casesAdverses = pieceAdverse.casesPossiblesJouable(pieceAdverse.getPositionX(),pieceAdverse.getPositionY());
-                for (coordonnee coordAdverse : casesAdverses) {
-                    if (coordAdverse.getX() == xnew && coordAdverse.getY() == ynew) {
-                        return false; // Le déplacement met le roi en échec
-                    }
-                }
-            }
-        }
-    
-        return true;
-    } */
-
-    public boolean deplacementSecurise(Piece roi, int xnew, int ynew) {
+     public boolean deplacementSecurise(Piece roi, int xnew, int ynew) {
         ArrayList<Piece> piecesAdverses = plateau.getPlateauPiece();
     
         for (Piece pieceAdverse : piecesAdverses) {

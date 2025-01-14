@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
-public class Fou extends Piece implements regle_Piece {
+public class Fou extends Piece implements regle_Piece 
+{
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -93,14 +94,15 @@ public class Fou extends Piece implements regle_Piece {
     }
     
 
-    // Fonction qui permet le premier déplacement de la pièce
-    public boolean PremierdeplacementPiece(int positionX, int positionY) {
-        return true;
-    }
-
-    public void PrisePiece(int x, int y) {
-        if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {
-            plateau.viderCase(x, y);
+    @Override
+    public void afficherCoordsPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPossiblesJouable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour le Cavalier :");
+        for (coordonnee coord : coords) 
+        {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+      
         }
     }
 }
