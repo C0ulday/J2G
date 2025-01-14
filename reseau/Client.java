@@ -1,6 +1,5 @@
 package Echecs.reseau;
 
-import Echecs.Joueur;
 import Echecs.Message;
 
 import java.io.IOException;
@@ -22,38 +21,44 @@ public class Client {
     private Socket socket;
 
     private ObjectInputStream in;
-    private ObjectOutput out; 
-    
-    private Joueur joueur;
-
+    private ObjectOutputStream out; 
 
     public Client(String ServerAddress, int ServerPort){
-
-        this.ServerAddress = ServerAddress;
-        this.ServerPort = ServerPort;
+        try{
+            this.ServerAddress = ServerAddress;
+            this.ServerPort = ServerPort;
+            this.socket = new Socket(ServerAddress,ServerPort);
+            this.in = new ObjectInputStream(socket.getInputStream());
+            this.out = new ObjectOutputStream(socket.getOutputStream());
+        } catch (Exception e) {
+            System.out.println("Impossible de créer un Socket pour le Client " + e.getMessage());
+        }
     }
+
+    public Client(Socket socket){
+        try { 
+            this.socket = socket;
+            this.in = new ObjectInputStream(socket.getInputStream());
+            this.out = new ObjectOutputStream(socket.getOutputStream());
+        } catch (Exception e) {
+            System.out.println("Impossible de créer un Socket pour le Client " + e.getMessage());
+        }
+    }
+
 
     public void Ready(){
 
-        try{
+      
+        System.out.println("[CLIENT] : Connecté au serveur à " + ServerAddress + ":" + ServerPort);
 
-            socket = new Socket(ServerAddress,ServerPort);
-            in = new ObjectInputStream(socket.getInputStream());
-            out = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("[CLIENT] : Connecté au serveur à " + ServerAddress + ":" + ServerPort);
+        // Envoyer ses infos de connexion
+        Connection();
+        System.out.println("[CLIENT] : En attente de connexion...");
 
-            // Envoyer ses infos de connexion
-            Connection();
-            System.out.println("[CLIENT] : En attente de connexion...");
+        // En attente du serveur
+        new Thread(this::ReceiveMessage).start();
 
-            // En attente du serveur
-
-            new Thread(this::ReceiveMessage).start();
-
-        } catch (IOException e) {
-            System.err.println("[CLIENT] : Erreur lors de la connexion au serveur.");
-            e.printStackTrace();
-        }
+    
     }
 
     public void Connection(){
@@ -87,6 +92,18 @@ public class Client {
 
     public void CheckConnection(){
 
+        LocalDateTime maintenant = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String temps = maintenant.format(formatter);
+
+        Message mess = new Message("CHECK",""+socket,"",temps);
+        try{
+            out.writeObject(mess);
+
+        } catch (IOException e){
+            Error("Impossible de tester la connexion avec le serveur");
+            e.printStackTrace();
+        }
 
     }
 
@@ -94,11 +111,49 @@ public class Client {
         try {
             while (true) {
                 Message message = (Message) in.readObject();
-                System.out.println("[SERVEUR] : " + message);
+
+                if ("CONNECTION".equals(message.getType())){
+                    System.out.println("[CLIENT] : " + "prêt à jouer !");
+                }
+
+                if("CHECK".equals(message.getType())){
+                    System.out.println("[CLIENT] : " + "Connexion active.");
+                }
+
+                if("RULES".equals(message.getType())){
+                    System.out.println("[CLIENT]-[REGLES]: " + message.getData());
+                }
+
+                if("BOARD".equals(message.getType())){
+                    System.out.println("[CLIENT]-[BOARD]: " + message.getData());
+                }
             }
         } catch (IOException e) {
-            System.err.println("[CLIENT] : Connexion perdue avec le serveur.");
+            Error("Impossible de lire le message du serveur");
+            e.printStackTrace();
         }
+    }
+
+    public void Error(String message){
+
+        String contenu = "[CLIENT]-[ERROR] :";
+        contenu += message;
+        System.out.println(contenu + "\n");
+
+    }
+
+    public ObjectInputStream getClientInputStream(){
+        return in;
+    }
+
+    public ObjectOutputStream getClientOutputStream(){
+        return out;
+    }
+
+
+    public static void main(String[] args){
+        Client client = new Client("localhostname",8585);
+        client.Ready();
     }
 
 }

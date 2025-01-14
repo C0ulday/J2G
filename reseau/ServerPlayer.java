@@ -6,16 +6,16 @@ import Echecs.Joueur;
 
 public class ServerPlayer {
     
-    private ServerClient client;
+    private Client client;
     private Joueur joueur;
 
-    public ServerPlayer(ServerClient client,Joueur joueur){
+    public ServerPlayer(Client client,Joueur joueur){
         this.client = client;
         this.joueur = joueur;
     }
 
 
-    public ServerClient getClient(){
+    public Client getClient(){
         return this.client;
     }
 
