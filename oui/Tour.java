@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
-public class Fou extends Piece implements regle_Piece 
-{
+public class Tour extends Piece implements regle_Piece{
     int xactu, xinit;
     int yactu, yinit;
     private Plateau plateau;
@@ -9,8 +8,8 @@ public class Fou extends Piece implements regle_Piece
     /* Constructeur 
      * public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) 
     */
-    public Fou(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
-        super("FOU", xinit, yinit, xactu, yactu, couleur, plateau);
+    public Tour(int xinit, int yinit, int xactu, int yactu, String couleur, Plateau plateau) {
+        super("TOUR", xinit, yinit, xactu, yactu, couleur, plateau);
         this.xactu = xactu;
         this.yactu = yactu;
         this.xinit = xinit;
@@ -37,21 +36,16 @@ public class Fou extends Piece implements regle_Piece
      */
 
     @Override
-    public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
+    public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
-        // Directions de déplacement du fou dans les coordonnées X et Y
-        // X = de gauche à droite
-        // Y = de haut en bas 
-
+        // Directions de déplacement de la tour dans les coordonnées X et Y
         int[][] directions = {
-            {1, -1}, // haut gauche
-            {1, 1},  // haut droite
-            {-1, -1}, // bas  gauche
-            {-1, 1}   // bas  droite
+            {-1, 0}, // Haut
+            {1, 0},  // Bas
+            {0, -1}, // Gauche
+            {0, 1}   // Droite
         };
-        
-        Piece origin = plateau.getPiece(xactu, yactu);
 
         for (int[] direction : directions) {
             
@@ -79,30 +73,47 @@ public class Fou extends Piece implements regle_Piece
                 {
                     // Case vide, ajoutée aux mouvements possibles
                     coords.add(new coordonnee(xnew, ynew));
-                } else if (!piece.getCouleur().equals(origin.getCouleur())) {
+                } 
+                else
+                {
                     // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
                     coords.add(new coordonnee(xnew, ynew));
                     valide = false; // La direction est bloquée après la capture
-                } else {
-                    // Case occupée par une pièce alliée
-                    valide = false; // La direction est bloquée
                 }
             }
-        }
-    
+        }  
         return coords;
     }
     
+    @Override
+    public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> casesPrenables = new ArrayList<>();
+        ArrayList<coordonnee> casesJouables = casesPossibles(xactu, yactu);
+
+        for (coordonnee coord : casesJouables) {
+            int x = coord.getX();
+            int y = coord.getY();
+            
+            // Récupérer la pièce à la position (x, y)
+            Piece piece = plateau.getPiece(x,y);
+            if (!piece.getCouleur().equals(this.getCouleur()) || piece == null)  // si la case est vide
+            {
+                // Case vide, ajoutée aux mouvements possibles
+                casesPrenables.add(coord);
+            }
+        }
+
+        return casesPrenables;
+    }
 
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = casesPossiblesJouable(xactu, yactu);
+        ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Cavalier :");
-        for (coordonnee coord : coords) 
-        {
+        System.out.println("Coordonnées possibles pour la Tour en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
-      
         }
     }
+
 }

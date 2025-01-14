@@ -161,7 +161,7 @@ public class Plateau {
     {
         //TODO réaliser la fonction
 
-        Piece piece = getPiece(x,y);
+        //Piece piece = getPiece(x,y);
 
     }
 
@@ -181,5 +181,9 @@ public class Plateau {
         }
         return p;
     }
-    
+
+    public int getSIZE() {
+
+        return this.SIZE;
+    }
 }

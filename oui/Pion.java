@@ -36,7 +36,7 @@ public class Pion extends Piece implements regle_Piece {
      */
 
     @Override
-    public ArrayList<coordonnee> casesPossiblesJouable(int xactu, int yactu) {
+    public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
         
         // création de la pièce 
@@ -54,26 +54,48 @@ public class Pion extends Piece implements regle_Piece {
                 }
             }
 
-            if(plateau.isCaseOccupee(xactu+1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
-            {
-                coords.add(new coordonnee(xactu+1, yactu+dir));
-            }
-
-            if(plateau.isCaseOccupee(xactu-1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
-            {
-                coords.add(new coordonnee(xactu+1, yactu+dir));
-            }
-        
-        else
+        if(plateau.isCaseOccupee(xactu+1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
         {
-            System.out.println("problème de génération de la pièce");
+            coords.add(new coordonnee(xactu+1, yactu+dir));
         }
-        
+
+        if(plateau.isCaseOccupee(xactu-1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
+        {
+            coords.add(new coordonnee(xactu+1, yactu+dir));
+        }  
+
         return coords;
     }
 
 
-   
+    @Override
+    public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = new ArrayList<>();
+
+        int dir = (this.getCouleur().equals("NOIR")) ? -1 : 1;
+
+        if(plateau.isCaseOccupee(xactu+1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
+        {
+            coords.add(new coordonnee(xactu+1, yactu+dir));
+        }
+
+        if(plateau.isCaseOccupee(xactu-1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
+        {
+            coords.add(new coordonnee(xactu+1, yactu+dir));
+        }    
+        
+        return coords;
+    }
+
+    @Override
+    public void afficherCoordsPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour le Pion en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
     
 
 
@@ -83,10 +105,4 @@ public class Pion extends Piece implements regle_Piece {
         return xactu == derniereLigne;
     }
     */
-
-    public void PrisePiece(int x, int y) {
-        if (plateau.getPiece(x, y) != null && !plateau.getPiece(x, y).getCouleur().equals(this.getCouleur())) {
-            plateau.viderCase(x, y);
-        }
-    }
 }

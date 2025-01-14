@@ -7,15 +7,20 @@ public class TestPlateau
         Plateau plateau = new Plateau(8); // Crée un plateau de 8x8
         // Crée un Cavalier
         //Cavalier cavalierBlanc = new Cavalier(9, 7, 9, 7, "BLANC", plateau);
+        
         Roi roi = new Roi(4, 4, 4, 4, "BLANC", plateau);
         Tour tour = new Tour(5,5,5,5,"NOIR",plateau);
         Cavalier cav = new Cavalier(7,6,7,6,"NOIR",plateau);
+        Pion pion = new Pion(5,4, 5, 4, "NOIR", plateau);
         plateau.placerPiece(roi, 4, 4);
         plateau.placerPiece(tour, 5, 5);
         plateau.placerPiece(cav, 7, 6);
+        plateau.placerPiece(pion, 5, 4);
         roi.afficherCoordsPossibles(4, 4);
-        cav.afficherCoordsPossibles(7, 6);
-        
+        //cav.afficherCoordsPossibles(7, 6);
+        pion.afficherCoordsPossibles(5, 4);
+        //System.out.println("Coordonnées jouables initiales Roi  : " + roi.casesPrenable(4,4));
+        //System.out.println("Coordonnées jouables initiales cava : " + cav.casesPrenable(7,6));
 
         // Remplir le plateau avec les pièces des deux joueurs
         plateau.remplirPlateau();
@@ -56,7 +61,7 @@ public class TestPlateau
         plateau.ajouterPieceBlanche(new Piece("Cavalier", 7, 6,7,6, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Fou", 7, 2,7,2, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Fou", 7, 5,7,5, "BLANC",plateau));
-        plateau.ajouterPieceBlanche(new Piece("Dame", 7, 3,7,3, "BLANC",plateau));
+        plateau.ajouterPieceBlanche(new Piece("Cavalier", 7, 3,7,3, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Roi", 7, 4,7,4, "BLANC",plateau));
 
         // Remplir le plateau avec les pièces des deux joueurs
