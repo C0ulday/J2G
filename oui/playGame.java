@@ -72,6 +72,7 @@ public class playGame {
             plateau.afficherPlateau();
             
             // Vérifications des conditions de fin de partie
+            // Vérifications des conditions de fin de partie
             if (regleJeuEchec.Echec(plateau, joueurActuel)) {
                 System.out.println("Attention : le roi des " + joueurActuel + "s est en échec !");
             }
@@ -79,13 +80,18 @@ public class playGame {
             if (regleJeuEchec.Mat(plateau, joueurActuel)) {
                 System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + "s gagnent !");
                 partieEnCours = false;
-            } else if (regleJeuEchec.Pat(plateau, joueurActuel)) {
+                continue; // Quitte le tour
+            }
+
+            if (regleJeuEchec.Pat(plateau, joueurActuel)) {
                 System.out.println("Pat ! Match nul.");
                 partieEnCours = false;
+                continue; // Quitte le tour
             }
 
             // Changer de joueur
             joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
+
         }
 
         scanner.close();
