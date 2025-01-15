@@ -96,39 +96,76 @@ public class Plateau {
     public void jouerPiece()
     {
     }
-    public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
+
+    public boolean deplacementDansPlateau(int xactu, int yactu, int xnew, int ynew) {
+        // Récupérer la pièce à déplacer
+
         if (!estDansLesLimites(xnew, ynew)) { // Vérifie si le déplacement est possible
             System.out.println("Déplacement interdit !");
-            return;
+            return false;
         }
-    
+        Piece piece  = getPiece(xactu, yactu);
+        Piece piece2 = getPiece(xnew, ynew);
         // Récupère la pièce à déplacer
-        Piece piece  = plateau.get(xactu * SIZE + yactu);
-        Piece piece2 = plateau.get(xnew * SIZE + ynew);
+        
     
         if (piece == null || "NULL".equals(piece.getName())) {
             System.out.println("Aucune pièce à déplacer à cette position !");
-            return;
+            return false;
         }
+    
+        // Vérifier si une pièce est présente à la position actuelle
+        if (piece == null || "NULL".equals(piece.getName())) {
+            System.out.println("Aucune pièce à déplacer à cette position !");
+            return false;
+        }
+        // Obtenir les cases possibles pour cette pièce
+        ArrayList<coordonnee> casesPossibles = ((regle_Piece) piece).casesPossibles(xactu, yactu);
+    
+        // Vérifier si la case cible est autorisée
+        boolean deplacementValide = false;
+        for (coordonnee coord : casesPossibles) {
+            if (coord.getX() == xnew && coord.getY() == ynew) {
+                deplacementValide = true;
+                break;
+            }
+        }
+    
+        if (!deplacementValide) {
+            System.out.println("Déplacement interdit : La case cible n'est pas dans les mouvements possibles !");
+            return false;
+        }
+    
+        // Appeler l'ancienne méthode pour effectuer le déplacement
 
-        //plateau.isCaseOccupee(xactu-1, yactu-1, "NOIR"))
+    
+        System.out.println("Déplacement validé !");
+        return true;
+    }
 
-        if( piece.getCouleur() != piece2.getCouleur() && !isCaseOccupee(xnew,ynew,"NULL") )
+    public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
+        
+        if(deplacementDansPlateau(xactu,yactu,xnew,ynew))
         {
-            PrisePiece(xnew,ynew);
+            Piece piece  = plateau.get(xactu * SIZE + yactu);
+            Piece piece2 = plateau.get(xnew * SIZE + ynew);
+            if( piece.getCouleur() != piece2.getCouleur() && !isCaseOccupee(xnew,ynew,"NULL") )
+            {
+                PrisePiece(xnew,ynew);
+            }
+
+            // Met à jour les coordonnées actuelles de la pièce
+            piece.setPosition(xnew, ynew);
+        
+            // Place la pièce à la nouvelle position dans le plateau
+            placerPiece(piece, xnew, ynew);
+        
+            // Vide l'ancienne case
+            viderCase(xactu, yactu);
+
+
+            System.out.println("Déplacement réussi !");
         }
-
-        // Met à jour les coordonnées actuelles de la pièce
-        piece.setPosition(xnew, ynew);
-    
-        // Place la pièce à la nouvelle position dans le plateau
-        placerPiece(piece, xnew, ynew);
-    
-        // Vide l'ancienne case
-        viderCase(xactu, yactu);
-
-
-        System.out.println("Déplacement réussi !");
     }
     
 
@@ -176,8 +213,9 @@ public class Plateau {
             x = i / SIZE;
             y = i % SIZE;
             if(this.getPiece(x,y) != null)
-            p.add(this.getPiece(x, y));
-   
+            {
+                p.add(this.getPiece(x, y));
+            }
         }
         return p;
     }

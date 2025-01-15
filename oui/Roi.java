@@ -87,7 +87,8 @@ public class Roi extends Piece implements regle_Piece{
         
         for (Piece piece : pieces) {
             // Vérifie si la pièce est adverse
-            if (!piece.getCouleur().equals(roi.getCouleur())) {
+            if (!piece.getCouleur().equals(roi.getCouleur())) 
+            {
                 // Vérifie si la pièce adverse peut attaquer la position cible
                 if (piece instanceof regle_Piece) {
                     ArrayList<coordonnee> casesAdverses = ((regle_Piece) piece).casesPossibles(piece.getPositionX(),piece.getPositionY());

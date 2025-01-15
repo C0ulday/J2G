@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class TestPlateau 
+public class TestPlateau
 {
     public static void main(String[] args) 
     {
@@ -9,25 +9,34 @@ public class TestPlateau
         //Cavalier cavalierBlanc = new Cavalier(9, 7, 9, 7, "BLANC", plateau);
         
         Roi roi = new Roi(4, 4, 4, 4, "BLANC", plateau);
-        Tour tour = new Tour(5,5,5,5,"NOIR",plateau);
+        Tour tour = new Tour(7,4,7,4,"NOIR",plateau);
         Cavalier cav = new Cavalier(7,6,7,6,"NOIR",plateau);
-        Pion pion = new Pion(5,4, 5, 4, "NOIR", plateau);
+        Pion pion = new Pion(5,5, 5, 5, "NOIR", plateau);
         plateau.placerPiece(roi, 4, 4);
-        plateau.placerPiece(tour, 5, 5);
+        plateau.placerPiece(tour, 7, 4);
         plateau.placerPiece(cav, 7, 6);
         plateau.placerPiece(pion, 5, 4);
         roi.afficherCoordsPossibles(4, 4);
-        //cav.afficherCoordsPossibles(7, 6);
+        cav.afficherCoordsPossibles(7, 6);
         pion.afficherCoordsPossibles(5, 4);
+        tour.afficherCoordsPossibles(7, 4);
         //System.out.println("Coordonnées jouables initiales Roi  : " + roi.casesPrenable(4,4));
         //System.out.println("Coordonnées jouables initiales cava : " + cav.casesPrenable(7,6));
 
         // Remplir le plateau avec les pièces des deux joueurs
+        // Vérifie si le roi est en échec
+        if (regleJeuEchec.Echec(plateau,"BLANC")) {
+            System.err.println("Le Roi est en échec.");
+        } else {
+            System.err.println("Le Roi est en sécurité.");
+        }
+
         plateau.remplirPlateau();
         System.out.println("\n");
         // Afficher le plateau
         plateau.afficherPlateau();
-
+    }
+}
 
         //plateau.deplacementPiece(0,0,4,3);
 
@@ -76,9 +85,6 @@ public class TestPlateau
         plateau.afficherPlateau();
 
         */
-
-    }
-}
 
 /*
 // Teste un déplacement valide
