@@ -30,24 +30,29 @@ public class GameServer {
     }
 
     /* Lancement d’une partie avec dénomination du numéro du joueur */
+    /* Lancement d’une partie avec dénomination du numéro du joueur */
     public void Ready() {
         if (clients.size() == 2) {
 
             /* Définition des joueurs */
-            String nomBlanc = ReceiveStringMessage(clients.get(0));
-            String couleurBlanc = ReceiveStringMessage(clients.get(0));
-            jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, couleurBlanc, new Chrono(0, 10, 0)));
+            try {
+                String nomBlanc = ReceiveStringMessage(clients.get(0), "nom");
+                String couleurBlanc = ReceiveStringMessage(clients.get(0), "couleur");
+                jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, couleurBlanc, new Chrono(0, 10, 0)));
 
-            String nomNoir = ReceiveStringMessage(clients.get(1));
-            String couleurNoir = ReceiveStringMessage(clients.get(1));
-            jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, couleurNoir, new Chrono(0, 10, 0)));
+                String nomNoir = ReceiveStringMessage(clients.get(1), "nom");
+                String couleurNoir = ReceiveStringMessage(clients.get(1), "couleur");
+                jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, couleurNoir, new Chrono(0, 10, 0)));
 
-            System.out.println("[SERVER]-[INFO] : Deux joueurs prêts à s'affronter !");
-            
-            // Démarrer la partie
-            startGame();
+                System.out.println("[SERVER]-[INFO] : Deux joueurs prêts à s'affronter !");
+
+                // Démarrer la partie
+                startGame();
+                
+            } catch (IOException | ClassNotFoundException e) {
+                Error("Erreur lors de la réception des informations des joueurs : " + e.getMessage());
+            }
         } else {
-            // Message d'erreur
             Error("Il faut deux joueurs pour lancer une partie !");
         }
     }
@@ -61,64 +66,53 @@ public class GameServer {
     // Recevoir un message du client
     public void ReceiveMessage(Client client) {
         try {
-            ObjectInputStream in = client.getClientInputStream();  // Récupérer le flux d'entrée du client
+            ObjectInputStream in = client.getClientInputStream();
             Message message;
 
             while (true) {
-                message = (Message) in.readObject();  // Lire le message envoyé par le client
+                message = (Message) in.readObject();
 
-                if ("CONNECTION".equals(message.getType())) {
-                    System.out.println("[SERVEUR] : " + message.getSender() + " prêt à jouer !");
-                }
-
-                if ("CHECK".equals(message.getType())) {
-                    System.out.println("[CLIENT] : " + message.getSender() + " : Connexion active.");
-                }
-
-                if ("RULES".equals(message.getType())) {
-                    System.out.println("[CLIENT]-[REGLES]: " + message.getData());
-                }
-
-                if ("BOARD".equals(message.getType())) {
-                    System.out.println("[CLIENT]-[BOARD]: " + message.getData());
+                switch (message.getType()) {
+                    case "CONNECTION":
+                        System.out.println("[SERVER] : " + message.getSender() + " prêt à jouer !");
+                        break;
+                    case "CHECK":
+                        System.out.println("[SERVER] : Connexion active avec " + message.getSender());
+                        break;
+                    case "RULES":
+                        System.out.println("[SERVER]-[RULES] : " + message.getData());
+                        break;
+                    case "BOARD":
+                        System.out.println("[SERVER]-[BOARD] : " + message.getData());
+                        break;
+                    default:
+                        System.out.println("[SERVER] : Message inconnu reçu.");
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            Error("Impossible de lire le message du client");
-            e.printStackTrace();
+            Error("Impossible de lire le message du client : " + e.getMessage());
         }
     }
+       // Recevoir un message contenant une chaîne spécifique (nom ou couleur d'un joueur)
+       public String ReceiveStringMessage(Client client, String type) throws IOException, ClassNotFoundException {
+        ObjectInputStream in = client.getClientInputStream();
+        Message messageString = (Message) in.readObject();
 
-    // Recevoir un message contenant le nom ou la couleur d'un joueur
-    public String ReceiveStringMessage(Client client) {
-        try {
-            ObjectInputStream in = client.getClientInputStream();  // Récupérer le flux d'entrée du client
-            Message messageString = (Message) in.readObject();  // Lire un objet Message
-
-            if ("nom".equals(messageString.getType())) {
-                return messageString.getData();
-            }
-
-            if ("couleur".equals(messageString.getType())) {
-                return messageString.getData();
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            Error("Impossible de lire le message du client");
-            e.printStackTrace();
+        if (type.equals(messageString.getType())) {
+            return messageString.getData();
+        } else {
+            throw new IOException("Type de message inattendu. Attendu : " + type + ", Reçu : " + messageString.getType());
         }
-
-        return "";  // Retourner une chaîne vide en cas d'erreur
     }
 
     // Envoyer un message à un client spécifique
     public void sendMessage(Client client, Message message) {
         try {
-            ObjectOutputStream out = client.getClientOutputStream();  // Récupérer le flux de sortie du client
+            ObjectOutputStream out = client.getClientOutputStream();
             out.writeObject(message);
-            out.flush();  // Assurer l'envoi immédiat du message
+            out.flush();
         } catch (IOException e) {
-            Error("Impossible d'envoyer le message au client");
-            e.printStackTrace();
+            Error("Impossible d'envoyer le message au client : " + e.getMessage());
         }
     }
 
