@@ -96,29 +96,28 @@ public class Plateau {
     public void jouerPiece()
     {
     }
-
     public boolean deplacementDansPlateau(int xactu, int yactu, int xnew, int ynew) {
-        // Récupérer la pièce à déplacer
-
-        if (!estDansLesLimites(xnew, ynew)) { // Vérifie si le déplacement est possible
+        // Vérifie si les coordonnées cibles sont dans les limites
+        if (!estDansLesLimites(xnew, ynew)) {
             System.out.println("Déplacement interdit !");
             return false;
         }
-        Piece piece  = getPiece(xactu, yactu);
-        Piece piece2 = getPiece(xnew, ynew);
+    
         // Récupère la pièce à déplacer
-        
+        Piece piece = getPiece(xactu, yactu);
     
+        // Vérifie si une pièce est présente à la position actuelle
         if (piece == null || "NULL".equals(piece.getName())) {
             System.out.println("Aucune pièce à déplacer à cette position !");
             return false;
         }
     
-        // Vérifier si une pièce est présente à la position actuelle
-        if (piece == null || "NULL".equals(piece.getName())) {
-            System.out.println("Aucune pièce à déplacer à cette position !");
+        // Vérifie si la pièce implémente l'interface regle_Piece
+        if (!(piece instanceof regle_Piece)) {
+            System.out.println("Cette pièce ne peut pas être déplacée (pas de règles associées).");
             return false;
         }
+    
         // Obtenir les cases possibles pour cette pièce
         ArrayList<coordonnee> casesPossibles = ((regle_Piece) piece).casesPossibles(xactu, yactu);
     
@@ -136,37 +135,40 @@ public class Plateau {
             return false;
         }
     
-        // Appeler l'ancienne méthode pour effectuer le déplacement
-
-    
         System.out.println("Déplacement validé !");
         return true;
     }
+    
 
     public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
-        
-        if(deplacementDansPlateau(xactu,yactu,xnew,ynew))
-        {
-            Piece piece  = plateau.get(xactu * SIZE + yactu);
-            Piece piece2 = plateau.get(xnew * SIZE + ynew);
-            if( piece.getCouleur() != piece2.getCouleur() && !isCaseOccupee(xnew,ynew,"NULL") )
-            {
-                PrisePiece(xnew,ynew);
+        // Vérifie si le déplacement est autorisé par `deplacementDansPlateau`
+        if (deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
+            // Récupère la pièce à déplacer
+            Piece piece = getPiece(xactu, yactu);
+            Piece destination = getPiece(xnew, ynew);
+    
+            // Si la destination contient une pièce ennemie, elle est capturée
+            if (destination != null && !destination.getCouleur().equals(piece.getCouleur())) {
+                viderCase(xnew, ynew);
             }
-
-            // Met à jour les coordonnées actuelles de la pièce
+    
+            // Met à jour les coordonnées de la pièce
             piece.setPosition(xnew, ynew);
-        
-            // Place la pièce à la nouvelle position dans le plateau
+    
+            // Place la pièce sur la nouvelle case en appelant `placerPiece`
             placerPiece(piece, xnew, ynew);
-        
+    
             // Vide l'ancienne case
             viderCase(xactu, yactu);
-
-
+    
             System.out.println("Déplacement réussi !");
+        } else {
+            System.out.println("Déplacement interdit.");
         }
     }
+    
+    
+    
     
 
     public boolean estDansLesLimites(int x, int y) 
@@ -174,10 +176,12 @@ public class Plateau {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
     }
 
-    public boolean isCaseOccupee(int x, int y, String couleur) 
-    {
+    public boolean isCaseOccupee(int x, int y, String couleur) {
+        if (!estDansLesLimites(x, y)) { // Vérifie si les indices sont valides
+            return false;
+        }
         Piece piece = plateau.get(x * SIZE + y);
-        return piece != null && piece.getCouleur().equals(couleur); //NULL si on veut vérifier si une case est vide
+        return piece != null && piece.getCouleur().equals(couleur);
     }
 
     public void placerPiece(Piece piece, int x, int y) 
