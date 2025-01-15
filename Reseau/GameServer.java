@@ -26,7 +26,10 @@ public class GameServer {
     // Ajouter un joueur
     public void addJoueur(Client client) {
         this.clients.add(client);
-        System.out.println("[SERVER]-[INFO] : Ajout d'un nouveau joueur");
+    }
+
+    public void showInfosPlayer(ServerPlayer player){
+        System.out.println("[SERVEUR]-[INFO]"+player.getJoueur().toString());
     }
 
     /* Lancement d’une partie avec dénomination du numéro du joueur */
@@ -40,9 +43,11 @@ public class GameServer {
                 String couleurBlanc = ReceiveStringMessage(clients.get(0), "couleur");
                 jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, couleurBlanc, new Chrono(0, 10, 0)));
 
+                showInfosPlayer(jBlanc);
                 String nomNoir = ReceiveStringMessage(clients.get(1), "nom");
                 String couleurNoir = ReceiveStringMessage(clients.get(1), "couleur");
                 jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, couleurNoir, new Chrono(0, 10, 0)));
+                showInfosPlayer(jNoir);
 
                 System.out.println("[SERVER]-[INFO] : Deux joueurs prêts à s'affronter !");
 
