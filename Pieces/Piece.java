@@ -1,19 +1,21 @@
 
-public class Piece {
+public class Piece{
     private String name;
     private String couleur;
     private int positionXinit;
     private int positionYinit;
     private int positionX;
     private int positionY;
+    private Plateau plateau;
  
-    public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur) {
+    public Piece(String name, int positionXinit, int positionYinit, int positionX, int positionY, String couleur, Plateau plateau) {
         this.name = name;
         this.positionXinit = positionXinit;
         this.positionYinit = positionYinit;
         this.positionX = positionX;
         this.positionY = positionY;
         this.couleur = couleur;
+        this.plateau = plateau;
 
     }
 
@@ -54,8 +56,11 @@ public class Piece {
         this.couleur = couleur;
     }
     public boolean coupPossible(int x, int y){
-        return false;
-    }
+    boolean dansLesLimites = plateau.estDansLesLimites(x, y);
+    boolean caseOccupee = plateau.isCaseOccupee(x, y, this.couleur);
+    System.out.println("coupPossible -> Dans les limites : " + dansLesLimites + ", Case occupée : " + caseOccupee);
+    return dansLesLimites && !caseOccupee;
+}
 
 
     @Override
