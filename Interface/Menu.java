@@ -7,7 +7,7 @@ public class Menu{
 
     static int boardType = 1;
     static int boardSize = 8;
-    static boolean sizeBoardChange =true;
+    
     static Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
     public static void main(String[] args) {
         // Fenêtre principale
@@ -168,10 +168,9 @@ public class Menu{
             boards.repaint();
         };
     
-        if(sizeBoardChange){
-             updateBoardTypePanel.run();
-             sizeBoardChange = false;
-        }     
+        
+        updateBoardTypePanel.run(); 
+
         boardTypePanel.add(boards);
         JButton btnBack = createStyledButton("Retour");
         btnBack.addActionListener(e -> cardLayout.show(mainPanel, "settings"));
@@ -190,8 +189,8 @@ public class Menu{
         initPage(BoaderSizePanel, "Board Size");
     
         // Créer un JSlider pour ajuster la taille
-        JSlider slider = new JSlider(4, 16, boardSize); // Plage de 4x4 à 16x16
-        slider.setMajorTickSpacing(2); // Graduation principale tous les 2
+        JSlider slider = new JSlider(4, 8, boardSize); // Plage de 4x4 à 16x16
+        slider.setMajorTickSpacing(1); // Graduation principale tous les 2
         slider.setPaintTicks(true); // Afficher les graduations
         slider.setPaintLabels(true); // Afficher les labels
         slider.addChangeListener(e -> {

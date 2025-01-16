@@ -14,7 +14,8 @@ public class ChessGame {
         {"\u265C","\u265E","\u265D","\u265B","\u265A","\u265D","\u265E","\u265C"}
     };
 
-   
+   static String[] funPiece = { "\u2694", "\u1F6E1", "\u2696", "\u2660", "\u2665", "\u2666", "\u2663", "\u269C"
+   };
 
     public static JPanel BoardInit(String[][] pieces, int rows, int cols, Color dark, Color light, int police ){
 
