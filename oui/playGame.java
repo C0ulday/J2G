@@ -42,57 +42,70 @@ public class playGame {
 
         // Boucle principale de jeu
         while (partieEnCours) {
-            plateau.afficherPlateau();
+            plateau.afficherPlateau(); // Affichage initial
             System.out.println("C'est au tour des " + joueurActuel + "s.");
-            System.out.println("Entrez les coordonnées de la pièce à déplacer (xactu yactu) :");
-
-            int xactu = scanner.nextInt();
-            int yactu = scanner.nextInt();
-
-            Piece piece = plateau.getPiece(xactu, yactu);
-
-            if (piece == null || !piece.getCouleur().equals(joueurActuel)) {
-                System.out.println("Aucune pièce valide à cette position.");
-                continue;
-            }
             
+            int xactu, yactu;
+            Piece piece = null;
+        
+            // Boucle pour s'assurer qu'une pièce valide est sélectionnée
+            while (true) {
+                System.out.println("Entrez les coordonnées de la pièce à déplacer (xactu yactu) :");
+                xactu = scanner.nextInt();
+                yactu = scanner.nextInt();
+                
+                piece = plateau.getPiece(xactu, yactu);
+        
+                if (piece != null && piece.getCouleur().equals(joueurActuel)) {
+                    break; // Une pièce valide a été sélectionnée
+                } else {
+                    System.out.println("Aucune pièce valide à cette position. Veuillez réessayer.");
+                }
+            }
+        
             // Affiche les coordonnées possibles de la pièce sélectionnée
             if (piece instanceof regle_Piece) {
                 ((regle_Piece) piece).afficherCoordsPossibles(xactu, yactu);
             } else {
                 System.out.println("Cette pièce n'a pas de règles définies.");
+                continue; // Redemander les coordonnées de départ
             }
-
-            System.out.println("Entrez les coordonnées de destination (xnew ynew) :");
-            int xnew = scanner.nextInt();
-            int ynew = scanner.nextInt();
-
-            // Déplacement de la pièce
-            plateau.deplacementPiece(xactu, yactu, xnew, ynew);
-            plateau.afficherPlateau();
-            
-            // Vérifications des conditions de fin de partie
+        
+            // Boucle pour s'assurer que la destination est valide
+            while (true) {
+                System.out.println("Entrez les coordonnées de destination (xnew ynew) :");
+                int xnew = scanner.nextInt();
+                int ynew = scanner.nextInt();
+        
+                if (plateau.deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
+                    plateau.deplacementPiece(xactu, yactu, xnew, ynew);
+                    break; // Déplacement effectué, sortir de la boucle
+                } else {
+                    System.out.println("Déplacement interdit. Veuillez entrer une destination valide.");
+                }
+            }
+        
             // Vérifications des conditions de fin de partie
             if (regleJeuEchec.Echec(plateau, joueurActuel)) {
                 System.out.println("Attention : le roi des " + joueurActuel + "s est en échec !");
             }
-
+        
             if (regleJeuEchec.Mat(plateau, joueurActuel)) {
                 System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + "s gagnent !");
                 partieEnCours = false;
-                continue; // Quitte le tour
+                continue; // Quitter le tour
             }
-
+        
             if (regleJeuEchec.Pat(plateau, joueurActuel)) {
                 System.out.println("Pat ! Match nul.");
                 partieEnCours = false;
-                continue; // Quitte le tour
+                continue; // Quitter le tour
             }
-
+        
             // Changer de joueur
             joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
-
         }
+        
 
         scanner.close();
         System.out.println("Fin de la partie. Merci d'avoir joué !");
