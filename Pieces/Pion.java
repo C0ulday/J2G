@@ -35,37 +35,35 @@ public class Pion extends Piece implements regle_Piece {
      *** La fonction retourne les coordonnées possibles où on peut aller 
      */
 
-    @Override
-    public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = new ArrayList<>();
-        
-        // création de la pièce 
-
-        Piece pion = plateau.getPiece(xactu, yactu);
-        int dir = (this.getCouleur().equals("NOIR")) ? -1 : 1;
-
-
-        if(plateau.isCaseOccupee(xactu, yactu+1, "NULL"))
-            {
-                coords.add(new coordonnee(xactu, yactu+dir));
-                if(pion.getPositionXinit()==xactu && pion.getPositionYinit()==yactu && plateau.isCaseOccupee(xactu, yactu+2, "NULL"))
-                {
-                    coords.add(new coordonnee(xactu, yactu+2*dir));
-                }
-            }
-
-        if(plateau.isCaseOccupee(xactu+1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
-        {
-            coords.add(new coordonnee(xactu+1, yactu+dir));
-        }
-
-        if(plateau.isCaseOccupee(xactu-1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
-        {
-            coords.add(new coordonnee(xactu+1, yactu+dir));
-        }  
-
-        return coords;
-    }
+     @Override
+     public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
+         ArrayList<coordonnee> coords = new ArrayList<>();
+         int dir = (this.getCouleur().equals("NOIR")) ? 1 : -1;
+     
+         // Vérifie si la case devant est libre
+         if (plateau.estDansLesLimites(xactu + dir, yactu) && plateau.isCaseOccupee(xactu + dir, yactu, "NULL")) {
+             coords.add(new coordonnee(xactu + dir, yactu));
+             // Déplacement initial de 2 cases
+             if (xactu == this.getPositionXinit() && plateau.isCaseOccupee(xactu + 2 * dir, yactu, "NULL")) {
+                 coords.add(new coordonnee(xactu + 2 * dir, yactu));
+             }
+         }
+     
+         // Capture diagonale gauche
+         if (plateau.estDansLesLimites(xactu + dir, yactu - 1) && 
+             plateau.isCaseOccupee(xactu + dir, yactu - 1, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR")) {
+             coords.add(new coordonnee(xactu + dir, yactu - 1));
+         }
+     
+         // Capture diagonale droite
+         if (plateau.estDansLesLimites(xactu + dir, yactu + 1) && 
+             plateau.isCaseOccupee(xactu + dir, yactu + 1, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR")) {
+             coords.add(new coordonnee(xactu + dir, yactu + 1));
+         }
+     
+         return coords;
+     }
+     
 
 
     @Override
