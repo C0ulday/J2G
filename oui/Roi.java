@@ -24,41 +24,28 @@ public class Roi extends Piece implements regle_Piece{
      */
 
      @Override
-     public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
-         ArrayList<coordonnee> coords = new ArrayList<>();
-         
-         // Directions de déplacement du roi
-         int[][] directions = {
-             {1, 1},   // Bas Droite
-             {1, 0},   // Droite
-             {1, -1},  // Haut Droite
-             {0, -1},  // Haut
-             {-1, -1}, // Haut Gauche
-             {-1, 0},  // Gauche
-             {-1, 1},  // Bas Gauche
-             {0, 1}    // Bas
-         };
-     
-         for (int[] direction : directions) {
-             int xnew = xactu + direction[0];
-             int ynew = yactu + direction[1];
-     
-             // Vérifie si la case est dans les limites du plateau
-             if (plateau.estDansLesLimites(xnew, ynew)) {
-                 Piece piece = plateau.getPiece(xnew, ynew);
-                 
-                 // Vérifie si la case est vide ou contient une pièce ennemie
-                 if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
-                     // Simule le déplacement et vérifie si le Roi est toujours en sécurité
-                     if (deplacementSecurise(this, xnew, ynew)) {
-                         coords.add(new coordonnee(xnew, ynew));
-                     }
-                 }
-             }
-         }
-     
-         return coords;
-     }
+    public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = new ArrayList<>();
+        int[][] directions = {
+            {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}
+        };
+
+        for (int[] direction : directions) {
+            int xnew = xactu + direction[0];
+            int ynew = yactu + direction[1];
+
+            if (!plateau.estDansLesLimites(xnew, ynew)) continue;
+
+            Piece piece = plateau.getPiece(xnew, ynew);
+            if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
+                if (deplacementSecurise(this, xnew, ynew)) {
+                    coords.add(new coordonnee(xnew, ynew)); // Case sûre
+                }
+            }
+        }
+        return coords;
+    }
+
      
 
     @Override

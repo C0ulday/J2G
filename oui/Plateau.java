@@ -102,7 +102,6 @@ public class Plateau {
             System.out.println("Déplacement interdit !");
             return false;
         }
-    
         // Récupère la pièce à déplacer
         Piece piece = getPiece(xactu, yactu);
     
@@ -147,6 +146,12 @@ public class Plateau {
             Piece piece = getPiece(xactu, yactu);
             Piece destination = getPiece(xnew, ynew);
     
+            // Vérifie si la case destination contient une pièce de la même couleur
+            if (destination != null && destination.getCouleur().equals(piece.getCouleur())) {
+                System.out.println("Déplacement interdit : Une pièce de la même couleur occupe déjà cette case !");
+                return; // Bloque le déplacement
+            }
+    
             // Si la destination contient une pièce ennemie, elle est capturée
             if (destination != null && !destination.getCouleur().equals(piece.getCouleur())) {
                 viderCase(xnew, ynew);
@@ -166,11 +171,6 @@ public class Plateau {
             System.out.println("Déplacement interdit.");
         }
     }
-    
-    
-    
-    
-
     public boolean estDansLesLimites(int x, int y) 
     {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;

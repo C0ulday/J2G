@@ -70,12 +70,40 @@ public class regleJeuEchec {
     
 
     public static boolean Mat(Plateau plateau, String couleur) {
-        // Si le roi est en échec et que le joueur n'a aucun mouvement possible, c'est un mat
-        if (Echec(plateau, couleur) && Pat(plateau, couleur)) {
-            return true;
+        if (Echec(plateau, couleur)) {
+            ArrayList<Piece> pieces = plateau.getPlateauPiece();
+            for (Piece piece : pieces) {
+                if (piece.getCouleur().equals(couleur) && piece instanceof regle_Piece) {
+                    ArrayList<coordonnee> casesPossibles = ((regle_Piece) piece).casesPossibles(piece.getPositionX(), piece.getPositionY());
+                    for (coordonnee coord : casesPossibles) {
+                        if (!mouvementExposeRoi(plateau, piece, coord.getX(), coord.getY())) {
+                            return false; // Un mouvement légal est possible
+                        }
+                    }
+                }
+            }
+            return true; // Aucun mouvement légal, c'est un mat
         }
         return false;
     }
+    public static boolean mouvementExposeRoi(Plateau plateau, Piece piece, int xNew, int yNew) {
+        // Sauvegarde de l'état actuel
+        Piece pieceCapturee = plateau.getPiece(xNew, yNew);
+        int xOld = piece.getPositionX();
+        int yOld = piece.getPositionY();
     
-
+        // Simuler le déplacement
+        plateau.deplacementPiece(xOld, yOld, xNew, yNew);
+    
+        // Vérifier si le roi est en échec après le déplacement
+        boolean exposeRoi = Echec(plateau, piece.getCouleur());
+    
+        // Restaurer l'état initial
+        plateau.deplacementPiece(xNew, yNew, xOld, yOld);
+        if (pieceCapturee != null) {
+            plateau.placerPiece(pieceCapturee, xNew, yNew);
+        }
+    
+        return exposeRoi;
+    }
 }

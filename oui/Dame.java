@@ -17,60 +17,34 @@ public class Dame extends Piece implements regle_Piece {
     @Override
     public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
-        
-        // Directions de déplacement de la dame dans les coordonnées X et Y
-        // X = de gauche à droite
-        // Y = de haut en bas 
-
-        int[][] directions = {
-            {1, 1},   // Bas Droite
-            {1, 0},   // Droite
-            {1, -1},  // Haut Droite
-            {0,-1},   // Haut
-            {-1, -1}, // Haut Gauche
-            {-1, 0},  // Gauche
-            {-1, 1},  // Bas Gauche
-            {0, 1}    // Bas
+        int[][] directions = { 
+            {-1, 0}, {1, 0}, {0, -1}, {0, 1},  // Ligne droite
+            {1, -1}, {1, 1}, {-1, -1}, {-1, 1} // Diagonales
         };
 
         for (int[] direction : directions) {
-            
-            boolean valide = true; // La piece peut se déplacer tant que cette variable est vraie
-            int Y = direction[0];
-            int X = direction[1];
-            
-            int xnew = xactu;
-            int ynew = yactu;
-    
-            // Parcours dans une direction jusqu'à la limite ou un obstacle
-            while (valide) {
-                xnew += Y;
-                ynew += X;
-    
-                // Vérifier si la case est hors limites
-                if (!plateau.estDansLesLimites(xnew, ynew)) {
-                    valide = false; // Arrêt si hors des limites
-                    break; // sortir de la boucle sans créer de pièce
-                }
-    
-                // Récupérer la pièce sur la case
+            int xnew = xactu, ynew = yactu;
+
+            while (true) {
+                xnew += direction[0];
+                ynew += direction[1];
+
+                if (!plateau.estDansLesLimites(xnew, ynew)) break;
+
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece.getCouleur() == "NULL")  // si la case est vide
-                {
-                    // Case vide, ajoutée aux mouvements possibles
-                    coords.add(new coordonnee(xnew, ynew));
-                } 
-                else
-                {
-                    // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
-                    coords.add(new coordonnee(xnew, ynew));
-                    valide = false; // La direction est bloquée après la capture
+                if (piece == null) {
+                    coords.add(new coordonnee(xnew, ynew)); // Case vide
+                } else {
+                    if (!piece.getCouleur().equals(this.getCouleur())) {
+                        coords.add(new coordonnee(xnew, ynew)); // Case ennemie
+                    }
+                    break;
                 }
             }
         }
-    
         return coords;
     }
+
     
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {

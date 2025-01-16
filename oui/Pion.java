@@ -38,31 +38,37 @@ public class Pion extends Piece implements regle_Piece {
      @Override
      public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
          ArrayList<coordonnee> coords = new ArrayList<>();
-         int dir = (this.getCouleur().equals("NOIR")) ? 1 : -1;
+         int dir = (this.getCouleur().equals("NOIR")) ? 1 : -1; // Direction de déplacement (NOIR vers le bas, BLANC vers le haut)
      
-         // Vérifie si la case devant est libre
-         if (plateau.estDansLesLimites(xactu + dir, yactu) && plateau.isCaseOccupee(xactu + dir, yactu, "NULL")) {
+         // Déplacement simple d'une case
+         if (plateau.estDansLesLimites(xactu + dir, yactu) && plateau.getPiece(xactu + dir, yactu) == null) {
              coords.add(new coordonnee(xactu + dir, yactu));
-             // Déplacement initial de 2 cases
-             if (xactu == this.getPositionXinit() && plateau.isCaseOccupee(xactu + 2 * dir, yactu, "NULL")) {
+     
+             // Déplacement initial de deux cases
+             if (xactu == this.getPositionXinit() && plateau.getPiece(xactu + 2 * dir, yactu) == null) {
                  coords.add(new coordonnee(xactu + 2 * dir, yactu));
              }
          }
      
          // Capture diagonale gauche
-         if (plateau.estDansLesLimites(xactu + dir, yactu - 1) && 
-             plateau.isCaseOccupee(xactu + dir, yactu - 1, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR")) {
-             coords.add(new coordonnee(xactu + dir, yactu - 1));
+         if (plateau.estDansLesLimites(xactu + dir, yactu - 1)) {
+             Piece pieceGauche = plateau.getPiece(xactu + dir, yactu - 1);
+             if (pieceGauche != null && !pieceGauche.getCouleur().equals(this.getCouleur())) {
+                 coords.add(new coordonnee(xactu + dir, yactu - 1));
+             }
          }
      
          // Capture diagonale droite
-         if (plateau.estDansLesLimites(xactu + dir, yactu + 1) && 
-             plateau.isCaseOccupee(xactu + dir, yactu + 1, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR")) {
-             coords.add(new coordonnee(xactu + dir, yactu + 1));
+         if (plateau.estDansLesLimites(xactu + dir, yactu + 1)) {
+             Piece pieceDroite = plateau.getPiece(xactu + dir, yactu + 1);
+             if (pieceDroite != null && !pieceDroite.getCouleur().equals(this.getCouleur())) {
+                 coords.add(new coordonnee(xactu + dir, yactu + 1));
+             }
          }
      
          return coords;
      }
+     
      
 
 

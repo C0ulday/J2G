@@ -16,26 +16,25 @@ class Cavalier extends Piece implements regle_Piece {
     }
 
     @Override
-    public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = new ArrayList<coordonnee>();
-        
-        // Déplacements possibles pour le Cavalier
-        int[][] deplacements = {
-            {-2, -1}, {-2, 1}, {2, -1}, {2, 1},
-            {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
-        };
+public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
+    ArrayList<coordonnee> coords = new ArrayList<>();
+    int[][] deplacements = {
+        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
+    };
 
-        for (int[] deplacement : deplacements) {
-            int Xnew = xactu + deplacement[0];
-            int Ynew = yactu + deplacement[1];
+    for (int[] deplacement : deplacements) {
+        int xnew = xactu + deplacement[0];
+        int ynew = yactu + deplacement[1];
 
-            if (plateau.estDansLesLimites(Xnew, Ynew)) {
-                coords.add(new coordonnee(Xnew, Ynew));                
-                
-            }
+        if (!plateau.estDansLesLimites(xnew, ynew)) continue;
+
+        Piece piece = plateau.getPiece(xnew, ynew);
+        if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
+            coords.add(new coordonnee(xnew, ynew));
         }
-    return coords;
     }
+    return coords;
+}
 
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
