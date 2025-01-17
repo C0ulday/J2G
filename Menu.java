@@ -1,5 +1,7 @@
 import java.awt.*;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import javax.swing.*;
 
 
@@ -11,11 +13,12 @@ public class Menu{
     
     static Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
     public static void main(String[] args) {
+
+       
         // Fenêtre principale
         JFrame frame = new JFrame("J2G - Jeu d'échecs - Menu Principal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
-
 
         //Panneau principal avec CardLayout
         CardLayout cardLayout = new CardLayout();
@@ -228,32 +231,68 @@ public class Menu{
     
         // Bouton pour héberger une partie
         JButton btnHostGame = createStyledButton("Héberger une Partie");
+
+
         btnHostGame.addActionListener(e -> {
             // Démarrer le serveur
             new Thread(() -> {
-                new Server();
-                JOptionPane.showMessageDialog(null, "Serveur démarré ! En attente de joueurs.");
+                Server serveur = new Server();
+                try {
+            // Obtenir l'adresse IP locale
+                InetAddress localHost = InetAddress.getLocalHost();
+                
+                // Afficher l'adresse IP et le nom d'hôte
+                JOptionPane.showMessageDialog(null,"Nom d'hôte : " + localHost.getHostName()+ "\n" + "Adresse IP locale : " + localHost.getHostAddress() + "\n" + "PORT : " + serveur.getPORT() + "\n" + "Serveur démarré ! En attente de joueurs." );
+            } catch (UnknownHostException error) {
+                System.err.println("Impossible de récupérer l'adresse IP : " + error.getMessage());
+            }
             }).start();
         });
     
         // Bouton pour rejoindre une partie
         JButton btnJoinGame = createStyledButton("Rejoindre une Partie");
         btnJoinGame.addActionListener(e -> {
-            String serverAddress = JOptionPane.showInputDialog("Entrez l'adresse IP du serveur :");
-            String portInput = JOptionPane.showInputDialog("Entrez le port du serveur :");
-            if (serverAddress != null && portInput != null) {
-                try {
-                    int port = Integer.parseInt(portInput);
-                    Socket socket = new Socket(serverAddress, port);
-                    Client client = new Client(socket);
-                    System.out.println("[INFO] Connecté au serveur : " + serverAddress + ":" + port);
-                    JOptionPane.showMessageDialog(null, "Connecté au serveur !");
-                    client.Ready();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Impossible de se connecter au serveur.");
+
+            // Créer un panneau pour les deux champs
+            JPanel panel = new JPanel();
+        
+            // Ajouter des labels et des champs de texte pour l'adresse IP et le port
+            JTextField serverAddressField = new JTextField(20);
+            JTextField portField = new JTextField(20);
+            
+            panel.add(new JLabel("Entrez l'adresse IP du serveur :"));
+            panel.add(serverAddressField);
+            panel.add(new JLabel("Entrez le port du serveur :"));
+            panel.add(portField);
+        
+            // Afficher la boîte de dialogue avec les champs de texte
+            int option = JOptionPane.showConfirmDialog(null, panel, "Configuration du serveur", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (option == JOptionPane.OK_OPTION) {
+                // Récupérer les valeurs des champs
+                String serverAddress = serverAddressField.getText();
+                String portInput = portField.getText();
+                
+                // Afficher les résultats (ou les utiliser)
+                System.out.println("Adresse IP du serveur : " + serverAddress);
+                System.out.println("Port du serveur : " + portInput);
+
+                if (serverAddress != null && portInput != null) {
+                    
+                    try {
+                        int port = Integer.parseInt(portInput);
+                        Socket socket = new Socket(serverAddress, port);
+                        Client client = new Client(socket);
+                        System.out.println("[INFO] Connecté au serveur : " + serverAddress + ":" + port);
+                        JOptionPane.showMessageDialog(null, "Connecté au serveur !");
+                        client.Ready();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Impossible de se connecter au serveur.");
+                    }
                 }
             }
+
         });
     
         // Bouton pour revenir à l'accueil

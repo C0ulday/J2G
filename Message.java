@@ -1,4 +1,4 @@
-package Echecs;
+
 
 public class Message {
     

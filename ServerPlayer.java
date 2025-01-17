@@ -1,6 +1,3 @@
-package Echecs.Reseau;
-
-import Echecs.Joueur;
 
 
 

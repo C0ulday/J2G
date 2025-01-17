@@ -1,14 +1,10 @@
-package Echecs.Reseau;
+
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import Echecs.Joueur;
-import Echecs.Message;
-import Echecs.Chrono;
-import Echecs.Reseau.ServerPlayer;
 
 /*
  * Cette classe permet de faire l'interface entre le Serveur et les clients
