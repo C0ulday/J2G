@@ -22,11 +22,12 @@ public class Dame extends Piece implements regle_Piece {
         // X = de gauche à droite
         // Y = de haut en bas 
 
+        // Directions de déplacement
         int[][] directions = {
             {1, 1},   // Bas Droite
             {1, 0},   // Droite
             {1, -1},  // Haut Droite
-            {0,-1},   // Haut
+            {0, -1},  // Haut
             {-1, -1}, // Haut Gauche
             {-1, 0},  // Gauche
             {-1, 1},  // Bas Gauche
@@ -84,9 +85,16 @@ public class Dame extends Piece implements regle_Piece {
             // Récupérer la pièce à la position (x, y)
             Piece piece = plateau.getPiece(x,y);
             
-            if (piece != null && !piece.getCouleur().equals(this.getCouleur())) {
-                // Si la pièce est d'une couleur différente, elle est prenable
-                casesPrenables.add(coord);
+            // Si la pièce est d'une couleur différente, elle est prenable
+            if (piece != null && !piece.getCouleur().equals(this.getCouleur())) 
+            {
+                
+               //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
+
             }
         }
 
@@ -95,7 +103,7 @@ public class Dame extends Piece implements regle_Piece {
 
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
     
         System.out.println("Coordonnées possibles pour la Dame en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
