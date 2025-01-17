@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.net.Socket;
 import javax.swing.*;
 
 
@@ -11,7 +12,7 @@ public class Menu{
     static Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
     public static void main(String[] args) {
         // Fenêtre principale
-        JFrame frame = new JFrame("Jeu d'échecs - Menu Principal");
+        JFrame frame = new JFrame("J2G - Jeu d'échecs - Menu Principal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
 
@@ -216,21 +217,60 @@ public class Menu{
 
 
 
-    //Page de jeu en ligne
-    public static JPanel createGameOnlinePage(JPanel mainPanel, CardLayout cardLayout){
-        JPanel gameOnlinePanel = new JPanel();
-
-        //Initialiser la page
-        initPage(gameOnlinePanel, "Online");
-
-        JButton bBack = createStyledButton("Quitter");
-        bBack.addActionListener(e -> cardLayout.show(mainPanel,"Accueil"));
-        gameOnlinePanel.add(bBack, BorderLayout.SOUTH);
-
-
+    public static JPanel createGameOnlinePage(JPanel mainPanel, CardLayout cardLayout) {
+        // Panneau principal avec un BorderLayout
+        JPanel gameOnlinePanel = new JPanel(new BorderLayout());
+        initPage(gameOnlinePanel, "Jouer avec un ami");
+    
+        // Panneau central pour les options
+        JPanel optionsPanel = new JPanel(new GridLayout(3, 1, 20, 20)); // Trois boutons empilés
+        optionsPanel.setOpaque(false);
+    
+        // Bouton pour héberger une partie
+        JButton btnHostGame = createStyledButton("Héberger une Partie");
+        btnHostGame.addActionListener(e -> {
+            // Démarrer le serveur
+            new Thread(() -> {
+                new Server();
+                JOptionPane.showMessageDialog(null, "Serveur démarré ! En attente de joueurs.");
+            }).start();
+        });
+    
+        // Bouton pour rejoindre une partie
+        JButton btnJoinGame = createStyledButton("Rejoindre une Partie");
+        btnJoinGame.addActionListener(e -> {
+            String serverAddress = JOptionPane.showInputDialog("Entrez l'adresse IP du serveur :");
+            String portInput = JOptionPane.showInputDialog("Entrez le port du serveur :");
+            if (serverAddress != null && portInput != null) {
+                try {
+                    int port = Integer.parseInt(portInput);
+                    Socket socket = new Socket(serverAddress, port);
+                    Client client = new Client(socket);
+                    System.out.println("[INFO] Connecté au serveur : " + serverAddress + ":" + port);
+                    JOptionPane.showMessageDialog(null, "Connecté au serveur !");
+                    client.Ready();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Impossible de se connecter au serveur.");
+                }
+            }
+        });
+    
+        // Bouton pour revenir à l'accueil
+        JButton btnBack = createStyledButton("Retour");
+        btnBack.addActionListener(e -> cardLayout.show(mainPanel, "Accueil"));
+    
+        // Ajouter les boutons au panneau d'options
+        optionsPanel.add(btnHostGame);
+        optionsPanel.add(btnJoinGame);
+        optionsPanel.add(btnBack);
+    
+        // Ajouter les panneaux au panneau principal
+        gameOnlinePanel.add(optionsPanel, BorderLayout.CENTER);
+    
         return gameOnlinePanel;
     }
-
+    
 
 
     //Page de jeu avec IA
@@ -253,7 +293,7 @@ public class Menu{
     public static JPanel createHomePage(JPanel mainPanel, CardLayout cardLayout, JFrame frame) {
         // Panneau principal avec fond personnalisé
         JPanel backgroundPanel = new JPanel();
-        initPage(backgroundPanel, "CHESS");
+        initPage(backgroundPanel, "ECHECS");
         
         //Icon de fond
         backgroundPanel.add(backend("\u265B", new Color(240, 217, 181), 500)); 
@@ -265,7 +305,7 @@ public class Menu{
 
         // Boutons avec style
         JButton btnPlay = createStyledButton("Lancer une Partie");
-        JButton btnPlayOnline = createStyledButton("Multi Joueurs");
+        JButton btnPlayOnline = createStyledButton("Jouer avec un ami");
         JButton btnSettings = createStyledButton("Paramètres");
         JButton btnExit = createStyledButton("Quitter");
 
@@ -298,18 +338,20 @@ public class Menu{
 
 
 
-    // Méthode pour créer des boutons stylisés
     private static JButton createStyledButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("SansSerif", Font.BOLD, 18));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(181, 136, 99)); // Couleur marron foncé
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createLineBorder(new Color(240, 217, 181), 2));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    
+        // Apparence générale
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setForeground(new Color(181, 136, 99)); // Couleur du texte
+        button.setBackground(new Color(139, 69, 19)); // Couleur marron foncé
+        button.setFocusPainted(false); // Supprimer l'effet de focus natif
+        button.setBorder(BorderFactory.createLineBorder(new Color(181, 136, 99), 2)); // Bordure fine
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Curseur main
+    
         return button;
     }
-
+    
 
     //Initialise les page
     public static void initPage(JPanel page, String pageName){
@@ -321,7 +363,7 @@ public class Menu{
        
         // Titre du jeu
         JLabel title = new JLabel(pageName, JLabel.CENTER);
-        title.setFont(new Font("Serif", Font.BOLD, 48));
+        title.setFont(new Font("Arial", Font.BOLD, 48));
         title.setForeground(new Color(181, 136, 99)); // Couleur du titre
         title.setBorder(BorderFactory.createLineBorder(new Color(181, 136, 99), 5));
         page.add(title, BorderLayout.NORTH);
