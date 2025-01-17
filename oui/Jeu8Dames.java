@@ -1,13 +1,46 @@
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Jeu8Dames {
-    public static void jouer() {
+    public static void main(String[] args) {
+        System.out.println("Bienvenue dans le jeu des 8 dames !");
+        jouer8Dames();
+    }
+
+    public static void jouer8Dames() {
         final int SIZE = 8;
         int[] solution = new int[SIZE]; // Chaque index représente une colonne, la valeur représente la ligne
         Set<String> solutionsTrouvees = new HashSet<>(); // Pour stocker les solutions uniques
-        placerDame(solution, 0, SIZE, solutionsTrouvees);
-        System.out.println("Nombre total de solutions uniques trouvées : " + solutionsTrouvees.size());
+
+        Scanner scanner = new Scanner(System.in);
+        boolean jeuEnCours = true;
+
+        while (jeuEnCours) {
+            System.out.println("=== Menu Jeu des 8 dames ===");
+            System.out.println("1. Trouver et afficher toutes les solutions");
+            System.out.println("2. Quitter");
+            System.out.print("Veuillez choisir une option : ");
+            int choix = scanner.nextInt();
+
+            switch (choix) {
+                case 1:
+                    System.out.println("Calcul des solutions...");
+                    solutionsTrouvees.clear(); // Réinitialiser les solutions précédentes
+                    placerDame(solution, 0, SIZE, solutionsTrouvees);
+                    System.out.println("Nombre total de solutions uniques trouvées : " + solutionsTrouvees.size());
+                    break;
+                case 2:
+                    System.out.println("Merci d'avoir joué au jeu des 8 dames !");
+                    jeuEnCours = false;
+                    break;
+                default:
+                    System.out.println("Option invalide. Veuillez réessayer.");
+                    break;
+            }
+        }
+
+        scanner.close();
     }
 
     private static boolean placerDame(int[] solution, int colonne, int taille, Set<String> solutionsTrouvees) {
@@ -45,12 +78,21 @@ public class Jeu8Dames {
 
     private static void afficherSolution(int[] solution) {
         System.out.println("=== Solution trouvée ===");
-        for (int ligne : solution) {
+        for (int ligne = 0; ligne < solution.length; ligne++) {
             for (int colonne = 0; colonne < solution.length; colonne++) {
                 if (solution[colonne] == ligne) {
-                    System.out.print("D ");
+                    // Alternance entre dames noires et blanches pour plus de réalisme
+                    if ((ligne + colonne) % 2 == 0) {
+                        System.out.print("N "); // Dame noire
+                    } else {
+                        System.out.print("B "); // Dame blanche
+                    }
                 } else {
-                    System.out.print(". ");
+                    if ((ligne + colonne) % 2 == 0) {
+                        System.out.print(". "); // Case noire
+                    } else {
+                        System.out.print("  "); // Case blanche
+                    }
                 }
             }
             System.out.println();

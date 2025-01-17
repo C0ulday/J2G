@@ -39,16 +39,16 @@ public class Plateau {
     }
 
     public void afficherPlateau() {
-        // Affichage des numéros de colonnes
-        System.out.print("  "); // Espace pour aligner avec la numérotation des lignes
+        // Affichage des numéros de colonnes avec un espace pour alignement
+        System.out.print("\n  ");
         for (int y = 0; y < SIZE; y++) {
             System.out.print(y + " ");
         }
-        System.out.println(); // Nouvelle ligne
+        System.out.println("Y"); // Ajout de l'indicateur Y à droite
     
         // Affichage du plateau avec numéros de lignes
         for (int x = 0; x < SIZE; x++) {
-            System.out.print(x + " "); // Numéro de la ligne
+            System.out.print(x + " "); // Affiche le numéro de ligne
             for (int y = 0; y < SIZE; y++) {
                 Piece piece = plateau.get(x * SIZE + y);
                 if ("NULL".equals(piece.getName())) {
@@ -57,11 +57,14 @@ public class Plateau {
                     char affichage = "BLANC".equals(piece.getCouleur()) 
                         ? piece.getName().toUpperCase().charAt(0) // Majuscule pour les pièces blanches
                         : piece.getName().toLowerCase().charAt(0); // Minuscule pour les pièces noires
-                    System.out.print(affichage + " "); // Affichage de la pièce
+                    System.out.print(affichage + " "); // Affiche la pièce
                 }
             }
             System.out.println(); // Nouvelle ligne après chaque rangée
         }
+    
+        // Ajout de l'indicateur X sous le dernier numéro de colonne
+        System.out.println("X"); // Affiche l'indicateur X sous le dernier numéro
     }
     
     
@@ -102,6 +105,7 @@ public class Plateau {
             System.out.println("Déplacement interdit !");
             return false;
         }
+    
         // Récupère la pièce à déplacer
         Piece piece = getPiece(xactu, yactu);
     
@@ -134,7 +138,7 @@ public class Plateau {
             return false;
         }
     
-        System.out.println("Déplacement validé !");
+        //System.out.println("Déplacement validé !");
         return true;
     }
     
@@ -145,12 +149,6 @@ public class Plateau {
             // Récupère la pièce à déplacer
             Piece piece = getPiece(xactu, yactu);
             Piece destination = getPiece(xnew, ynew);
-    
-            // Vérifie si la case destination contient une pièce de la même couleur
-            if (destination != null && destination.getCouleur().equals(piece.getCouleur())) {
-                System.out.println("Déplacement interdit : Une pièce de la même couleur occupe déjà cette case !");
-                return; // Bloque le déplacement
-            }
     
             // Si la destination contient une pièce ennemie, elle est capturée
             if (destination != null && !destination.getCouleur().equals(piece.getCouleur())) {
@@ -166,11 +164,16 @@ public class Plateau {
             // Vide l'ancienne case
             viderCase(xactu, yactu);
     
-            System.out.println("Déplacement réussi !");
+            //System.out.println("Déplacement réussi !");
         } else {
             System.out.println("Déplacement interdit.");
         }
     }
+    
+    
+    
+    
+
     public boolean estDansLesLimites(int x, int y) 
     {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
@@ -189,11 +192,11 @@ public class Plateau {
         if (estDansLesLimites(x,y))
         {
             plateau.set(x * SIZE + y, piece);
-            System.out.println("Pièce placee avec succes");
+            //System.out.println("Pièce placee avec succes");
         }
         else
         {
-            System.out.println("coordonnées invalide");
+            //System.out.println("coordonnées invalide");
         }
         
     }
@@ -228,4 +231,25 @@ public class Plateau {
 
         return this.SIZE;
     }
+
+    public boolean verifEchec(Plateau plateau, Piece piece, int x, int y, int xactu, int yactu) {
+        // Sauvegarder la pièce à la position cible
+        Piece pieceDepart = getPiece(xactu, yactu);
+        Piece pieceArrive = getPiece(x, y);
+    
+        // Effectuer le déplacement temporaire
+        plateau.deplacementPiece(xactu, yactu, x, y);
+
+    
+        // Vérifier si l'échec est toujours présent après le déplacement
+        //System.out.println("x= "+x+" y= "+y+" xactu= "+xactu+" yactu= "+yactu+" Couleur piece à la case ="+pieceDepart.getCouleur());
+        boolean echec = regleJeuEchec.Echec(plateau, pieceDepart.getCouleur());
+    
+        // Restaurer l'état initial
+        plateau.deplacementPiece(x, y, xactu, yactu);
+        plateau.placerPiece(pieceArrive, x, y);
+    
+        return echec;
+    }
+
 }

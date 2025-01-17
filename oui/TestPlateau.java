@@ -5,36 +5,40 @@ public class TestPlateau
     public static void main(String[] args) 
     {
         Plateau plateau = new Plateau(8); // Crée un plateau de 8x8
-        // Crée un Cavalier
-        //Cavalier cavalierBlanc = new Cavalier(9, 7, 9, 7, "BLANC", plateau);
+        // Crée un Dame
+        //Dame cavalierBlanc = new Dame(9, 7, 9, 7, "BLANC", plateau);
         
-        Roi roi = new Roi(4, 4, 4, 4, "BLANC", plateau);
-        Tour tour = new Tour(7,4,7,4,"NOIR",plateau);
-        Cavalier cav = new Cavalier(7,6,7,6,"NOIR",plateau);
-        Pion pion = new Pion(5,5, 5, 5, "NOIR", plateau);
-        plateau.placerPiece(roi, 4, 4);
-        plateau.placerPiece(tour, 7, 4);
-        plateau.placerPiece(cav, 7, 6);
-        plateau.placerPiece(pion, 5, 4);
-        roi.afficherCoordsPossibles(4, 4);
-        cav.afficherCoordsPossibles(7, 6);
-        pion.afficherCoordsPossibles(5, 4);
-        tour.afficherCoordsPossibles(7, 4);
+        Roi roi = new Roi(0, 0, 0, 0, "BLANC", plateau);
+        Tour tour = new Tour(0,7,0,7,"NOIR",plateau);
+        Tour tour2 = new Tour(1,7,1,7,"NOIR",plateau);
+        Dame dame = new Dame(7,7,7,7,"BLANC",plateau);
+        //Pion pion = new Pion(5,5, 5, 5, "NOIR", plateau);
+        plateau.placerPiece(roi, 0, 0);
+        plateau.placerPiece(tour, 0, 7);
+        plateau.placerPiece(tour2, 1, 7);
+        plateau.placerPiece(dame, 7, 7);
+        //plateau.placerPiece(pion, 5, 4);
+        //roi.afficherCoordsPossibles(4, 4);
+        dame.afficherCoordsPossibles(7,7);
+        //pion.afficherCoordsPossibles(5, 4);
+        //tour.afficherCoordsPossibles(7, 4);
         //System.out.println("Coordonnées jouables initiales Roi  : " + roi.casesPrenable(4,4));
-        //System.out.println("Coordonnées jouables initiales cava : " + cav.casesPrenable(7,6));
+        //System.out.println("Coordonnées jouables initiales cava : " + dame.casesPrenable(7,6));
 
         // Remplir le plateau avec les pièces des deux joueurs
         // Vérifie si le roi est en échec
-        if (regleJeuEchec.Echec(plateau,"BLANC")) {
-            System.err.println("Le Roi est en échec.");
-        } else {
-            System.err.println("Le Roi est en sécurité.");
+
+        //plateau.remplirPlateau();
+
+        // Afficher le plateau
+        if(regleJeuEchec.Mat(plateau,"BLANC"))
+        {
+            System.out.println("\n dead");
         }
 
-        plateau.remplirPlateau();
-        System.out.println("\n");
-        // Afficher le plateau
+
         plateau.afficherPlateau();
+        System.out.println("\n");
     }
 }
 
@@ -45,8 +49,8 @@ public class TestPlateau
         
         /* 
         Plateau plateau = new Plateau(8); // Crée un plateau de 8x8
-        // Crée un Cavalier
-        //Cavalier cavalierBlanc = new Cavalier(9, 7, 9, 7, "BLANC", plateau);
+        // Crée un Dame
+        //Dame cavalierBlanc = new Dame(9, 7, 9, 7, "BLANC", plateau);
 
         for (int i = 0; i < 8; i++) {
             plateau.ajouterPieceNoire(new Piece("pion", 1, i,1,i, "NOIR",plateau));
@@ -66,11 +70,11 @@ public class TestPlateau
         }
         plateau.ajouterPieceBlanche(new Piece("Tour", 7, 0,7,0, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Tour", 7, 7,7,7, "BLANC",plateau));
-        plateau.ajouterPieceBlanche(new Piece("Cavalier", 7, 1,7,1, "BLANC",plateau));
-        plateau.ajouterPieceBlanche(new Piece("Cavalier", 7, 6,7,6, "BLANC",plateau));
+        plateau.ajouterPieceBlanche(new Piece("Dame", 7, 1,7,1, "BLANC",plateau));
+        plateau.ajouterPieceBlanche(new Piece("Dame", 7, 6,7,6, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Fou", 7, 2,7,2, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Fou", 7, 5,7,5, "BLANC",plateau));
-        plateau.ajouterPieceBlanche(new Piece("Cavalier", 7, 3,7,3, "BLANC",plateau));
+        plateau.ajouterPieceBlanche(new Piece("Dame", 7, 3,7,3, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Roi", 7, 4,7,4, "BLANC",plateau));
 
         // Remplir le plateau avec les pièces des deux joueurs
@@ -88,26 +92,26 @@ public class TestPlateau
 
 /*
 // Teste un déplacement valide
-        plateau.deplacementPiece(3, 2, 5, 3); // Déplacement valide pour le Cavalier
-        System.out.println("Position actuelle Cavalier après déplacement valide : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")");
+        plateau.deplacementPiece(3, 2, 5, 3); // Déplacement valide pour le Dame
+        System.out.println("Position actuelle Dame après déplacement valide : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")");
 
         // Teste un déplacement non valide
-        plateau.deplacementPiece(5, 3, 6, 6); // Déplacement invalide pour le Cavalier
-        System.out.println("Position actuelle Cavalier après déplacement invalide : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")"); 
+        plateau.deplacementPiece(5, 3, 6, 6); // Déplacement invalide pour le Dame
+        System.out.println("Position actuelle Dame après déplacement invalide : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")"); 
 
 
         // Test d'une case vide
-        Piece caseVide = plateau.getPiece(3, 2); // Case initiale du Cavalier, désormais vide
+        Piece caseVide = plateau.getPiece(3, 2); // Case initiale du Dame, désormais vide
         System.out.println("Ancienne case (3, 2) : " + (caseVide != null ? caseVide.getName() : "Vide"));
 
         */
 
 /*
-// Place le Cavalier sur le plateau
+// Place le Dame sur le plateau
         plateau.placerPiece(cavalierBlanc, 9, 7);
         plateau.placerPiece(roi, 3, 3);
         // Affiche la position initiale
-        System.out.println("Position initiale Cavalier : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")");
+        System.out.println("Position initiale Dame : (" + cavalierBlanc.getPositionX() + ", " + cavalierBlanc.getPositionY() + ")");
         System.out.println("Coordonnées jouables initiales : " + cavalierBlanc.casesPossiblesJouable(3, 2));
 
         // Vérification des cases jouables après déplacement
@@ -123,7 +127,7 @@ public class TestPlateau
         System.out.println("Coordonnées jouables après déplacement pion blanc: " + pionBlanc.getPositionX() + " "+ pionBlanc.getPositionY());
 
         //plateau.deplacementPiece(5, 3, 6, 1);
-        System.out.println("Coordonnées jouables après déplacement  Cavalier: " + cavalierBlanc.casesPossiblesJouable(cavalierBlanc.getPositionX(), cavalierBlanc.getPositionY()));
+        System.out.println("Coordonnées jouables après déplacement  Dame: " + cavalierBlanc.casesPossiblesJouable(cavalierBlanc.getPositionX(), cavalierBlanc.getPositionY()));
 
         System.out.println("Coordonnées jouables initiales Tour : " + roi.casesPossiblesJouable(3, 3));
 */
@@ -134,7 +138,7 @@ public class TestPlateau
         plateau.placerPiece(roi, 4, 4);
         System.out.println("Coordonnées jouables initiales roi : " + roi.casesPossiblesJouable(4, 4));
         plateau.deplacementPiece(4, 4, 4, 7);
-        Piece caseVide = plateau.getPiece(4, 4); // Case initiale du Cavalier, désormais vide
+        Piece caseVide = plateau.getPiece(4, 4); // Case initiale du Dame, désormais vide
         System.out.println("case : " + (caseVide != null ? caseVide.getName() : "Vide"));   
 
 */

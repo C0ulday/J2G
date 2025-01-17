@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class playGame {
@@ -54,12 +55,27 @@ public class playGame {
 
             // Boucle pour s'assurer qu'une pièce valide est sélectionnée
             while (true) {
-                System.out.println("Entrez les coordonnées de la pièce à déplacer (xactu yactu) :");
-                xactu = scanner.nextInt();
-                yactu = scanner.nextInt();
+                boolean choixPiece= true;
+                do{
+                    System.out.println("Entrez les coordonnées de la pièce à déplacer (xactu yactu) :");
+                    xactu = scanner.nextInt();
+                    yactu = scanner.nextInt();
+                    piece = plateau.getPiece(xactu, yactu);
+
+                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPossibles(xactu, yactu);
+                    if(coords.isEmpty())
+                    {
+                        choixPiece = false;
+                        System.out.println("Piece non deplaçable!");
+                        System.out.println("Reesssayez stp");
+                    }else{
+                        break;
+                    }
+                   
+                }while(!choixPiece); //il faut qu'il y a des coup possible pour pouvoir se deplacer
+
 
                 piece = plateau.getPiece(xactu, yactu);
-
                 if (piece != null && piece.getCouleur().equals(joueurActuel)) {
                     break; // Une pièce valide a été sélectionnée
                 } else {
