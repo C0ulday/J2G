@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import javax.swing.JOptionPane;
-
 
 
 public class Client {
@@ -39,8 +37,8 @@ public class Client {
     public Client(Socket socket){
         try { 
             this.socket = socket;
-            this.in = new ObjectInputStream(socket.getInputStream());
             this.out = new ObjectOutputStream(socket.getOutputStream());
+            this.in = new ObjectInputStream(socket.getInputStream());
         } catch (Exception e) {
             System.out.println("Impossible de créer un Socket pour le Client " + e.getMessage());
         }
@@ -92,14 +90,7 @@ public class Client {
         String temps = maintenant.format(formatter);
 
         Message mess = new Message("CHECK",""+socket,"",temps);
-        try{
-            sendMessage(mess);
-
-        } catch (IOException e){
-            Error("Impossible de tester la connexion avec le serveur");
-            e.printStackTrace();
-        }
-
+        sendMessage(mess);
     }
 
     public void ReceiveMessage() {
@@ -182,9 +173,6 @@ public class Client {
 
         Message mess = new Message("CONNECTION",client.getSocket().toString(),"","15/02/20029");
         client.sendMessage(mess);
-        while (true) { 
-            
-        }
     }
 
 }
