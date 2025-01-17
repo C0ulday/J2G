@@ -1,44 +1,40 @@
-package Echecs;
+public class Joueur
+{
+    	/**
+	 * Defini si le Joueur est humain ou non
+	 */
 
-public class Joueur {
+	protected boolean estHumain = true;
+	
+	/**
+	 * Couleur du joueur
+	 */
+	protected String couleur;
     
-
-    private boolean estHumain = true;
-    private String nom;
-    private String couleur;
-    private Chrono chrono;
-    
-    
-    public Joueur(String nom, String couleur,Chrono chrono){
-        this.nom = nom;
-        this.couleur = couleur;
-        this.chrono = new Chrono(0,10,0);
+	//Constructeur
+	public Joueur(String c)
+    {
+        this.couleur = c;
     }
-
-    public String getCouleur(){
+    public String getCouleur()
+    {
         return this.couleur;
     }
 
-    public String getNom(){
-        return this.nom;
-    }
+    	/**
+	 * Retourne si le joueur est humain
+	 * @return True si il l'est sinon false
+	 */
+	public boolean estHumain(){
+		return estHumain;
+	}
 
-    public void setNom(String nom){
-        this.nom = nom;
-    }
-
-    public void setCouleur(String couleur){
-        this.couleur = couleur;
-    }
-
-    public void setIA(){
-        estHumain = false;
-    }
-
-    public void setChrono(int h,int m,int s){
-        chrono.setHeures(h);
-        chrono.setMinutes(m);
-        chrono.setSecondes(s);
-    }
-
+	/** 
+	 * Defini si le Joueur est humain
+	 * @param b
+	 */
+	public void setHumain(boolean b){
+		estHumain = b;
+	}
+    
 }

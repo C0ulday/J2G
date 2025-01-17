@@ -1,21 +1,79 @@
-
-import Echecs.pieces.*;
-
 import java.util.ArrayList;
 import java.util.List;
-;
 
 public class Plateau {
     private List<Piece> plateau;
     private int SIZE;
 
-    public Plateau(int SIZE) 
-    {
+    private List<Piece> piecesNoires; // Liste des pièces du joueur noir
+    private List<Piece> piecesBlanches; // Liste des pièces du joueur blanc
+
+    // Constructeur
+    public Plateau(int SIZE) {
         this.SIZE = SIZE;
-        plateau = new ArrayList<Piece>(SIZE * SIZE);
+        plateau = new ArrayList<>(SIZE * SIZE);
+
+        // Initialisation du plateau avec des cases vides
         for (int i = 0; i < SIZE * SIZE; i++) {
-            plateau.add(new Piece("NULL", i / SIZE, i % SIZE, i / SIZE, i % SIZE, "NULL", this));
+            plateau.add(new Piece("NULL", -1, -1,-1,-1, "NULL",this));
         }
+
+        piecesNoires = new ArrayList<>();
+        piecesBlanches = new ArrayList<>();
+    }
+
+    public void remplirPlateau() {
+        // Ajouter les pièces noires
+        for (Piece piece : piecesNoires) {
+            if (estDansLesLimites(piece.getPositionXinit(), piece.getPositionYinit())) {
+                plateau.set(piece.getPositionXinit() * SIZE + piece.getPositionYinit(), piece);
+            }
+        }
+
+        // Ajouter les pièces blanches
+        for (Piece piece : piecesBlanches) {
+            if (estDansLesLimites(piece.getPositionXinit(), piece.getPositionYinit())) {
+                plateau.set(piece.getPositionXinit() * SIZE + piece.getPositionYinit(), piece);
+            }
+        }
+    }
+
+    public void afficherPlateau() {
+        // Affichage des numéros de colonnes
+        System.out.print("  "); // Espace pour aligner avec la numérotation des lignes
+        for (int y = 0; y < SIZE; y++) {
+            System.out.print(y + " ");
+        }
+        System.out.println(); // Nouvelle ligne
+    
+        // Affichage du plateau avec numéros de lignes
+        for (int x = 0; x < SIZE; x++) {
+            System.out.print(x + " "); // Numéro de la ligne
+            for (int y = 0; y < SIZE; y++) {
+                Piece piece = plateau.get(x * SIZE + y);
+                if ("NULL".equals(piece.getName())) {
+                    System.out.print(". "); // Case vide
+                } else {
+                    char affichage = "BLANC".equals(piece.getCouleur()) 
+                        ? piece.getName().toUpperCase().charAt(0) // Majuscule pour les pièces blanches
+                        : piece.getName().toLowerCase().charAt(0); // Minuscule pour les pièces noires
+                    System.out.print(affichage + " "); // Affichage de la pièce
+                }
+            }
+            System.out.println(); // Nouvelle ligne après chaque rangée
+        }
+    }
+    
+    
+
+    // Ajoute une pièce à la liste du joueur noir
+    public void ajouterPieceNoire(Piece piece) {
+        piecesNoires.add(piece);
+    }
+
+    // Ajoute une pièce à la liste du joueur blanc
+    public void ajouterPieceBlanche(Piece piece) {
+        piecesBlanches.add(piece);
     }
 
     public void viderCase(int x, int y) 
@@ -38,45 +96,79 @@ public class Plateau {
     public void jouerPiece()
     {
     }
-    public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
-        if (!estDansLesLimites(xnew, ynew)) { // Vérifie si le déplacement est possible
+    public boolean deplacementDansPlateau(int xactu, int yactu, int xnew, int ynew) {
+        // Vérifie si les coordonnées cibles sont dans les limites
+        if (!estDansLesLimites(xnew, ynew)) {
             System.out.println("Déplacement interdit !");
-            return;
+            return false;
         }
     
         // Récupère la pièce à déplacer
-        Piece piece  = plateau.get(xactu * SIZE + yactu);
-        Piece piece2 = plateau.get(xnew * SIZE + ynew);
+        Piece piece = getPiece(xactu, yactu);
     
+        // Vérifie si une pièce est présente à la position actuelle
         if (piece == null || "NULL".equals(piece.getName())) {
             System.out.println("Aucune pièce à déplacer à cette position !");
-            return;
+            return false;
         }
-        
-        if (!piece.coupPossible(xnew, ynew)) {
-            System.out.println("Déplacement impossible !");
-            return;
-        }
-
-        //plateau.isCaseOccupee(xactu-1, yactu-1, "NOIR"))
-
-        if( piece.getCouleur() != piece2.getCouleur() && !isCaseOccupee(xnew,ynew,"NULL") )
-        {
-            PrisePiece(xnew,ynew);
-        }
-
-        // Met à jour les coordonnées actuelles de la pièce
-        piece.setPosition(xnew, ynew);
     
-        // Place la pièce à la nouvelle position dans le plateau
-        placerPiece(piece, xnew, ynew);
+        // Vérifie si la pièce implémente l'interface regle_Piece
+        if (!(piece instanceof regle_Piece)) {
+            System.out.println("Cette pièce ne peut pas être déplacée (pas de règles associées).");
+            return false;
+        }
     
-        // Vide l'ancienne case
-        viderCase(xactu, yactu);
-
-
-        System.out.println("Déplacement réussi !");
+        // Obtenir les cases possibles pour cette pièce
+        ArrayList<coordonnee> casesPossibles = ((regle_Piece) piece).casesPossibles(xactu, yactu);
+    
+        // Vérifier si la case cible est autorisée
+        boolean deplacementValide = false;
+        for (coordonnee coord : casesPossibles) {
+            if (coord.getX() == xnew && coord.getY() == ynew) {
+                deplacementValide = true;
+                break;
+            }
+        }
+    
+        if (!deplacementValide) {
+            System.out.println("Déplacement interdit : La case cible n'est pas dans les mouvements possibles !");
+            return false;
+        }
+    
+        System.out.println("Déplacement validé !");
+        return true;
     }
+    
+
+    public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
+        // Vérifie si le déplacement est autorisé par `deplacementDansPlateau`
+        if (deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
+            // Récupère la pièce à déplacer
+            Piece piece = getPiece(xactu, yactu);
+            Piece destination = getPiece(xnew, ynew);
+    
+            // Si la destination contient une pièce ennemie, elle est capturée
+            if (destination != null && !destination.getCouleur().equals(piece.getCouleur())) {
+                viderCase(xnew, ynew);
+            }
+    
+            // Met à jour les coordonnées de la pièce
+            piece.setPosition(xnew, ynew);
+    
+            // Place la pièce sur la nouvelle case en appelant `placerPiece`
+            placerPiece(piece, xnew, ynew);
+    
+            // Vide l'ancienne case
+            viderCase(xactu, yactu);
+    
+            System.out.println("Déplacement réussi !");
+        } else {
+            System.out.println("Déplacement interdit.");
+        }
+    }
+    
+    
+    
     
 
     public boolean estDansLesLimites(int x, int y) 
@@ -84,10 +176,12 @@ public class Plateau {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
     }
 
-    public boolean isCaseOccupee(int x, int y, String couleur) 
-    {
+    public boolean isCaseOccupee(int x, int y, String couleur) {
+        if (!estDansLesLimites(x, y)) { // Vérifie si les indices sont valides
+            return false;
+        }
         Piece piece = plateau.get(x * SIZE + y);
-        return piece != null && piece.getCouleur().equals(couleur); //NULL si on veut vérifier si une case est vide
+        return piece != null && piece.getCouleur().equals(couleur);
     }
 
     public void placerPiece(Piece piece, int x, int y) 
@@ -108,22 +202,10 @@ public class Plateau {
     {
         //TODO réaliser la fonction
 
-        Piece piece = getPiece(x,y);
+        //Piece piece = getPiece(x,y);
 
     }
 
-
-    public boolean coupPossible(int x, int y) 
-    {
-        return this.estDansLesLimites(x, y) && !this.isCaseOccupee(x, y, "NULL"); // "NULL" si on veut vérifier si une case est vide
-    }
-
-
-
-     /**
-     * Recupere une liste de toutes les pieces
-     * @return une liste
-     */
     public ArrayList<Piece> getPlateauPiece()
     {
         ArrayList<Piece> p = new ArrayList<Piece>();
@@ -135,10 +217,15 @@ public class Plateau {
             x = i / SIZE;
             y = i % SIZE;
             if(this.getPiece(x,y) != null)
-            p.add(this.getPiece(x, y));
-   
+            {
+                p.add(this.getPiece(x, y));
+            }
         }
         return p;
     }
-    
+
+    public int getSIZE() {
+
+        return this.SIZE;
+    }
 }
