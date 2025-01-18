@@ -156,18 +156,20 @@ public class Menu{
         game.run();
         gamePanel.add(game.getboardPanel(), BorderLayout.CENTER);
     
-        if (vsAI) {
-            // Vérifier et exécuter le premier coup de l'IA si elle commence
-            if ("WHITE".equals(game.getCurrentPlayer())) {
-                try {
-                    String aiMove = aiPlayer.getNextMove(game);
-                    game.makeMove(aiMove);
-                    game.refreshBoardIA(game.getboardPanel(), boardSize, boardSize, dark, light, 39, true, aiPlayer);
-                } catch (Exception e) {
-                    System.err.println("Erreur lors du coup initial de l'IA : " + e.getMessage());
-                }
-            }
-        }
+        // Chronomètres pour chaque joueur
+        Chrono chronoJoueur = new Chrono(0, 10, 0); // 10 minutes pour le joueur
+        Chrono chronoIA = new Chrono(0, 10, 0); // 10 minutes pour l'IA
+        JLabel chronoJoueurLabel = new JLabel("Temps Joueur : " + chronoJoueur.toString());
+        JLabel chronoIALabel = new JLabel("Temps IA : " + chronoIA.toString());
+    
+        JPanel chronoPanel = new JPanel(new GridLayout(2, 1));
+        chronoPanel.add(chronoJoueurLabel);
+        chronoPanel.add(chronoIALabel);
+    
+        gamePanel.add(chronoPanel, BorderLayout.NORTH);
+    
+        // Déclenchement des chronomètres
+        startChrono(chronoJoueur, chronoIA, chronoJoueurLabel, chronoIALabel, vsAI);
     
         JButton bBack = createStyledButton("RETOUR");
         bBack.addActionListener(e -> cardLayout.show(mainPanel, "Accueil"));
@@ -176,7 +178,57 @@ public class Menu{
         return gamePanel;
     }
     
-
+    private void startChrono(Chrono chronoJoueur, Chrono chronoIA, JLabel chronoJoueurLabel, JLabel chronoIALabel, boolean vsAI) {
+        Timer timer = new Timer(1000, e -> {
+            if ("BLACK".equals(game.getCurrentPlayer())) {
+                decrementChrono(chronoJoueur, chronoJoueurLabel);
+            } else if ("WHITE".equals(game.getCurrentPlayer())) {
+                decrementChrono(chronoIA, chronoIALabel);
+            }
+    
+            // Vérifiez si l'un des chronomètres a expiré
+            if (chronoJoueur.getHeures() == 0 && chronoJoueur.getMinutes() == 0 && chronoJoueur.getSecondes() == 0) {
+                ((Timer) e.getSource()).stop();
+                JOptionPane.showMessageDialog(null, "Le joueur a perdu à cause du temps !");
+            } else if (chronoIA.getHeures() == 0 && chronoIA.getMinutes() == 0 && chronoIA.getSecondes() == 0) {
+                ((Timer) e.getSource()).stop();
+                JOptionPane.showMessageDialog(null, "L'IA a perdu à cause du temps !");
+            } else {
+                // Si c'est au tour de l'IA, elle joue
+                if (vsAI && "WHITE".equals(game.getCurrentPlayer())) {
+                    jouerCoupIA(chronoIA, chronoIALabel);
+                }
+            }
+        });
+        timer.start();
+    }
+    
+    private void jouerCoupIA(Chrono chronoIA, JLabel chronoIALabel) {
+        try {
+            String aiMove = aiPlayer.getNextMove(game);
+            game.makeMove(aiMove);
+            game.refreshBoardIA(game.getboardPanel(), boardSize, boardSize, game.dark, game.light, 39, true, aiPlayer);
+            decrementChrono(chronoIA, chronoIALabel); // Met à jour le temps après le coup de l'IA
+        } catch (Exception e) {
+            System.err.println("Erreur lors du coup de l'IA : " + e.getMessage());
+        }
+    }
+    
+    private void decrementChrono(Chrono chrono, JLabel label) {
+        if (chrono.getSecondes() > 0) {
+            chrono.setSecondes(chrono.getSecondes() - 1);
+        } else if (chrono.getMinutes() > 0) {
+            chrono.setMinutes(chrono.getMinutes() - 1);
+            chrono.setSecondes(59);
+        } else if (chrono.getHeures() > 0) {
+            chrono.setHeures(chrono.getHeures() - 1);
+            chrono.setMinutes(59);
+            chrono.setSecondes(59);
+        }
+        label.setText("Temps : " + chrono.toString());
+    }
+    
+    
     // Page pour choisir un type de plateau
     public JPanel createBoardTypePage(JPanel mainPanel, CardLayout cardLayout){
 

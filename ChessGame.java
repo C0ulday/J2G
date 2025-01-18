@@ -300,6 +300,7 @@ public class ChessGame {
         return ChessPieces;
     }
 
+
     public void run() {
         board = ChessPieces;
         JFrame frame = new JFrame();
@@ -311,4 +312,6 @@ public class ChessGame {
         boardPanel = new JPanel(new GridLayout(rows, cols));
         refreshBoard(boardPanel, rows, cols, dark, light, 39);
     }
+
+
 }

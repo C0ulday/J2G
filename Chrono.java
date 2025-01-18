@@ -43,7 +43,7 @@ public class Chrono {
 		String contenu = "";
 
         if(heures < 10){
-            contenu += "0"+heures;
+            contenu += "0"+heures + ":";
         } else{
             contenu = contenu + heures + ":";
         }
