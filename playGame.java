@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class playGame {
     static Plateau plateau;
@@ -58,7 +57,7 @@ public class playGame {
 
         if (plateau.deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
             plateau.deplacementPiece(xactu, yactu, xnew, ynew);
-             // Vérifications des conditions de fin de partie
+            /* // Vérifications des conditions de fin de partie
             if (regleJeuEchec.Echec(plateau, joueurActuel)) {
                 System.out.println("Attention : le roi des " + joueurActuel + "s est en échec !");
             }
@@ -73,7 +72,7 @@ public class playGame {
                 System.out.println("Pat ! Match nul.");
                 partieEnCours = false;
                 continue; // Quitter le tour
-            }
+            }*/
             joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
             return true;
         } else {
