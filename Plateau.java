@@ -23,24 +23,13 @@ public class Plateau {
     }
 
     public boolean isCaseOccupee(int x, int y, String couleur) {
-        // Vérifie si la case est dans les limites
-        if (!estDansLesLimites(x, y)) {
-            return false;
-        }
-    
-        // Récupère la pièce à la position donnée
         regle_Piece piece = getPiece(x, y);
-    
-        // Vérifie si la case est occupée et si la couleur correspond
-        if (piece != null) {
-            if ("NULL".equals(couleur)) {
-                return true; // La case est occupée, peu importe la couleur
-            }
-            return piece.getCouleur().equals(couleur);
+        if (piece == null) {
+            return "NULL".equals(couleur); // La case est vide si "NULL" est recherché
         }
-    
-        return false; // La case n'est pas occupée
+        return piece.getCouleur().equals(couleur);
     }
+    
     
 
     public void remplirPlateau() {
@@ -102,37 +91,34 @@ public class Plateau {
         }
     }
 
+    
     public regle_Piece getPiece(int x, int y) {
         if (estDansLesLimites(x, y)) {
-            return plateau.get(x * SIZE + y);
+            return (regle_Piece) plateau.get(x * SIZE + y);
         }
         return null;
     }
+    
 
 
     public boolean deplacementDansPlateau(int xactu, int yactu, int xnew, int ynew) {
-        // Vérifie si la case de destination est dans les limites du plateau
+        // Vérifie si la case est dans les limites
         if (!estDansLesLimites(xnew, ynew)) {
-            System.out.println("Déplacement interdit : Hors des limites.");
+            System.out.println("Déplacement interdit : hors des limites.");
             return false;
         }
     
-        // Récupère la pièce à la position actuelle
+        // Vérifie les mouvements possibles pour la pièce
         regle_Piece piece = getPiece(xactu, yactu);
-    
-        // Si aucune pièce n'est présente à la position initiale
         if (piece == null) {
-            System.out.println("Aucune pièce à déplacer à cette position.");
+            System.out.println("Aucune pièce à déplacer.");
             return false;
         }
     
-        // Récupère les mouvements possibles pour la pièce
-        ArrayList<coordonnee> casesPossibles = piece.casesPossibles(xactu, yactu);
-    
-        // Vérifie si la destination est dans les mouvements possibles
-        for (coordonnee coord : casesPossibles) {
+        ArrayList<coordonnee> coupsPossibles = piece.casesPossibles(xactu, yactu);
+        for (coordonnee coord : coupsPossibles) {
             if (coord.getX() == xnew && coord.getY() == ynew) {
-                return true;
+                return true; // Mouvement valide
             }
         }
     
@@ -157,6 +143,7 @@ public class Plateau {
             System.out.println("Déplacement interdit.");
         }
     }
+
 
     public boolean estDansLesLimites(int x, int y) {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;

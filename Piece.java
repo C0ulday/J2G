@@ -47,10 +47,13 @@ public abstract class Piece implements regle_Piece{
         return this.name;
     }
 
+    @Override
     public void setPosition(int x, int y) {
         this.positionX = x;
         this.positionY = y;
     }
+
+
 
 
 

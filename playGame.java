@@ -49,7 +49,7 @@ public class playGame {
         int xnew = Integer.parseInt(parts[2]);
         int ynew = Integer.parseInt(parts[3]);
 
-        Piece piece = plateau.getPiece(xactu, yactu);
+        regle_Piece piece = plateau.getPiece(xactu, yactu);
 
         if (piece == null || !piece.getCouleur().equals(joueurActuel)) {
             return false;

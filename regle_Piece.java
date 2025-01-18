@@ -11,8 +11,11 @@ public interface regle_Piece {
     int getPositionXinit();
     int getPositionYinit();
 
+    void setPosition(int x, int y);
+
     // Méthodes pour la couleur et le nom
     String getCouleur();
     String getName();
+
 }
 
