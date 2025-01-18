@@ -120,7 +120,7 @@ public class ChessGame {
                         updateBoard(xactu, yactu, x, y);
                         try {
                             Thread.sleep(2); // Attendre 2 secondes
-                            refreshBoard(boardPanel, 8, 8, new Color(173, 255, 47), new Color(34, 139, 34),39); // Rafraîchit l'interface
+                            refreshBoard(boardPanel, 8, 8, dark, light,39); // Rafraîchit l'interface
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -162,7 +162,7 @@ public class ChessGame {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 JButton btn = (JButton) boardPanel.getComponent(i * 8 + j);
-                btn.setBackground((i + j) % 2 == 0 ? new Color(173, 255, 47) : new Color(34, 139, 34));
+                btn.setBackground((i + j) % 2 == 0 ? dark : light);
             }
         }
     }
@@ -172,7 +172,7 @@ public class ChessGame {
         if (selectedPosition[0] != -1) {
             int x = selectedPosition[0], y = selectedPosition[1];
             JButton btn = (JButton) boardPanel.getComponent(x * 8 + y);
-            btn.setBackground((x + y) % 2 == 0 ? new Color(173, 255, 47) : new Color(34, 139, 34));
+            btn.setBackground((x + y) % 2 == 0 ? dark : light);
         }
     }
 
