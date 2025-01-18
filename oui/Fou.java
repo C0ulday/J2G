@@ -36,34 +36,58 @@ public class Fou extends Piece implements regle_Piece {
      */
 
     @Override
-
     public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
-        int[][] directions = { {1, -1}, {1, 1}, {-1, -1}, {-1, 1} }; // Diagonales
+        
+        // Directions de déplacement du fou dans les coordonnées X et Y
+        // X = de gauche à droite
+        // Y = de haut en bas 
+
+        int[][] directions = {
+            {1, -1}, // haut gauche
+            {1, 1},  // haut droite
+            {-1, -1}, // bas  gauche
+            {-1, 1}   // bas  droite
+        };
 
         for (int[] direction : directions) {
-            int xnew = xactu, ynew = yactu;
-
-            while (true) {
-                xnew += direction[0];
-                ynew += direction[1];
-
-                if (!plateau.estDansLesLimites(xnew, ynew)) break;
-
+            
+            boolean valide = true; // La piece peut se déplacer tant que cette variable est vraie
+            int Y = direction[0];
+            int X = direction[1];
+            
+            int xnew = xactu;
+            int ynew = yactu;
+    
+            // Parcours dans une direction jusqu'à la limite ou un obstacle
+            while (valide) {
+                xnew += Y;
+                ynew += X;
+    
+                // Vérifier si la case est hors limites
+                if (!plateau.estDansLesLimites(xnew, ynew)) {
+                    valide = false; // Arrêt si hors des limites
+                    break; // sortir de la boucle sans créer de pièce
+                }
+    
+                // Récupérer la pièce sur la case
                 Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece == null) {
-                    coords.add(new coordonnee(xnew, ynew)); // Case vide
-                } else {
-                    if (!piece.getCouleur().equals(this.getCouleur())) {
-                        coords.add(new coordonnee(xnew, ynew)); // Case ennemie
-                    }
-                    break;
+                if (piece.getCouleur() == "NULL")  // si la case est vide
+                {
+                    // Case vide, ajoutée aux mouvements possibles
+                    coords.add(new coordonnee(xnew, ynew));
+                } 
+                else
+                {
+                    // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
+                    coords.add(new coordonnee(xnew, ynew));
+                    valide = false; // La direction est bloquée après la capture
                 }
             }
         }
+    
         return coords;
     }
-
 
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
@@ -76,10 +100,13 @@ public class Fou extends Piece implements regle_Piece {
             
             // Récupérer la pièce à la position (x, y)
             Piece piece = plateau.getPiece(x,y);
-            if (!piece.getCouleur().equals(this.getCouleur()) || piece == null)  // si la case est vide
+            if (piece != null && !piece.getCouleur().equals(this.getCouleur()))  // si la case est vide
             {
-                // Case vide, ajoutée aux mouvements possibles
-                casesPrenables.add(coord);
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
             }
         }
 
@@ -90,9 +117,20 @@ public class Fou extends Piece implements regle_Piece {
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Fou en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour la Fou en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }
     }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Fou en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
 }

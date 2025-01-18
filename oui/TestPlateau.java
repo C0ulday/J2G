@@ -11,19 +11,19 @@ public class TestPlateau
         Roi roi = new Roi(0, 0, 0, 0, "BLANC", plateau);
         Tour tour = new Tour(0,7,0,7,"NOIR",plateau);
         Tour tour2 = new Tour(1,7,1,7,"NOIR",plateau);
-        Dame dame = new Dame(7,7,7,7,"BLANC",plateau);
+        Pion fou = new Pion(2,3,2,3,"BLANC",plateau);
         //Pion pion = new Pion(5,5, 5, 5, "NOIR", plateau);
         plateau.placerPiece(roi, 0, 0);
         plateau.placerPiece(tour, 0, 7);
         plateau.placerPiece(tour2, 1, 7);
-        plateau.placerPiece(dame, 7, 7);
+        plateau.placerPiece(fou, 2, 3);
         //plateau.placerPiece(pion, 5, 4);
         //roi.afficherCoordsPossibles(4, 4);
-        dame.afficherCoordsPossibles(7,7);
+        fou.afficherCoordsPrenable(2,3);
         //pion.afficherCoordsPossibles(5, 4);
-        //tour.afficherCoordsPossibles(7, 4);
-        //System.out.println("Coordonnées jouables initiales Roi  : " + roi.casesPrenable(4,4));
-        //System.out.println("Coordonnées jouables initiales cava : " + dame.casesPrenable(7,6));
+        //tour.afficherCoordsPossibles(0, 7);
+        //System.out.println("Coordonnées jouables initiales Dame  : " + roi.casesPrenable(4,4));
+        //System.out.println("Coordonnées jouables initiales cava : " + Dame.casesPrenable(7,6));
 
         // Remplir le plateau avec les pièces des deux joueurs
         // Vérifie si le roi est en échec
@@ -61,7 +61,7 @@ public class TestPlateau
         plateau.ajouterPieceNoire(new Piece("cavalier", 0, 6,0,6, "NOIR",plateau));
         plateau.ajouterPieceNoire(new Piece("fou", 0, 2,0,2, "NOIR",plateau));
         plateau.ajouterPieceNoire(new Piece("fou", 0, 5,0,5, "NOIR",plateau));
-        plateau.ajouterPieceNoire(new Piece("dame", 0, 3,0,3, "NOIR",plateau));
+        plateau.ajouterPieceNoire(new Piece("Dame", 0, 3,0,3, "NOIR",plateau));
         plateau.ajouterPieceNoire(new Piece("roi", 0, 4,0,4, "NOIR",plateau));
 
         // Ajouter les pièces blanches
@@ -75,7 +75,7 @@ public class TestPlateau
         plateau.ajouterPieceBlanche(new Piece("Fou", 7, 2,7,2, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Fou", 7, 5,7,5, "BLANC",plateau));
         plateau.ajouterPieceBlanche(new Piece("Dame", 7, 3,7,3, "BLANC",plateau));
-        plateau.ajouterPieceBlanche(new Piece("Roi", 7, 4,7,4, "BLANC",plateau));
+        plateau.ajouterPieceBlanche(new Piece("Dame", 7, 4,7,4, "BLANC",plateau));
 
         // Remplir le plateau avec les pièces des deux joueurs
         plateau.remplirPlateau();
@@ -134,7 +134,7 @@ public class TestPlateau
 
 /*
 
-        Roi roi = new Roi(4, 4, 4, 4, "BLANC", plateau);
+        Dame roi = new Dame(4, 4, 4, 4, "BLANC", plateau);
         plateau.placerPiece(roi, 4, 4);
         System.out.println("Coordonnées jouables initiales roi : " + roi.casesPossiblesJouable(4, 4));
         plateau.deplacementPiece(4, 4, 4, 7);

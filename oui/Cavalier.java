@@ -16,25 +16,26 @@ class Cavalier extends Piece implements regle_Piece {
     }
 
     @Override
-public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
-    ArrayList<coordonnee> coords = new ArrayList<>();
-    int[][] deplacements = {
-        {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
-    };
+    public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = new ArrayList<coordonnee>();
+        
+        // Déplacements possibles pour le Cavalier
+        int[][] deplacements = {
+            {-2, -1}, {-2, 1}, {2, -1}, {2, 1},
+            {-1, -2}, {-1, 2}, {1, -2}, {1, 2}
+        };
 
-    for (int[] deplacement : deplacements) {
-        int xnew = xactu + deplacement[0];
-        int ynew = yactu + deplacement[1];
+        for (int[] deplacement : deplacements) {
+            int Xnew = xactu + deplacement[0];
+            int Ynew = yactu + deplacement[1];
 
-        if (!plateau.estDansLesLimites(xnew, ynew)) continue;
-
-        Piece piece = plateau.getPiece(xnew, ynew);
-        if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
-            coords.add(new coordonnee(xnew, ynew));
+            if (plateau.estDansLesLimites(Xnew, Ynew)) {
+                coords.add(new coordonnee(Xnew, Ynew));                
+                
+            }
         }
-    }
     return coords;
-}
+    }
 
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
@@ -50,7 +51,11 @@ public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
             
             if (piece != null && !piece.getCouleur().equals(this.getCouleur())) {
                 // Si la pièce est d'une couleur différente, elle est prenable
-                casesPrenables.add(coord);
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
             }
         }
 
@@ -62,7 +67,17 @@ public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Cavalier en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour la Cavalier en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Cavalier en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }

@@ -63,7 +63,6 @@ public class regleJeuEchec {
                 }
             }
         }
-    
         // Si aucune pièce ne peut bouger et le roi n'est pas en échec, c'est un pat
         return true;
     }

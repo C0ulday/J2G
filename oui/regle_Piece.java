@@ -4,9 +4,12 @@ public  interface regle_Piece {  // notre interface à repecter pour créer une 
 
     ArrayList<coordonnee> casesPossibles(int xactu, int yactu);
 
+    ArrayList<coordonnee> casesPrenable(int xactu, int yactu);
+
     void afficherCoordsPossibles(int xactu, int yactu);
 
-    ArrayList<coordonnee> casesPrenable(int xactu, int yactu);
+    void afficherCoordsPrenable(int xactu, int yactu);
+    
 
 
 }  
