@@ -10,6 +10,7 @@ public class Menu{
     int boardType = 1;
     int boardSize = 8;
     ChessGame game;
+    AIPlayer aiPlayer;
     Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
     
     public static void main(String[] args) {
@@ -132,7 +133,49 @@ public class Menu{
         return pieceConfigPanel;
     }
 
-
+    public JPanel createGamePageIA(JPanel mainPanel, CardLayout cardLayout, boolean vsAI) {
+        JPanel gamePanel = new JPanel(new BorderLayout());
+        initPage(gamePanel, "Game");
+    
+        final Color dark;
+        final Color light;
+        if (boardType == 2) { 
+            dark = boardcolors[1]; 
+            light = boardcolors[4]; 
+        } else if (boardType == 3) { 
+            dark = boardcolors[2]; 
+            light = boardcolors[5]; 
+        } else {
+            dark = boardcolors[0];
+            light = boardcolors[3];
+        }
+    
+        game = new ChessGame(boardSize, boardSize, dark, light, 39);
+        aiPlayer = vsAI ? new AIPlayer(2) : null;
+    
+        game.run();
+        gamePanel.add(game.getboardPanel(), BorderLayout.CENTER);
+    
+        if (vsAI) {
+            // Vérifier et exécuter le premier coup de l'IA si elle commence
+            if ("WHITE".equals(game.getCurrentPlayer())) {
+                try {
+                    String aiMove = aiPlayer.getNextMove(game);
+                    game.makeMove(aiMove);
+                    game.refreshBoardIA(game.getboardPanel(), boardSize, boardSize, dark, light, 39, true, aiPlayer);
+                } catch (Exception e) {
+                    System.err.println("Erreur lors du coup initial de l'IA : " + e.getMessage());
+                }
+            }
+        }
+    
+        JButton bBack = createStyledButton("RETOUR");
+        bBack.addActionListener(e -> cardLayout.show(mainPanel, "Accueil"));
+        gamePanel.add(bBack, BorderLayout.SOUTH);
+    
+        return gamePanel;
+    }
+    
 
     // Page pour choisir un type de plateau
     public JPanel createBoardTypePage(JPanel mainPanel, CardLayout cardLayout){
@@ -296,7 +339,7 @@ public class Menu{
         });
     
         // Bouton pour revenir à l'accueil
-        JButton btnBack = createStyledButton("Retour");
+        JButton btnBack = createStyledButton("RETOUR");
         btnBack.addActionListener(e -> cardLayout.show(mainPanel, "Accueil"));
     
         // Ajouter les boutons au panneau d'options
@@ -330,7 +373,7 @@ public class Menu{
         }
 
         
-        JButton bBack = createStyledButton("Quitter");
+        JButton bBack = createStyledButton("RETOUR");
         bBack.addActionListener(e -> cardLayout.show(mainPanel,"Accueil"));
         gamePanel.add(bBack, BorderLayout.SOUTH);
 
@@ -368,6 +411,15 @@ public class Menu{
          
            
         });
+
+        btnPlayIA.addActionListener(e -> {
+            mainPanel.remove(gamePageinit);
+            JPanel newGamePage = createGamePageIA(mainPanel, cardLayout, true);
+            mainPanel.add(newGamePage, "game");
+            cardLayout.show(mainPanel, "game");
+        });
+
+       
         btnSettings.addActionListener(e -> cardLayout.show(mainPanel,"settings"));
         btnPlayOnline.addActionListener(e -> cardLayout.show(mainPanel,"gameOnline"));
 
