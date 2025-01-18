@@ -16,10 +16,10 @@ public class regleJeuEchec {
                 yRoi = roi.getPositionY();
                 
                 // pour chaque pièce adverse au roi
-                for (Piece piece : pieces) 
+                for (Piece pieceDepart : pieces) 
                 {
-                    if (piece instanceof regle_Piece && !piece.getCouleur().equals(couleur) ) {
-                        ArrayList<coordonnee> casesAdverses = ((regle_Piece) piece).casesPossibles(piece.getPositionX(),piece.getPositionY());
+                    if (pieceDepart instanceof regle_Piece && !pieceDepart.getCouleur().equals(couleur) ) {
+                        ArrayList<coordonnee> casesAdverses = ((regle_Piece) pieceDepart).casesPossibles(pieceDepart.getPositionX(),pieceDepart.getPositionY());
         
                         // Vérifie si la position cible est attaquée
                         for (coordonnee coordAdverse : casesAdverses) {
@@ -30,11 +30,11 @@ public class regleJeuEchec {
                     }
                 
                     // Cas particulier pour les pions (les pions attaquent en diagonale)
-                    if (piece.getName().equals("PION")) 
+                    if (pieceDepart.getName().equals("PION")) 
                     {
-                        int direction = piece.getCouleur().equals("BLANC") ? -1 : 1; // Sens d'attaque du pion
-                        int pionX = piece.getPositionX();
-                        int pionY = piece.getPositionY();
+                        int direction = pieceDepart.getCouleur().equals("BLANC") ? -1 : 1; // Sens d'attaque du pion
+                        int pionX = pieceDepart.getPositionX();
+                        int pionY = pieceDepart.getPositionY();
         
                         if ((pionX + direction == xRoi && pionY + 1 == yRoi) ||
                             (pionX + direction == xRoi && pionY - 1 == yRoi)) {
@@ -47,63 +47,60 @@ public class regleJeuEchec {
         return false;
     }
     public static boolean Pat(Plateau plateau, String couleur) {
-        ArrayList<Piece> pieces = plateau.getPlateauPiece();
-    
-        // Vérifie si le roi est en échec
-        if (Echec(plateau, couleur)) {
-            return false; // Si le roi est en échec, ce n'est pas un pat
-        }
-    
-        // Vérifie si au moins une pièce peut bouger
-        for (Piece piece : pieces) {
-            if (piece.getCouleur().equals(couleur) && piece instanceof regle_Piece) {
-                ArrayList<coordonnee> casesPossibles = ((regle_Piece) piece).casesPossibles(piece.getPositionX(), piece.getPositionY());
-                if (!casesPossibles.isEmpty()) {
-                    return false; // Si une pièce peut bouger, ce n'est pas un pat
-                }
-            }
-        }
-    
-        // Si aucune pièce ne peut bouger et le roi n'est pas en échec, c'est un pat
-        return true;
+        return !Echec(plateau, couleur) && mouvementRealisable(plateau,couleur);
     }
     
 
-    public static boolean Mat(Plateau plateau, String couleur) {
-        if (Echec(plateau, couleur)) {
-            ArrayList<Piece> pieces = plateau.getPlateauPiece();
-            for (Piece piece : pieces) {
-                if (piece.getCouleur().equals(couleur) && piece instanceof regle_Piece) {
-                    ArrayList<coordonnee> casesPossibles = ((regle_Piece) piece).casesPossibles(piece.getPositionX(), piece.getPositionY());
+    public static boolean Mat(Plateau plateau, String couleur) 
+    {
+        return Echec(plateau, couleur) && mouvementRealisable(plateau,couleur);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static boolean mouvementExposeRoi(Plateau plateau, Piece pieceDepart, int xnew, int ynew) {
+        // Sauvegarde de l'état actuel
+        Piece pieceArrive = plateau.getPiece(xnew, ynew);
+        int xactu = pieceDepart.getPositionX();
+        int yactu = pieceDepart.getPositionY();
+    
+        // Simuler le déplacement
+        plateau.placerPiece(pieceDepart, xnew, ynew);
+        plateau.viderCase(xactu, yactu);
+    
+        // Vérifier si le roi est en échec après le déplacement
+        boolean exposeRoi = Echec(plateau, pieceDepart.getCouleur());
+    
+        // Restaurer l'état initial
+        plateau.placerPiece(pieceDepart,xactu, yactu);
+        plateau.viderCase(xnew,ynew);
+
+        if (pieceArrive != null) {
+            plateau.placerPiece(pieceArrive, xnew, ynew);
+        }
+    
+        return exposeRoi;
+    }
+
+    public static boolean mouvementRealisable(Plateau plateau, String couleur)
+    {
+        ArrayList<Piece> pieces = plateau.getPlateauPiece();
+            for (Piece pieceDepart : pieces) {
+                if (pieceDepart.getCouleur().equals(couleur) && pieceDepart instanceof regle_Piece) {
+                    ArrayList<coordonnee> casesPossibles = ((regle_Piece) pieceDepart).casesPrenable(pieceDepart.getPositionX(), pieceDepart.getPositionY());
                     for (coordonnee coord : casesPossibles) {
-                        if (!mouvementExposeRoi(plateau, piece, coord.getX(), coord.getY())) {
+                        if (!mouvementExposeRoi(plateau, pieceDepart, coord.getX(), coord.getY())) {
                             return false; // Un mouvement légal est possible
                         }
                     }
                 }
             }
             return true; // Aucun mouvement légal, c'est un mat
-        }
-        return false;
-    }
-    public static boolean mouvementExposeRoi(Plateau plateau, Piece piece, int xNew, int yNew) {
-        // Sauvegarde de l'état actuel
-        Piece pieceCapturee = plateau.getPiece(xNew, yNew);
-        int xOld = piece.getPositionX();
-        int yOld = piece.getPositionY();
-    
-        // Simuler le déplacement
-        plateau.deplacementPiece(xOld, yOld, xNew, yNew);
-    
-        // Vérifier si le roi est en échec après le déplacement
-        boolean exposeRoi = Echec(plateau, piece.getCouleur());
-    
-        // Restaurer l'état initial
-        plateau.deplacementPiece(xNew, yNew, xOld, yOld);
-        if (pieceCapturee != null) {
-            plateau.placerPiece(pieceCapturee, xNew, yNew);
-        }
-    
-        return exposeRoi;
     }
 }

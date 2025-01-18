@@ -5,3 +5,4 @@ on a utilisé une interface pour les regles
 
 @C0ulday et @EFMM7
 
+il y'a un boucle infini sur l'echec pour le cas du Roi, cela fait un boucle infini

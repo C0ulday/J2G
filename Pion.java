@@ -68,39 +68,47 @@ public class Pion extends Piece implements regle_Piece {
 
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = new ArrayList<>();
+        ArrayList<coordonnee> casesPrenables = new ArrayList<>();
+        ArrayList<coordonnee> casesJouables = casesPossibles(xactu, yactu);
 
-        int dir = (this.getCouleur().equals("NOIR")) ? -1 : 1;
-
-        if(plateau.isCaseOccupee(xactu+1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
-        {
-            coords.add(new coordonnee(xactu+1, yactu+dir));
+        for (coordonnee coord : casesJouables) {
+            int x = coord.getX();
+            int y = coord.getY();
+            
+            // Récupérer la pièce à la position (x, y)
+            Piece piece = plateau.getPiece(x,y);
+            if (!piece.getCouleur().equals(this.getCouleur()) || piece == null)  // si la case est vide
+            {
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                  
+                }
+            }
         }
 
-        if(plateau.isCaseOccupee(xactu-1, yactu+dir, this.getCouleur().equals("NOIR") ? "BLANC" : "NOIR" ))
-        {
-            coords.add(new coordonnee(xactu+1, yactu+dir));
-        }    
-        
-        return coords;
+        return casesPrenables;
     }
+
+
 
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Pion en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour la Pion en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }
     }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
     
-
-
-    /* TODO: gérer la promotion ???
-    public boolean Promotion(int xactu) {
-        int derniereLigne = (this.getCouleur().equals("blanc")) ? plateau.SIZE() - 1 : 0;
-        return xactu == derniereLigne;
+        System.out.println("Coordonnées possibles pour la Pion en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
     }
-    */
 }

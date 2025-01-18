@@ -65,7 +65,7 @@ public class Dame extends Piece implements regle_Piece {
                 {
                     // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
                     coords.add(new coordonnee(xnew, ynew));
-                    valide = false; // La direction est bloquée après la capture
+                    valide = false;
                 }
             }
         }
@@ -103,6 +103,16 @@ public class Dame extends Piece implements regle_Piece {
 
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Dame en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
     
         System.out.println("Coordonnées possibles pour la Dame en ["+xactu+","+yactu+"] :");

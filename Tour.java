@@ -98,8 +98,11 @@ public class Tour extends Piece implements regle_Piece{
             Piece piece = plateau.getPiece(x,y);
             if (!piece.getCouleur().equals(this.getCouleur()) || piece == null)  // si la case est vide
             {
-                // Case vide, ajoutée aux mouvements possibles
-                casesPrenables.add(coord);
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
             }
         }
 
@@ -109,6 +112,16 @@ public class Tour extends Piece implements regle_Piece{
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Tour en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
     
         System.out.println("Coordonnées possibles pour la Tour en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {

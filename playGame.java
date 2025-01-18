@@ -1,13 +1,15 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class playGame {
-    static Plateau plateau;
-    static String joueurActuel = "BLANC";
-
-    public static void run() {
+    public static void main(String[] args) {
+        System.out.println("Bienvenue dans le jeu d'échecs !");
+        echecs();
+    }
+    public static void echecs() {
         // Taille standard du plateau d'échecs
         final int SIZE = 8;
-        plateau = new Plateau(SIZE);
+        Plateau plateau = new Plateau(SIZE);
 
         // Initialisation des pièces blanches
         for (int i = 0; i < 8; i++) {
@@ -38,32 +40,76 @@ public class playGame {
         // Remplir le plateau avec les pièces
         plateau.remplirPlateau();
 
-        System.out.println("Backend prêt à recevoir des mouvements.");
-    }
+        // Scanner pour les entrées utilisateur
+        Scanner scanner = new Scanner(System.in);
+        boolean partieEnCours = true;
+        String joueurActuel = "BLANC";
 
-    // Méthode pour traiter un mouvement (format \"xactu yactu xnew ynew\")
-    public static boolean  traiterMouvement(String mouvement) {
-        String[] parts = mouvement.split(" ");
-        int xactu = Integer.parseInt(parts[0]);
-        int yactu = Integer.parseInt(parts[1]);
-        int xnew = Integer.parseInt(parts[2]);
-        int ynew = Integer.parseInt(parts[3]);
+        // Boucle principale de jeu
+        while (partieEnCours) {
+            System.out.println("C'est au tour des " + joueurActuel + "s.");
 
-        Piece piece = plateau.getPiece(xactu, yactu);
+            int xactu, yactu;
+            Piece piece = null;
 
-        if (piece == null || !piece.getCouleur().equals(joueurActuel)) {
-            return false;
-        }
+            // Boucle pour assurer la validité du coup
+            boolean choixPiece;
+            do{
+                choixPiece = true;
+                plateau.afficherPlateau(); // Affichage du plateau
+                System.out.println("Entrez les coordonnées de la pièce à déplacer (X Y) :");
+                xactu = scanner.nextInt();
+                yactu = scanner.nextInt();
+                piece = plateau.getPiece(xactu, yactu);
+                if(!piece.getCouleur().equals(joueurActuel)) // si la piece selectionné n'appartient pas au joueur courant, on reboucle
+                {
+                    System.out.println("Piece non selectionable ! Veillez recommencer");
+                    choixPiece = false;
+                }
+                else
+                {
+                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPrenable(xactu, yactu); // pb ici avec pion
 
-        if (plateau.deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
-            plateau.deplacementPiece(xactu, yactu, xnew, ynew);
-            /* // Vérifications des conditions de fin de partie
+                    if(coords.isEmpty()) // si une piece valide sélectionné ne peut pas bouger, on reboucle
+                    {
+                        choixPiece = false;
+                        System.out.println("Piece non deplaçable ! Veillez recommencer");
+                    }
+                }
+                
+                if (piece instanceof regle_Piece) 
+                {
+                    ((regle_Piece) piece).afficherCoordsPrenable(xactu, yactu); // on affiche les coup réalisable par la piéce
+                }
+                if(choixPiece)
+                {
+                    System.out.println("Entrez les coordonnées de destination (X Y) :");
+                    int xnew = scanner.nextInt();
+                    int ynew = scanner.nextInt();
+
+                    if (!plateau.deplacementDansPlateau(xactu,yactu, xnew,ynew)) // si la coordonnée d'arrivée est incorrect, on reboucle
+                    {
+                        choixPiece = false; // Déplacement effectué
+                        System.out.println("Déplacement interdit. Veuillez entrer une destination valide.");
+                    } 
+                    else 
+                    { 
+                        plateau.deplacementPiece(xactu, yactu, xnew, ynew);
+                    }
+                }
+            }while(!choixPiece); 
+
+            // Changer de joueur
+            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
+
+
+            // Vérifications des conditions de fin de partie
             if (regleJeuEchec.Echec(plateau, joueurActuel)) {
-                System.out.println("Attention : le roi des " + joueurActuel + "s est en échec !");
+                System.out.println("Attention : le roi " + joueurActuel + " est en échec !");
             }
 
             if (regleJeuEchec.Mat(plateau, joueurActuel)) {
-                System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + "s gagnent !");
+                System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + " gagnent !");
                 partieEnCours = false;
                 continue; // Quitter le tour
             }
@@ -72,23 +118,12 @@ public class playGame {
                 System.out.println("Pat ! Match nul.");
                 partieEnCours = false;
                 continue; // Quitter le tour
-            }*/
-            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
-            return true;
-        } else {
-            return false;
+            }
+
+            
         }
 
-        
-    }
-
-    public static  ArrayList<coordonnee> obtenirCoupPossible(int x, int y){
-        Piece piece = plateau.getPiece(x, y);
-
-        ArrayList<coordonnee> cords = ((regle_Piece) piece).casesPossibles(x,y);
-
-        return cords;
+        scanner.close();
+        System.out.println("Fin de la partie. Merci d'avoir joué !");
     }
 }
-
-
