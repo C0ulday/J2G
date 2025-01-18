@@ -12,30 +12,25 @@ public class Menu{
     ChessGame game;
     Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
     
-    public  void main(String[] args) {
+    public static void main(String[] args) {
         // Fenêtre principale
         JFrame frame = new JFrame("Jeu d'échecs - Menu Principal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
 
-    
-
-        
-        //Panneau principal avec CardLayout
+        // Panneau principal avec CardLayout
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
-        
 
         // Ajouter les différentes pages
-        JPanel gamePage = createGamePage(mainPanel, cardLayout);
-        JPanel homePage = createHomePage(mainPanel, cardLayout, frame, gamePage);
-        JPanel settingsPage = createSettingsPage(mainPanel, cardLayout);
-        JPanel boardtypePage = createBoardTypePage(mainPanel, cardLayout);
-        JPanel boardsizePage = createBoardSizePage(mainPanel, cardLayout);
-        JPanel pieceConfigPage = createPieceConfigPage(mainPanel, cardLayout);
-        JPanel gameOnlinePage = createGameOnlinePage(mainPanel, cardLayout);
-        
-        //JPanel boardPage = createBoardPage(mainPanel, cardLayout, 8);
+        Menu menu = new Menu(); // Création d'une instance pour accéder aux méthodes non statiques
+        JPanel gamePage = menu.createGamePage(mainPanel, cardLayout);
+        JPanel homePage = menu.createHomePage(mainPanel, cardLayout, frame, gamePage);
+        JPanel settingsPage = menu.createSettingsPage(mainPanel, cardLayout);
+        JPanel boardtypePage = menu.createBoardTypePage(mainPanel, cardLayout);
+        JPanel boardsizePage = menu.createBoardSizePage(mainPanel, cardLayout);
+        JPanel pieceConfigPage = menu.createPieceConfigPage(mainPanel, cardLayout);
+        JPanel gameOnlinePage = menu.createGameOnlinePage(mainPanel, cardLayout);
 
         mainPanel.add(homePage, "Accueil");
         mainPanel.add(settingsPage, "settings");
@@ -48,11 +43,11 @@ public class Menu{
         // Afficher la page d'accueil
         cardLayout.show(mainPanel, "Accueil");
 
-
         // Ajouter le panneau principal à la fenêtre
         frame.add(mainPanel);
         frame.setVisible(true);
     }
+
 
 
 
@@ -347,7 +342,7 @@ public class Menu{
     public JPanel createHomePage(JPanel mainPanel, CardLayout cardLayout, JFrame frame, JPanel gamePageinit) {
         // Panneau principal avec fond personnalisé
         JPanel backgroundPanel = new JPanel();
-        initPage(backgroundPanel, "CHESS");
+        initPage(backgroundPanel, "J2G - ECHECS");
         
         //Icon de fond
         backgroundPanel.add(backend("\u265B", new Color(240, 217, 181), 500)); 
@@ -358,10 +353,10 @@ public class Menu{
         buttonPanel.setLayout(new GridLayout(4, 1));
 
         // Boutons avec style
-        JButton btnPlay = createStyledButton("Lancer une Partie");
-        JButton btnPlayOnline = createStyledButton("Multi Joueurs");
-        JButton btnSettings = createStyledButton("Paramètres");
-        JButton btnExit = createStyledButton("Quitter");
+        JButton btnPlay = createStyledButton("JOUER");
+        JButton btnPlayIA = createStyledButton("JOUER vs l'IA");
+        JButton btnPlayOnline = createStyledButton("JOUER vs AMI");
+        JButton btnSettings = createStyledButton("PARAMÈTRES");
 
         btnPlay.addActionListener(e -> {
             
@@ -375,12 +370,11 @@ public class Menu{
         });
         btnSettings.addActionListener(e -> cardLayout.show(mainPanel,"settings"));
         btnPlayOnline.addActionListener(e -> cardLayout.show(mainPanel,"gameOnline"));
-        btnExit.addActionListener(e -> System.exit(0));
 
         buttonPanel.add(btnPlay);
+        buttonPanel.add(btnPlayIA);
         buttonPanel.add(btnPlayOnline);
         buttonPanel.add(btnSettings);
-        buttonPanel.add(btnExit);
 
         backgroundPanel.add(buttonPanel, BorderLayout.EAST);   
         return backgroundPanel; 
@@ -404,11 +398,11 @@ public class Menu{
     // Méthode pour créer des boutons stylisés
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("SansSerif", Font.BOLD, 18));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(181, 136, 99)); // Couleur marron foncé
+        button.setFont(new Font("Arial", Font.BOLD, 18));
+        button.setForeground(new Color(181, 136, 99));
+        button.setBackground(new Color(240, 217, 181)); 
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createLineBorder(new Color(240, 217, 181), 2));
+        button.setBorder(BorderFactory.createLineBorder(new Color(181, 136, 99), 3));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
@@ -418,13 +412,13 @@ public class Menu{
     public void initPage(JPanel page, String pageName){
         
         page.setLayout(new BorderLayout());
-        page.setBorder(BorderFactory.createLineBorder(new Color(181, 136, 99), 5));
+        page.setBorder(BorderFactory.createLineBorder(new Color(181, 136, 99), 3));
         page.setBackground(new Color(240, 217, 181));
        
        
         // Titre du jeu
         JLabel title = new JLabel(pageName, JLabel.CENTER);
-        title.setFont(new Font("Serif", Font.BOLD, 48));
+        title.setFont(new Font("Arial", Font.BOLD, 48));
         title.setForeground(new Color(181, 136, 99)); // Couleur du titre
         title.setBorder(BorderFactory.createLineBorder(new Color(181, 136, 99), 5));
         page.add(title, BorderLayout.NORTH);
