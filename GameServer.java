@@ -31,18 +31,17 @@ public class GameServer {
     /* Lancement d’une partie avec dénomination du numéro du joueur */
     /* Lancement d’une partie avec dénomination du numéro du joueur */
     public void Ready() {
+        System.out.println("[SERVEUR] : Nombre de clients connectés : "+clients.size());
         if (clients.size() == 2) {
 
             /* Définition des joueurs */
             try {
                 String nomBlanc = ReceiveStringMessage(clients.get(0), "nom");
-                String couleurBlanc = ReceiveStringMessage(clients.get(0), "couleur");
-                jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, couleurBlanc, new Chrono(0, 10, 0)));
+                jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, new Chrono(0, 10, 0)));
 
                 showInfosPlayer(jBlanc);
                 String nomNoir = ReceiveStringMessage(clients.get(1), "nom");
-                String couleurNoir = ReceiveStringMessage(clients.get(1), "couleur");
-                jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, couleurNoir, new Chrono(0, 10, 0)));
+                jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, new Chrono(0, 10, 0)));
                 showInfosPlayer(jNoir);
 
                 System.out.println("[SERVER]-[INFO] : Deux joueurs prêts à s'affronter !");
@@ -97,15 +96,33 @@ public class GameServer {
        // Recevoir un message contenant une chaîne spécifique (nom ou couleur d'un joueur)
        public String ReceiveStringMessage(Client client, String type) throws IOException, ClassNotFoundException {
         ObjectInputStream in = client.getClientInputStream();
-        Message messageString = (Message) in.readObject();
+    
+        try {
+            System.out.println("[SERVER] Attente d'un message de type " + type + "...");
+            Object obj = in.readObject();
+    
+            if (obj instanceof Message) {
 
-        if (type.equals(messageString.getType())) {
-            return messageString.getData();
-        } else {
-            throw new IOException("Type de message inattendu. Attendu : " + type + ", Reçu : " + messageString.getType());
+                System.out.println("Objet bien de type message");
+                Message messageString = (Message) obj;
+    
+                if (type.equals(messageString.getType())) {
+                    System.out.println("[SERVER] Message reçu : " + messageString.getData());
+                    return messageString.getData();
+                } else {
+                    System.err.println("[SERVER] Type de message inattendu. Attendu : " + type + ", Reçu : " + messageString.getType());
+                    throw new IOException("Type de message inattendu.");
+                }
+            } else {
+                System.err.println("[SERVER] Objet non reconnu reçu : " + obj.getClass().getName());
+                throw new IOException("Objet reçu non reconnu.");
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("[SERVER]-[ERROR] Erreur lors de la réception : " + e.getMessage());
+            throw e;
         }
     }
-
+    
     // Envoyer un message à un client spécifique
     public void sendMessage(Client client, Message message) {
         try {

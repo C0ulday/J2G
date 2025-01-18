@@ -11,7 +11,8 @@ public class Menu{
     int boardSize = 8;
     ChessGame game;
     Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
-    public void main(String[] args) {
+    
+    public  void main(String[] args) {
         // Fenêtre principale
         JFrame frame = new JFrame("Jeu d'échecs - Menu Principal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

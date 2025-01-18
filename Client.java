@@ -61,13 +61,10 @@ public class Client {
     public void Connection(){
 
         String nom;
-        String couleur;
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Entrez votre nom : ");
         nom = scanner.nextLine();
-        System.out.print("Choisissez votre couleur : ");
-        couleur = scanner.nextLine();
 
         // Encapsulation du message à envoyer
 
@@ -76,11 +73,8 @@ public class Client {
         String temps = maintenant.format(formatter);
 
         Message messNom = new Message("nom",""+socket,nom,temps);
-        Message messCouleur= new Message("couleur",""+socket,couleur,temps);
         
         sendMessage(messNom);
-        sendMessage(messCouleur);
-        System.out.println("[CLIENT] : Informations envoyées au serveur.");
     }
 
     public void CheckConnection(){
@@ -135,12 +129,20 @@ public class Client {
 
     public void sendMessage(Message message) {
         try {
+            if (message == null) {
+                System.err.println("[CLIENT] : Message null. Rien à envoyer.");
+                return;
+            }
+    
             out.writeObject(message);
             out.flush();
+            System.out.println("[CLIENT] : Informations envoyées au serveur.");
         } catch (IOException e) {
-            Error("Impossible d'envoyer le message au client : " + e.getMessage());
+            System.err.println("[CLIENT] : Impossible d'envoyer le message au client : " + e.getMessage());
         }
     }
+
+    
     public void Error(String message){
 
         String contenu = "[CLIENT]-[ERROR] :";
