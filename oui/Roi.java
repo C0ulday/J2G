@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-//TODO : Retirer les cases avec Echec
-
 public class Roi extends Piece implements regle_Piece{
     int xactu, xinit;
     int yactu, yinit;
@@ -44,10 +42,9 @@ public class Roi extends Piece implements regle_Piece{
              int ynew = yactu + direction[1];
      
              // Vérifie si la case est dans les limites du plateau
-             if (plateau.estDansLesLimites(xnew, ynew)) {
-                 Piece piece = plateau.getPiece(xnew, ynew);
-                 
-                 
+             if (plateau.estDansLesLimites(xnew, ynew)) 
+             {
+                coords.add(new coordonnee(xnew, ynew));               
              }
          }
      

@@ -82,7 +82,7 @@ public class Pion extends Piece implements regle_Piece {
                 //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
                 if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
                 {
-                    casesPrenables.add(coord);                   
+                    casesPrenables.add(coord);                  
                 }
             }
         }

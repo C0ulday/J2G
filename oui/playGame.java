@@ -47,72 +47,69 @@ public class playGame {
 
         // Boucle principale de jeu
         while (partieEnCours) {
-            plateau.afficherPlateau(); // Affichage initial
             System.out.println("C'est au tour des " + joueurActuel + "s.");
 
             int xactu, yactu;
             Piece piece = null;
 
-            // Boucle pour s'assurer qu'une pièce valide est sélectionnée
-            while (true) {
-                boolean choixPiece= true;
-                do{
-                    System.out.println("Entrez les coordonnées de la pièce à déplacer (xactu yactu) :");
-                    xactu = scanner.nextInt();
-                    yactu = scanner.nextInt();
-                    piece = plateau.getPiece(xactu, yactu);
+            // Boucle pour assurer la validité du coup
+            boolean choixPiece;
+            do{
+                choixPiece = true;
+                plateau.afficherPlateau(); // Affichage du plateau
+                System.out.println("Entrez les coordonnées de la pièce à déplacer (X Y) :");
+                xactu = scanner.nextInt();
+                yactu = scanner.nextInt();
+                piece = plateau.getPiece(xactu, yactu);
+                if(!piece.getCouleur().equals(joueurActuel)) // si la piece selectionné n'appartient pas au joueur courant, on reboucle
+                {
+                    System.out.println("Piece non selectionable ! Veillez recommencer");
+                    choixPiece = false;
+                }
+                else
+                {
+                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPrenable(xactu, yactu); // pb ici avec pion
 
-                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPossibles(xactu, yactu);
-                    if(coords.isEmpty())
+                    if(coords.isEmpty()) // si une piece valide sélectionné ne peut pas bouger, on reboucle
                     {
                         choixPiece = false;
-                        System.out.println("Piece non deplaçable!");
-                        System.out.println("Reesssayez stp");
-                    }else{
-                        break;
+                        System.out.println("Piece non deplaçable ! Veillez recommencer");
                     }
-                   
-                }while(!choixPiece); //il faut qu'il y a des coup possible pour pouvoir se deplacer
-
-
-                piece = plateau.getPiece(xactu, yactu);
-                if (piece != null && piece.getCouleur().equals(joueurActuel)) {
-                    break; // Une pièce valide a été sélectionnée
-                } else {
-                    System.out.println("Aucune pièce valide à cette position. Veuillez réessayer.");
                 }
-            }
-
-            // Affiche les coordonnées possibles de la pièce sélectionnée
-            if (piece instanceof regle_Piece) {
-                ((regle_Piece) piece).afficherCoordsPossibles(xactu, yactu);
-            } else {
-                System.out.println("Cette pièce n'a pas de règles définies.");
-                continue; // Redemander les coordonnées de départ
-            }
-
-            // Boucle pour s'assurer que la destination est valide
-            boolean deplacementReussi = false;
-            while (!deplacementReussi) {
-                System.out.println("Entrez les coordonnées de destination (xnew ynew) :");
-                int xnew = scanner.nextInt();
-                int ynew = scanner.nextInt();
-
-                if (plateau.deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
-                    plateau.deplacementPiece(xactu, yactu, xnew, ynew);
-                    deplacementReussi = true; // Déplacement effectué
-                } else {
-                    System.out.println("Déplacement interdit. Veuillez entrer une destination valide.");
+                
+                if (piece instanceof regle_Piece) 
+                {
+                    ((regle_Piece) piece).afficherCoordsPrenable(xactu, yactu); // on affiche les coup réalisable par la piéce
                 }
-            }
+                if(choixPiece)
+                {
+                    System.out.println("Entrez les coordonnées de destination (X Y) :");
+                    int xnew = scanner.nextInt();
+                    int ynew = scanner.nextInt();
+
+                    if (!plateau.deplacementDansPlateau(xactu,yactu, xnew,ynew)) // si la coordonnée d'arrivée est incorrect, on reboucle
+                    {
+                        choixPiece = false; // Déplacement effectué
+                        System.out.println("Déplacement interdit. Veuillez entrer une destination valide.");
+                    } 
+                    else 
+                    { 
+                        plateau.deplacementPiece(xactu, yactu, xnew, ynew);
+                    }
+                }
+            }while(!choixPiece); 
+
+            // Changer de joueur
+            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
+
 
             // Vérifications des conditions de fin de partie
             if (regleJeuEchec.Echec(plateau, joueurActuel)) {
-                System.out.println("Attention : le roi des " + joueurActuel + "s est en échec !");
+                System.out.println("Attention : le roi " + joueurActuel + " est en échec !");
             }
 
             if (regleJeuEchec.Mat(plateau, joueurActuel)) {
-                System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + "s gagnent !");
+                System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + " gagnent !");
                 partieEnCours = false;
                 continue; // Quitter le tour
             }
@@ -123,8 +120,7 @@ public class playGame {
                 continue; // Quitter le tour
             }
 
-            // Changer de joueur
-            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
+            
         }
 
         scanner.close();

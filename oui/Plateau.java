@@ -93,12 +93,8 @@ public class Plateau {
         }
         return null; // Retourne null si les coordonnées sont en dehors des limites
     }
-    /*
-    jouer permet de jouer
-    */
-    public void jouerPiece()
-    {
-    }
+
+    
     public boolean deplacementDansPlateau(int xactu, int yactu, int xnew, int ynew) {
         // Vérifie si les coordonnées cibles sont dans les limites
         if (!estDansLesLimites(xnew, ynew)) {
@@ -111,7 +107,7 @@ public class Plateau {
     
         // Vérifie si une pièce est présente à la position actuelle
         if (piece == null || "NULL".equals(piece.getName())) {
-            System.out.println("Aucune pièce à déplacer à cette position !");
+            //System.out.println("Aucune pièce à déplacer à cette position !");
             return false;
         }
     
@@ -134,7 +130,7 @@ public class Plateau {
         }
     
         if (!deplacementValide) {
-            System.out.println("Déplacement interdit : La case cible n'est pas dans les mouvements possibles !");
+            //System.out.println("Déplacement interdit : La case cible n'est pas dans les mouvements possibles !");
             return false;
         }
     
@@ -143,9 +139,10 @@ public class Plateau {
     }
     
 
-    public void deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
+    public boolean deplacementPiece(int xactu, int yactu, int xnew, int ynew) {
         // Vérifie si le déplacement est autorisé par `deplacementDansPlateau`
-        if (deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
+        if (deplacementDansPlateau(xactu, yactu, xnew, ynew)) 
+        {
             // Récupère la pièce à déplacer
             Piece piece = getPiece(xactu, yactu);
             Piece destination = getPiece(xnew, ynew);
@@ -165,15 +162,15 @@ public class Plateau {
             viderCase(xactu, yactu);
     
             //System.out.println("Déplacement réussi !");
-        } else {
-            System.out.println("Déplacement interdit.");
+            return true;
+        } 
+        else 
+        {
+            return false;
+            //System.out.println("Déplacement interdit.");
         }
     }
     
-    
-    
-    
-
     public boolean estDansLesLimites(int x, int y) 
     {
         return x >= 0 && x < SIZE && y >= 0 && y < SIZE;
@@ -199,14 +196,6 @@ public class Plateau {
             //System.out.println("coordonnées invalide");
         }
         
-    }
-
-    public void PrisePiece(int x, int y)
-    {
-        //TODO réaliser la fonction
-
-        //Piece piece = getPiece(x,y);
-
     }
 
     public ArrayList<Piece> getPlateauPiece()
@@ -236,17 +225,19 @@ public class Plateau {
         // Sauvegarder la pièce à la position cible
         Piece pieceDepart = getPiece(xactu, yactu);
         Piece pieceArrive = getPiece(x, y);
-    
+        
         // Effectuer le déplacement temporaire
-        plateau.deplacementPiece(xactu, yactu, x, y);
+        plateau.placerPiece(pieceDepart, x, y);
+        plateau.viderCase(xactu, yactu);
 
-    
         // Vérifier si l'échec est toujours présent après le déplacement
         //System.out.println("x= "+x+" y= "+y+" xactu= "+xactu+" yactu= "+yactu+" Couleur piece à la case ="+pieceDepart.getCouleur());
         boolean echec = regleJeuEchec.Echec(plateau, pieceDepart.getCouleur());
-    
+        
         // Restaurer l'état initial
-        plateau.deplacementPiece(x, y, xactu, yactu);
+        plateau.placerPiece(pieceDepart, xactu, yactu);
+        
+        
         plateau.placerPiece(pieceArrive, x, y);
     
         return echec;

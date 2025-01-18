@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class TestPlateau
 {
@@ -9,17 +8,17 @@ public class TestPlateau
         //Dame cavalierBlanc = new Dame(9, 7, 9, 7, "BLANC", plateau);
         
         Roi roi = new Roi(0, 0, 0, 0, "BLANC", plateau);
-        Tour tour = new Tour(0,7,0,7,"NOIR",plateau);
+        Tour tour = new Tour(7,1,7,1,"NOIR",plateau);
         Tour tour2 = new Tour(1,7,1,7,"NOIR",plateau);
-        Pion fou = new Pion(2,3,2,3,"BLANC",plateau);
-        //Pion pion = new Pion(5,5, 5, 5, "NOIR", plateau);
+        Fou fou = new Fou(3,3,3,3,"NOIR",plateau);
+        Pion pion = new Pion(2,2, 2, 2, "NOIR", plateau);
         plateau.placerPiece(roi, 0, 0);
-        plateau.placerPiece(tour, 0, 7);
+        plateau.placerPiece(tour, 7, 1);
         plateau.placerPiece(tour2, 1, 7);
-        plateau.placerPiece(fou, 2, 3);
-        //plateau.placerPiece(pion, 5, 4);
+        plateau.placerPiece(fou, 3,3);
+        plateau.placerPiece(pion, 2, 2);
         //roi.afficherCoordsPossibles(4, 4);
-        fou.afficherCoordsPrenable(2,3);
+        roi.afficherCoordsPrenable(0,0);
         //pion.afficherCoordsPossibles(5, 4);
         //tour.afficherCoordsPossibles(0, 7);
         //System.out.println("Coordonnées jouables initiales Dame  : " + roi.casesPrenable(4,4));
@@ -31,9 +30,14 @@ public class TestPlateau
         //plateau.remplirPlateau();
 
         // Afficher le plateau
+        if(regleJeuEchec.Pat(plateau,"BLANC"))
+        {
+            System.out.println("\n Pat");
+        }
+
         if(regleJeuEchec.Mat(plateau,"BLANC"))
         {
-            System.out.println("\n dead");
+            System.out.println("\n Mat");
         }
 
 
