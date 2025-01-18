@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class Menu{
 
-    int boardType = 2;
+    int boardType = 1;
     int boardSize = 8;
     ChessGame game;
     Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
