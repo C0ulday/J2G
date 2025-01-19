@@ -214,7 +214,7 @@ public class Menu{
     }
     
 
-    public JPanel createGamePageIA(JPanel mainPanel, CardLayout cardLayout, boolean vsAI,int minutes, int difficultyLevel) {
+    public JPanel createGamePageIA(JPanel mainPanel, CardLayout cardLayout, boolean vsAI,int difficultyLevel,int minutes) {
         JPanel gamePanel = new JPanel(new BorderLayout());
         initPage(gamePanel, "Game");
     
