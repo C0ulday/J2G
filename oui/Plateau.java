@@ -496,6 +496,9 @@ public class Plateau {
         return plateau;
     }
 
+
+
+    
     public static boolean FinDuJeu(Plateau plateau, String couleur)
     {
         ArrayList<Piece> listePieces = plateau.getPlateauPiece();

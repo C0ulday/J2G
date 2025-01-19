@@ -5,6 +5,7 @@ public class MultiGaming {
         Scanner scanner = new Scanner(System.in);
         boolean continuer = true;
 
+
         while (continuer) {
             // Afficher le menu principal
             System.out.println("=== MENU PRINCIPAL ===");
