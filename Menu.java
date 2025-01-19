@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.io.File;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -13,6 +12,14 @@ public class Menu{
     ChessGame game;
     AIPlayer aiPlayer;
     Color boardcolors[] = {new Color(173, 255, 47),new Color(173, 216, 230),new Color(222, 184, 135),new Color(34, 139, 34),new Color(25, 25, 142),new Color(139, 69, 19)};
+    
+   
+    
+    public Menu() {
+        // Initialisation de l'objet ChessGame avec des valeurs par défaut
+        game = new ChessGame(8, 8, Color.DARK_GRAY, Color.WHITE, 39);
+    }
+
     
     public static void main(String[] args) {
         // Fenêtre principale
@@ -31,7 +38,7 @@ public class Menu{
         JPanel settingsPage = menu.createSettingsPage(mainPanel, cardLayout);
         JPanel boardtypePage = menu.createBoardTypePage(mainPanel, cardLayout);
         JPanel boardsizePage = menu.createBoardSizePage(mainPanel, cardLayout);
-        JPanel pieceConfigPage = menu.createPieceConfigPage(mainPanel, cardLayout);
+        JPanel pieceConfigPage = menu.createPieceConfigPage(mainPanel, cardLayout,menu.game);
         JPanel gameOnlinePage = menu.createGameOnlinePage(mainPanel, cardLayout);
 
         mainPanel.add(homePage, "Accueil");
@@ -92,48 +99,120 @@ public class Menu{
    
     //Page pour configurer les pieces ajouter
 
-    public JPanel createPieceConfigPage(JPanel mainPanel, CardLayout cardLayout) {
+    public JPanel createPieceConfigPage(JPanel mainPanel, CardLayout cardLayout, ChessGame game) {
         JPanel pieceConfigPanel = new JPanel(new BorderLayout());
         initPage(pieceConfigPanel, "Configuration des Pièces");
-
+    
         JPanel pieceOptions = new JPanel(new GridLayout(4, 1, 20, 20));
         pieceOptions.setOpaque(false);
-
-        JButton btnAddPiece = createStyledButton("Ajouter une Nouvelle Pièce");
-        btnAddPiece.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Sélectionner une image de pièce");
-            int result = fileChooser.showOpenDialog(null);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                JOptionPane.showMessageDialog(null, "Image sélectionnée: " + selectedFile.getName());
+    
+       // --- Bouton : Modifier une Pièce Existante (version avec image) ---
+    JButton btnModifyPiece = createStyledButton("Modifier une Pièce Existante");
+    btnModifyPiece.addActionListener(e -> {
+        // 1) Demander ligne et colonne
+        JPanel inputPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        
+        JTextField rowField = new JTextField();
+        JTextField colField = new JTextField();
+        
+        inputPanel.add(new JLabel("Ligne (0-7) :"));
+        inputPanel.add(rowField);
+        inputPanel.add(new JLabel("Colonne (0-7) :"));
+        inputPanel.add(colField);
+        
+        int result = JOptionPane.showConfirmDialog(
+            null,
+            inputPanel,
+            "Modifier une pièce (Image)",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+        
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int row = Integer.parseInt(rowField.getText());
+                int col = Integer.parseInt(colField.getText());
+                
+                // 2) Ouvrir un JFileChooser pour sélectionner l'image
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Choisir l'image de la pièce");
+                
+                int userSelection = fileChooser.showOpenDialog(null);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    java.io.File file = fileChooser.getSelectedFile();
+                    
+                    // 3) Créer l’icône depuis le fichier choisi
+                    ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+                    
+                    // 4) Redimensionner l’image (ex. 60x60)
+                    Image originalImage = icon.getImage();
+                    Image scaledImage = originalImage.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+                    
+                    // 5) Appeler la méthode de ChessGame pour affecter l’icône
+                    game.setPieceIcon(row, col, scaledIcon);
+                }
+                
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                    null,
+                    "Veuillez saisir des valeurs entières pour la ligne et la colonne.",
+                    "Erreur de saisie",
+                    JOptionPane.ERROR_MESSAGE
+                );
             }
-        });
-
-        JButton btnModifyPiece = createStyledButton("Modifier une Pièce Existante");
-        btnModifyPiece.addActionListener(e -> {
-            cardLayout.show(mainPanel, "pieceConfig");
-        });
-
+        }
+    });
+    
+    
         JButton btnChooseColor = createStyledButton("Choisir la Couleur des Pièces");
         String[] colors = {"Blanc", "Noir", "Rouge", "Bleu", "Vert"};
         JComboBox<String> colorSelection = new JComboBox<>(colors);
+    
         btnChooseColor.addActionListener(e -> {
             JOptionPane.showMessageDialog(null, colorSelection, "Sélectionner une couleur", JOptionPane.QUESTION_MESSAGE);
+            
+            String selectedColor = (String) colorSelection.getSelectedItem();
+            Color dark, light;
+            
+            switch (selectedColor) {
+                case "Noir":
+                    dark = Color.BLACK;
+                    light = Color.GRAY;
+                    break;
+                case "Rouge":
+                    dark = Color.RED.darker();
+                    light = Color.PINK;
+                    break;
+                case "Bleu":
+                    dark = Color.BLUE.darker();
+                    light = Color.CYAN;
+                    break;
+                case "Vert":
+                    dark = Color.GREEN.darker();
+                    light = Color.LIGHT_GRAY;
+                    break;
+                default:
+                    dark = Color.DARK_GRAY;
+                    light = Color.WHITE;
+                    break;
+            }
+    
+            game.updatePiecesColors(dark, light);
         });
-
+    
         JButton btnBack = createStyledButton("Retour");
         btnBack.addActionListener(e -> cardLayout.show(mainPanel, "settings"));
-
-        pieceOptions.add(btnAddPiece);
+    
         pieceOptions.add(btnModifyPiece);
         pieceOptions.add(btnChooseColor);
-
+    
         pieceConfigPanel.add(pieceOptions, BorderLayout.CENTER);
         pieceConfigPanel.add(btnBack, BorderLayout.SOUTH);
-        
+    
         return pieceConfigPanel;
     }
+    
 
     public JPanel createGamePageIA(JPanel mainPanel, CardLayout cardLayout, boolean vsAI) {
         JPanel gamePanel = new JPanel(new BorderLayout());
@@ -151,8 +230,11 @@ public class Menu{
             dark = boardcolors[0];
             light = boardcolors[3];
         }
-    
-        game = new ChessGame(boardSize, boardSize, dark, light, 39);
+        
+        this.game.dark = dark;
+        this.game.light = light;
+        game.run();
+        gamePanel.add(game.getboardPanel());
         aiPlayer = vsAI ? new AIPlayer(2) : null;
     
         game.run();
@@ -420,7 +502,9 @@ public class Menu{
             if(boardType ==1){ dark = boardcolors[0];  light = boardcolors[3];}
             if(boardType ==2){ dark = boardcolors[1];  light = boardcolors[4];}
             if(boardType ==3){ dark = boardcolors[2];  light = boardcolors[5];}
-            ChessGame game = new ChessGame(boardSize, boardSize, dark, light, 39);
+            
+            this.game.dark = dark;
+            this.game.light = light;
             game.run();
             gamePanel.add(game.getboardPanel());
         

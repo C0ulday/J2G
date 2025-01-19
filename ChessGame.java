@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -11,6 +9,7 @@ public class ChessGame {
     Color dark; 
     Color light;
     String[][] gameBoard; 
+    private Icon[][] pieceIcons;
     int police;
     private boolean isWhiteTurn = true;
 
@@ -20,6 +19,8 @@ public class ChessGame {
         this.dark = dark;
         this.light = light;
         this.police = police;
+        pieceIcons = new Icon[rows][cols];
+
     }
 
     private String[][] ChessPieces = {    
@@ -33,6 +34,7 @@ public class ChessGame {
         {"\u265C", "\u265E", "\u265D", "\u265B", "\u265A", "\u265D", "\u265E", "\u265C"}
     };
 
+  
     int[] selectedPosition = {-1, -1};
 
     private JPanel boardPanel;
@@ -138,32 +140,78 @@ public class ChessGame {
         board[x2][y2] = board[x1][y1];
         board[x1][y1] = "";
     }
+
+    public void updatePiecesColors(Color newDark, Color newLight) {
+        this.dark = newDark;
+        this.light = newLight;
+        if (boardPanel != null) {
+            refreshBoard(boardPanel, rows, cols, dark, light, police);
+        }
+    }
+    
+    public void setPieceSymbol(int row, int col, String newSymbol) {
+        // Vérifie que row/col sont valides
+        if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
+            System.err.println("Coordonnées invalides : (" + row + ", " + col + ")");
+            return;
+        }
+        // Met à jour le symbole de la pièce
+        board[row][col] = newSymbol;
+    
+        // Actualise l'affichage si le boardPanel est déjà construit
+        if (boardPanel != null) {
+            refreshBoard(boardPanel, rows, cols, dark, light, police);
+        }
+    }
     
 
-    public void refreshBoard(JPanel boardPanel, int rows, int cols, Color dark, Color light, int police) {
-        boardPanel.removeAll();
+    public void refreshBoard(JPanel boardPanel, int rows, int cols,
+                         Color dark, Color light, int police) {
+    // On nettoie le panel avant de le reconstruire
+    boardPanel.removeAll();
+    
+    // On définit la grille (rows x cols)
+    boardPanel.setLayout(new GridLayout(rows, cols));
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                JButton button = new JButton(board[i][j]);
-                button.setFont(new Font("ADLaM Display", Font.PLAIN, police));
-                button.setFocusPainted(false);
-                button.setBackground((i + j) % 2 == 0 ? dark : light);
-                boardPanel.add(button);
+    // Parcours des cases
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            // Crée un bouton pour la case (i, j)
+            JButton button = new JButton();
+            button.setFont(new Font("Arial", Font.PLAIN, police));
+            button.setFocusPainted(false);
 
-                int finalI = i;
-                int finalJ = j;
-                button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        handleMove(finalI, finalJ, button);
-                    }
-                });
+            // Détermine la couleur de fond (cases alternées)
+            if ((i + j) % 2 == 0) {
+                button.setBackground(dark);
+            } else {
+                button.setBackground(light);
             }
-        }
 
-        boardPanel.revalidate();
-        boardPanel.repaint();
+            // S’il y a une icône dans pieceIcons, on l’affiche
+            if (pieceIcons[i][j] != null) {
+                button.setIcon(pieceIcons[i][j]);
+                // On peut laisser le texte vide
+                button.setText("");
+            } else {
+                // Pas d’icône → on affiche le symbole texte
+                button.setIcon(null);
+                button.setText(board[i][j]);
+            }
+
+            // Gère l’événement de clic sur la case
+            final int row = i;
+            final int col = j;
+            button.addActionListener(e -> handleMove(row, col, button));
+
+            // Ajoute le bouton au panel
+            boardPanel.add(button);
+        }
     }
+    // Force la mise à jour de l'interface
+    boardPanel.revalidate();
+    boardPanel.repaint();
+}
 
     public void refreshBoardIA(JPanel boardPanel, int rows, int cols, Color dark, Color light, int police, boolean aiTurn, AIPlayer aiPlayer) {
         boardPanel.removeAll();
@@ -300,6 +348,16 @@ public class ChessGame {
     public String[][] getboardPieces() {
         return ChessPieces;
     }
+
+    public void setPieceIcon(int row, int col, Icon icon) {
+        if (row < 0 || row >= rows || col < 0 || col >= cols) return;
+        pieceIcons[row][col] = icon;
+        if (boardPanel != null) {
+            refreshBoard(boardPanel, rows, cols, dark, light, police);
+        }
+    }
+
+
 
 
     public void run() {
