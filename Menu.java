@@ -233,12 +233,9 @@ public class Menu{
         
         this.game.dark = dark;
         this.game.light = light;
-        game.run();
+    
         gamePanel.add(game.getboardPanel());
         aiPlayer = vsAI ? new AIPlayer(difficultyLevel) : null;
-    
-        game.run();
-        gamePanel.add(game.getboardPanel(), BorderLayout.CENTER);
     
         // Chronomètres pour chaque joueur
         Chrono chronoJoueur = new Chrono(minutes, 0); // 10 minutes pour le joueur
@@ -246,7 +243,7 @@ public class Menu{
         JLabel chronoJoueurLabel = new JLabel("Temps Joueur : " + chronoJoueur.toString());
         JLabel chronoIALabel = new JLabel("Temps IA : " + chronoIA.toString());
     
-        JPanel chronoPanel = new JPanel(new GridLayout(2, 1));
+        JPanel chronoPanel = new JPanel(new GridLayout(2, 3));
         chronoPanel.add(chronoJoueurLabel);
         chronoPanel.add(chronoIALabel);
     

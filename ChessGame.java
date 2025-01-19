@@ -251,45 +251,77 @@ public class ChessGame {
     
 
     void handleMove(int x, int y, JButton button) {
+        // 1) Premier clic : on sélectionne une pièce
         if (selectedPosition[0] == -1) {
-            if (!board[x][y].isEmpty()) {
-                selectedPosition[0] = x;
-                selectedPosition[1] = y;
-                highlightMoves(x, y);
-                button.setBackground(Color.YELLOW);
+            // Si la case est vide, pas de sélection possible
+            if (board[x][y].isEmpty()) {
+                return;
             }
-
-            System.out.println("Position de départ sélectionnée : (" + x + ", " + y + ")");
+    
+            // Vérifier si la pièce appartient bien au joueur courant
+            String piece = board[x][y];
+            if (!isPieceColorValid(piece, getCurrentPlayer())) {
+                // On peut éventuellement afficher un message d’erreur
+                JOptionPane.showMessageDialog(null, "Ce n'est pas votre pièce !");
+                return;
+            }
+    
+            // OK, on sélectionne
+            selectedPosition[0] = x;
+            selectedPosition[1] = y;
+            highlightMoves(x, y);
+            button.setBackground(Color.YELLOW);
         } else {
+            // 2) Deuxième clic : on tente de déplacer la pièce
             resetHighlights();
-            if (selectedPosition[0] == x && selectedPosition[1] == y) {
+    
+            int xDepart = selectedPosition[0];
+            int yDepart = selectedPosition[1];
+    
+            // Vérifier à nouveau la couleur de la pièce d'origine (au cas où)
+            if (!isPieceColorValid(board[xDepart][yDepart], getCurrentPlayer())) {
+                JOptionPane.showMessageDialog(null, "Ce n'est pas votre pièce !");
                 selectedPosition[0] = -1;
                 selectedPosition[1] = -1;
-                resetSelection(); 
+                return;
+            }
+    
+            if (xDepart == x && yDepart == y) {
+                // Si on reclique la même case, on annule la sélection
+                selectedPosition[0] = -1;
+                selectedPosition[1] = -1;
+                resetSelection();
             } else {
-                int xactu = selectedPosition[0];
-                int yactu = selectedPosition[1];
-                System.out.println("Position de destination : (" + x + ", " + y + ")");
-
-                String mouvement = xactu + " " + yactu + " " + x + " " + y;
+                String mouvement = xDepart + " " + yDepart + " " + x + " " + y;
                 boolean response = playGame.traiterMouvement(mouvement);
+    
                 if (response) {
-                    updateBoard(xactu, yactu, x, y);
-                    try {
-                        Thread.sleep(2);
-                        refreshBoard(boardPanel, 8, 8, dark, light, 39);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    updateBoard(xDepart, yDepart, x, y);
+                    refreshBoard(boardPanel, 8, 8, dark, light, 39);
+                    // Seulement si le coup est réellement validé, on bascule de joueur
+                    toggleTurn();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Coup invalide !");
                 }
-
-                System.out.println("Réponse du backend : " + response);
+    
                 selectedPosition[0] = -1;
                 selectedPosition[1] = -1;
             }
         }
-        toggleTurn();
     }
+    
+    private boolean isPieceColorValid(String pieceSymbol, String currentPlayer) {
+    // currentPlayer vaut "WHITE" ou "BLACK"
+    // On vérifie le code Unicode
+    if (currentPlayer.equals("WHITE")) {
+        // Roi blanc = \u2654, Dame blanche = \u2655, etc.
+        // On peut vérifier la plage :
+        return (pieceSymbol.codePointAt(0) >= 0x2654 && pieceSymbol.codePointAt(0) <= 0x2659);
+    } else { 
+        // currentPlayer = "BLACK"
+        return (pieceSymbol.codePointAt(0) >= 0x265A && pieceSymbol.codePointAt(0) <= 0x265F);
+    }
+}
 
     public void highlightMoves(int x, int y) {
         ArrayList<coordonnee> possibleMoves = playGame.obtenirCoupPossible(x, y);

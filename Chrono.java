@@ -33,7 +33,7 @@ public class Chrono {
 		String contenu = "";
 
 		if(minutes < 10){
-			contenu += "0"+minutes;
+			contenu += "0"+minutes + ":";
 		}else{
 			contenu = contenu + minutes + ":";
 		}
