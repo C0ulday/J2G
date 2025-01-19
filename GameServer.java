@@ -37,11 +37,11 @@ public class GameServer {
             /* Définition des joueurs */
             try {
                 String nomBlanc = ReceiveStringMessage(clients.get(0), "nom");
-                jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, new Chrono(0, 10, 0)));
+                jBlanc = new ServerPlayer(clients.get(0), new Joueur(nomBlanc, new Chrono(10, 0)));
 
                 showInfosPlayer(jBlanc);
                 String nomNoir = ReceiveStringMessage(clients.get(1), "nom");
-                jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, new Chrono(0, 10, 0)));
+                jNoir = new ServerPlayer(clients.get(1), new Joueur(nomNoir, new Chrono(10, 0)));
                 showInfosPlayer(jNoir);
 
                 System.out.println("[SERVER]-[INFO] : Deux joueurs prêts à s'affronter !");

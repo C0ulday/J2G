@@ -214,7 +214,7 @@ public class Menu{
     }
     
 
-    public JPanel createGamePageIA(JPanel mainPanel, CardLayout cardLayout, boolean vsAI) {
+    public JPanel createGamePageIA(JPanel mainPanel, CardLayout cardLayout, boolean vsAI,int minutes, int difficultyLevel) {
         JPanel gamePanel = new JPanel(new BorderLayout());
         initPage(gamePanel, "Game");
     
@@ -235,14 +235,14 @@ public class Menu{
         this.game.light = light;
         game.run();
         gamePanel.add(game.getboardPanel());
-        aiPlayer = vsAI ? new AIPlayer(2) : null;
+        aiPlayer = vsAI ? new AIPlayer(difficultyLevel) : null;
     
         game.run();
         gamePanel.add(game.getboardPanel(), BorderLayout.CENTER);
     
         // Chronomètres pour chaque joueur
-        Chrono chronoJoueur = new Chrono(0, 10, 0); // 10 minutes pour le joueur
-        Chrono chronoIA = new Chrono(0, 10, 0); // 10 minutes pour l'IA
+        Chrono chronoJoueur = new Chrono(minutes, 0); // 10 minutes pour le joueur
+        Chrono chronoIA = new Chrono(minutes, 0); // 10 minutes pour l'IA
         JLabel chronoJoueurLabel = new JLabel("Temps Joueur : " + chronoJoueur.toString());
         JLabel chronoIALabel = new JLabel("Temps IA : " + chronoIA.toString());
     
@@ -271,10 +271,10 @@ public class Menu{
             }
     
             // Vérifiez si l'un des chronomètres a expiré
-            if (chronoJoueur.getHeures() == 0 && chronoJoueur.getMinutes() == 0 && chronoJoueur.getSecondes() == 0) {
+            if (chronoJoueur.getMinutes() == 0 && chronoJoueur.getSecondes() == 0) {
                 ((Timer) e.getSource()).stop();
                 JOptionPane.showMessageDialog(null, "Le joueur a perdu à cause du temps !");
-            } else if (chronoIA.getHeures() == 0 && chronoIA.getMinutes() == 0 && chronoIA.getSecondes() == 0) {
+            } else if (chronoIA.getMinutes() == 0 && chronoIA.getSecondes() == 0) {
                 ((Timer) e.getSource()).stop();
                 JOptionPane.showMessageDialog(null, "L'IA a perdu à cause du temps !");
             } else {
@@ -303,10 +303,6 @@ public class Menu{
             chrono.setSecondes(chrono.getSecondes() - 1);
         } else if (chrono.getMinutes() > 0) {
             chrono.setMinutes(chrono.getMinutes() - 1);
-            chrono.setSecondes(59);
-        } else if (chrono.getHeures() > 0) {
-            chrono.setHeures(chrono.getHeures() - 1);
-            chrono.setMinutes(59);
             chrono.setSecondes(59);
         }
         label.setText("Temps : " + chrono.toString());
@@ -548,13 +544,63 @@ public class Menu{
          
            
         });*/
-
         btnPlayIA.addActionListener(e -> {
-            mainPanel.remove(gamePageinit);
-            JPanel newGamePage = createGamePageIA(mainPanel, cardLayout, true);
-            mainPanel.add(newGamePage, "game");
-            cardLayout.show(mainPanel, "game");
+            // 1) Créer un petit panel pour recueillir les choix
+            JPanel configPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        
+            // Combo box pour la difficulté
+            JComboBox<String> difficultyCombo = new JComboBox<>(new String[] {"Facile", "Moyen", "Difficile"});
+            configPanel.add(new JLabel("Difficulté de l'IA :"));
+            configPanel.add(difficultyCombo);
+        
+            // Champ texte ou Spinner pour le chrono (en minutes)
+            JTextField chronoField = new JTextField("10"); // Exemple: 10 minutes par défaut
+            configPanel.add(new JLabel("Minutes de chrono :"));
+            configPanel.add(chronoField);
+        
+            // 2) Afficher la boîte de dialogue de configuration
+            int result = JOptionPane.showConfirmDialog(
+                null, 
+                configPanel, 
+                "Configuration IA", 
+                JOptionPane.OK_CANCEL_OPTION, 
+                JOptionPane.PLAIN_MESSAGE
+            );
+        
+            // 3) Si l’utilisateur clique sur OK
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    // Récupérer la difficulté
+                    String difficultySelected = (String) difficultyCombo.getSelectedItem();
+                    int difficultyLevel = 1;
+                    if ("Facile".equals(difficultySelected)) {
+                        difficultyLevel = 1;
+                    } else if ("Moyen".equals(difficultySelected)) {
+                        difficultyLevel = 2;
+                    } else if ("Difficile".equals(difficultySelected)) {
+                        difficultyLevel = 3;
+                    }
+        
+                    // Récupérer le chrono en minutes
+                    int minutes = Integer.parseInt(chronoField.getText());
+                    if (minutes <= 0) minutes = 10; // Sécuriser par exemple
+        
+                    // 4) Générer la page de jeu IA, en lui passant les paramètres
+                    mainPanel.remove(gamePageinit); 
+                    JPanel newGamePage = createGamePageIA(mainPanel, cardLayout, true, difficultyLevel,minutes);
+                    mainPanel.add(newGamePage, "game");
+                    cardLayout.show(mainPanel, "game");
+        
+                } catch (NumberFormatException exTime) {
+                    JOptionPane.showMessageDialog(null, 
+                        "Veuillez saisir un nombre entier pour le chrono.",
+                        "Erreur de saisie",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
         });
+        
 
        
         btnSettings.addActionListener(e -> cardLayout.show(mainPanel,"settings"));
