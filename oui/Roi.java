@@ -92,13 +92,9 @@ public class Roi extends Piece implements regle_Piece{
                 if(piece.getName() == "ROI")
                 {
                         // Vérifie si la case cible est adjacente à l'autre roi
-                        if (!plateau.verifEchec(plateau,roi,roi.getPositionX(),roi.getPositionY(),xnew,ynew)) 
+                        if (plateau.verifEchec(plateau,roi,roi.getPositionX(),roi.getPositionY(),xnew,ynew)) 
                         {
                             return false;                   
-                        }
-                        else
-                        {
-                            return true; // La case n'est pas adjacente à l'autre roi
                         }
                 }
                 // Vérifie si la pièce adverse peut attaquer la position cible

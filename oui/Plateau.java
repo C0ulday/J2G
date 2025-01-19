@@ -241,6 +241,7 @@ public class Plateau {
         
         plateau.placerPiece(pieceArrive, x, y);
     
+        //retourne s'il y a echec ou pas
         return echec;
     }
 
@@ -469,5 +470,52 @@ public class Plateau {
         plateau.ajouterPieceNoire(new Roi(0, colonneRoi, 0, colonneRoi, "NOIR", plateau));
     }
     
+    public static Plateau InitJeu8Dames(int taille) {
+        Plateau plateau = new Plateau(taille);
+        
+        // Ligne des dames
+        int ligneDamesBlancs = taille - 1; // Dernière ligne pour les Blancs
+        int ligneDamesNoirs = 0; // Première ligne pour les Noirs
+    
+        // Ligne des pions
+        int lignePionsBlancs = taille - 2; // Avant-dernière ligne pour les Blancs
+        int lignePionsNoirs = 1; // Deuxième ligne pour les Noirs
+    
+        // Placement des dames
+        for (int i = 0; i < taille; i++) {
+            plateau.ajouterPieceBlanche(new Dame(ligneDamesBlancs, i, ligneDamesBlancs, i, "BLANC", plateau));
+            plateau.ajouterPieceNoire(new Dame(ligneDamesNoirs, i, ligneDamesNoirs, i, "NOIR", plateau));
+        }
+    
+        // Placement des pions
+        for (int i = 0; i < taille; i++) {
+            plateau.ajouterPieceBlanche(new Pion(lignePionsBlancs, i, lignePionsBlancs, i, "BLANC", plateau));
+            plateau.ajouterPieceNoire(new Pion(lignePionsNoirs, i, lignePionsNoirs, i, "NOIR", plateau));
+        }
+        plateau.initPlateau();
+        return plateau;
+    }
 
+    public static boolean FinDuJeu(Plateau plateau, String couleur)
+    {
+        ArrayList<Piece> listePieces = plateau.getPlateauPiece();
+        boolean pion = true, dame = true;
+
+        for (Piece piece : listePieces) {
+            if (piece.getCouleur().equals(couleur))
+            {
+                if(piece.getName().equals("PION")) 
+                {
+                    pion = false; // L'équipe possède encore un pion
+                }
+                else if(piece.getName().equals("DAME"))
+                {
+                    dame = false; // L'équipe possède encore une dame
+                }
+            }
+            
+        }
+
+    return dame || pion;
+    }
 }

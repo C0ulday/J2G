@@ -9,7 +9,7 @@ public class playGame {
     public static void echecs() {
         // Taille standard du plateau d'échecs
         Scanner scanner = new Scanner(System.in);
-        int SIZE = -1;
+        int SIZE = 8;
         while(SIZE<4 || SIZE>8)
         {
             System.out.println("quel taille de plateau souhaité vous ? (8x8) à (4x4)");
@@ -22,8 +22,6 @@ public class playGame {
         }
 
         Plateau plateau = Plateau.initJeu(SIZE);
-
-        plateau.initPlateau();
 
         // Scanner pour les entrées utilisateur
         boolean partieEnCours = true;
@@ -52,7 +50,7 @@ public class playGame {
                 }
                 else
                 {
-                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPrenable(xactu, yactu); // pb ici avec pion
+                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPrenable(xactu, yactu); 
 
                     if(coords.isEmpty()) // si une piece valide sélectionné ne peut pas bouger, on reboucle
                     {
