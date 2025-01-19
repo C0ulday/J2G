@@ -5,6 +5,7 @@ public class MultiGaming {
         Scanner scanner = new Scanner(System.in);
         boolean continuer = true;
 
+
         while (continuer) {
             // Afficher le menu principal
             System.out.println("=== MENU PRINCIPAL ===");
@@ -25,7 +26,7 @@ public class MultiGaming {
                 case 2:
                     // Lancer le jeu des 8 dames
                     System.out.println("Vous avez choisi de jouer au Jeu des 8 dames !");
-                    Jeu8Dames.jouer8Dames(); // Appel de la méthode pour jouer au jeu des 8 dames
+                    Jeu8Dames.jeu8Dames(); // Appel de la méthode pour jouer au jeu des 8 dames
                     break;
 
                 case 3:

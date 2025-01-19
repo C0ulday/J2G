@@ -1,69 +1,106 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class playGame {
-    static Plateau plateau;
-    static String joueurActuel = "BLANC";
-
-    public static void run() {
-        // Taille standard du plateau d'échecs
-        final int SIZE = 8;
-        plateau = new Plateau(SIZE);
-
-        // Initialisation des pièces blanches
-        for (int i = 0; i < 8; i++) {
-            plateau.ajouterPieceBlanche(new Pion(6, i, 6, i, "BLANC", plateau));
-        }
-        plateau.ajouterPieceBlanche(new Tour(7, 0, 7, 0, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Tour(7, 7, 7, 7, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Cavalier(7, 1, 7, 1, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Cavalier(7, 6, 7, 6, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Fou(7, 2, 7, 2, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Fou(7, 5, 7, 5, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Dame(7, 3, 7, 3, "BLANC", plateau));
-        plateau.ajouterPieceBlanche(new Roi(7, 4, 7, 4, "BLANC", plateau));
-
-        // Initialisation des pièces noires
-        for (int i = 0; i < 8; i++) {
-            plateau.ajouterPieceNoire(new Pion(1, i, 1, i, "NOIR", plateau));
-        }
-        plateau.ajouterPieceNoire(new Tour(0, 0, 0, 0, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Tour(0, 7, 0, 7, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Cavalier(0, 1, 0, 1, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Cavalier(0, 6, 0, 6, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Fou(0, 2, 0, 2, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Fou(0, 5, 0, 5, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Dame(0, 3, 0, 3, "NOIR", plateau));
-        plateau.ajouterPieceNoire(new Roi(0, 4, 0, 4, "NOIR", plateau));
-
-        // Remplir le plateau avec les pièces
-        plateau.remplirPlateau();
-
-        System.out.println("Backend prêt à recevoir des mouvements.");
+    public static void main(String[] args) {
+        System.out.println("Bienvenue dans le jeu d'échecs !");
+        echecs();
     }
-
-    // Méthode pour traiter un mouvement (format \"xactu yactu xnew ynew\")
-    public static boolean  traiterMouvement(String mouvement) {
-        String[] parts = mouvement.split(" ");
-        int xactu = Integer.parseInt(parts[0]);
-        int yactu = Integer.parseInt(parts[1]);
-        int xnew = Integer.parseInt(parts[2]);
-        int ynew = Integer.parseInt(parts[3]);
-
-        regle_Piece piece = plateau.getPiece(xactu, yactu);
-
-        if (piece == null || !piece.getCouleur().equals(joueurActuel)) {
-            return false;
+    public static void echecs() {
+        // Taille standard du plateau d'échecs
+        Scanner scanner = new Scanner(System.in);
+        int SIZE = 8;
+        while(SIZE<4 || SIZE>8)
+        {
+            System.out.println("quel taille de plateau souhaité vous ? (8x8) à (4x4)");
+            System.out.print("Taille : ");
+            SIZE = scanner.nextInt();
+            if (SIZE<4 || SIZE>8)
+            {
+                System.out.println("Taille de plateau incorrect. Veillez reessayer \n");
+            }
         }
 
-        if (plateau.deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
-            plateau.deplacementPiece(xactu, yactu, xnew, ynew);
-            /* // Vérifications des conditions de fin de partie
+        Plateau plateau = Plateau.initJeu(SIZE);
+
+        // Scanner pour les entrées utilisateur
+        boolean partieEnCours = true;
+        String joueurActuel = "BLANC";
+
+        // Boucle principale de jeu
+        while (partieEnCours) {
+            System.out.println("C'est au tour des " + joueurActuel + "s.");
+
+            int xactu, yactu;
+            Piece piece = null;
+
+            // Boucle pour assurer la validité du coup
+            boolean choixPiece;
+            do{
+                choixPiece = true;
+                plateau.afficherPlateau(); // Affichage du plateau
+                System.out.println("Entrez les coordonnées de la pièce à déplacer (X Y) :");
+                xactu = scanner.nextInt();
+                yactu = scanner.nextInt();
+                piece = plateau.getPiece(xactu, yactu);
+                if(!piece.getCouleur().equals(joueurActuel)) // si la piece selectionné n'appartient pas au joueur courant, on reboucle
+                {
+                    System.out.println("Piece non selectionable ! Veillez recommencer");
+                    choixPiece = false;
+                }
+                else
+                {
+                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPrenable(xactu, yactu); 
+
+                    if(coords.isEmpty()) // si une piece valide sélectionné ne peut pas bouger, on reboucle
+                    {
+                        choixPiece = false;
+                        System.out.println("Piece non deplaçable ! Veillez recommencer");
+                    }
+                }
+                
+                if (piece instanceof regle_Piece) 
+                {
+                    ((regle_Piece) piece).afficherCoordsPrenable(xactu, yactu); // on affiche les coup réalisable par la piéce
+                }
+                if(choixPiece)
+                {
+                    System.out.println("Entrez les coordonnées de destination (X Y) :");
+                    int xnew = scanner.nextInt();
+                    int ynew = scanner.nextInt();
+
+                    if (!plateau.deplacementDansPlateau(xactu,yactu, xnew,ynew)) // si la coordonnée d'arrivée est incorrect, on reboucle
+                    {
+                        choixPiece = false; // Déplacement effectué
+                        System.out.println("Déplacement interdit. Veuillez entrer une destination valide.");
+                    } 
+                    else 
+                    { 
+                        plateau.deplacementPiece(xactu, yactu, xnew, ynew);
+                        if(xnew == 0 || xnew == 7)
+                        {
+                            plateau.promouvoirPiece(plateau,xnew,ynew);
+                        }
+                    }
+                }
+            }while(!choixPiece); 
+
+
+
+
+
+
+            // Changer de joueur
+            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
+
+
+            // Vérifications des conditions de fin de partie
             if (regleJeuEchec.Echec(plateau, joueurActuel)) {
-                System.out.println("Attention : le roi des " + joueurActuel + "s est en échec !");
+                System.out.println("Attention : le roi " + joueurActuel + " est en échec !");
             }
 
             if (regleJeuEchec.Mat(plateau, joueurActuel)) {
-                System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + "s gagnent !");
+                System.out.println("Échec et mat ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + " gagnent !");
                 partieEnCours = false;
                 continue; // Quitter le tour
             }
@@ -72,29 +109,12 @@ public class playGame {
                 System.out.println("Pat ! Match nul.");
                 partieEnCours = false;
                 continue; // Quitter le tour
-            }*/
-            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
-            return true;
-        } else {
-            return false;
+            }
+
+            
         }
 
-        
+        scanner.close();
+        System.out.println("Fin de la partie. Merci d'avoir joué !");
     }
-
-    public static ArrayList<coordonnee> obtenirCoupPossible(int x, int y) {
-        ArrayList<coordonnee> possibleMoves = new ArrayList<>();
-        regle_Piece piece = plateau.getPiece(x, y); // Récupère directement un regle_Piece
-    
-        if (piece == null) {
-            return possibleMoves; // Pas de pièce à cet emplacement
-        }
-        // Appelle directement la méthode casesPossibles de regle_Piece
-        possibleMoves = piece.casesPossibles(x, y);
-    
-        return possibleMoves;
-    }
-    
 }
-
-

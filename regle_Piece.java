@@ -1,21 +1,16 @@
 import java.util.ArrayList;
 
-public interface regle_Piece {
+public  interface regle_Piece {  // notre interface à repecter pour créer une pièce
+
     ArrayList<coordonnee> casesPossibles(int xactu, int yactu);
-    void afficherCoordsPossibles(int xactu, int yactu);
+
     ArrayList<coordonnee> casesPrenable(int xactu, int yactu);
 
-    // Méthodes pour accéder aux coordonnées actuelles et initiales
-    int getPositionX();
-    int getPositionY();
-    int getPositionXinit();
-    int getPositionYinit();
+    void afficherCoordsPossibles(int xactu, int yactu);
 
-    void setPosition(int x, int y);
+    void afficherCoordsPrenable(int xactu, int yactu);
+    
 
-    // Méthodes pour la couleur et le nom
-    String getCouleur();
-    String getName();
 
-}
-
+}  
+ 

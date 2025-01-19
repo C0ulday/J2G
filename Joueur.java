@@ -7,21 +7,18 @@ public class Joueur
 	protected boolean estHumain = true;
 	
 	/**
-	 * Nom du joueur
+	 * Couleur du joueur
 	 */
-	private String Nom;
-	private Chrono chrono;
-
+	protected String couleur;
     
 	//Constructeur
-	public Joueur(String c,Chrono chrono)
+	public Joueur(String c)
     {
-        this.Nom = c;
-		this.chrono = new Chrono(0,10,0);
+        this.couleur = c;
     }
-    public String getNom()
+    public String getCouleur()
     {
-        return this.Nom;
+        return this.couleur;
     }
 
     	/**

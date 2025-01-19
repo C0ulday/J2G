@@ -47,11 +47,15 @@ class Cavalier extends Piece implements regle_Piece {
             int y = coord.getY();
             
             // Récupérer la pièce à la position (x, y)
-            regle_Piece piece = plateau.getPiece(x,y);
+            Piece piece = plateau.getPiece(x,y);
             
             if (piece != null && !piece.getCouleur().equals(this.getCouleur())) {
                 // Si la pièce est d'une couleur différente, elle est prenable
-                casesPrenables.add(coord);
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
             }
         }
 
@@ -63,7 +67,17 @@ class Cavalier extends Piece implements regle_Piece {
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Cavalier en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour la Cavalier en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Cavalier en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }

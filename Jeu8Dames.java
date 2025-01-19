@@ -1,110 +1,92 @@
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Jeu8Dames {
     public static void main(String[] args) {
-        System.out.println("Bienvenue dans le jeu des 8 dames !");
-        jouer8Dames();
+        System.out.println("Bienvenue dans le jeu des 8 Dames !");
+        jeu8Dames();
     }
 
-    public static void jouer8Dames() {
-        final int SIZE = 8;
-        int[] solution = new int[SIZE]; // Chaque index représente une colonne, la valeur représente la ligne
-        Set<String> solutionsTrouvees = new HashSet<>(); // Pour stocker les solutions uniques
-
+    public static void jeu8Dames() {
+        // Scanner pour les entrées utilisateur
         Scanner scanner = new Scanner(System.in);
-        boolean jeuEnCours = true;
 
-        while (jeuEnCours) {
-            System.out.println("=== Menu Jeu des 8 dames ===");
-            System.out.println("1. Trouver et afficher toutes les solutions");
-            System.out.println("2. Quitter");
-            System.out.print("Veuillez choisir une option : ");
-            int choix = scanner.nextInt();
+        // Choix de la taille du plateau
+        int SIZE = -1;
+        while (SIZE < 4 || SIZE > 8) {
+            System.out.println("Quelle taille de plateau souhaitez-vous ? (entre 4x4 et 8x8)");
+            System.out.print("Taille : ");
+            SIZE = scanner.nextInt();
+            if (SIZE < 4 || SIZE > 8) {
+                System.out.println("Taille de plateau incorrecte. Veuillez réessayer.\n");
+            }
+        }
 
-            switch (choix) {
-                case 1:
-                    System.out.println("Calcul des solutions...");
-                    solutionsTrouvees.clear(); // Réinitialiser les solutions précédentes
-                    placerDame(solution, 0, SIZE, solutionsTrouvees);
-                    System.out.println("Nombre total de solutions uniques trouvées : " + solutionsTrouvees.size());
-                    break;
-                case 2:
-                    System.out.println("Merci d'avoir joué au jeu des 8 dames !");
-                    jeuEnCours = false;
-                    break;
-                default:
-                    System.out.println("Option invalide. Veuillez réessayer.");
-                    break;
+        // Initialisation du plateau
+        Plateau plateau = Plateau.InitJeu8Dames(SIZE);
+
+        // Boucle de jeu (similaire à votre logique existante)
+        boolean partieEnCours = true;
+        String joueurActuel = "BLANC";
+
+        while (partieEnCours) {
+            System.out.println("C'est au tour des " + joueurActuel + "s.");
+
+            plateau.afficherPlateau();
+            int xactu, yactu;
+            Piece piece;
+
+            boolean choixPiece;
+            do {
+                choixPiece = true;
+                System.out.println("Entrez les coordonnées de la pièce à déplacer (X Y) :");
+                xactu = scanner.nextInt();
+                yactu = scanner.nextInt();
+
+                piece = plateau.getPiece(xactu, yactu);
+
+                if (piece == null || !piece.getCouleur().equals(joueurActuel)) {
+                    System.out.println("Pièce non sélectionnable ! Veuillez recommencer.");
+                    choixPiece = false;
+                    continue;
+                }
+
+                if (piece instanceof regle_Piece) {
+                    ArrayList<coordonnee> coords = ((regle_Piece) piece).casesPrenable(xactu, yactu);
+                    if (coords.isEmpty()) {
+                        System.out.println("Pièce non déplaçable ! Veuillez recommencer.");
+                        choixPiece = false;
+                    } else {
+                        ((regle_Piece) piece).afficherCoordsPrenable(xactu, yactu);
+                    }
+                }
+
+                if (choixPiece) {
+                    System.out.println("Entrez les coordonnées de destination (X Y) :");
+                    int xnew = scanner.nextInt();
+                    int ynew = scanner.nextInt();
+
+                    if (!plateau.deplacementDansPlateau(xactu, yactu, xnew, ynew)) {
+                        System.out.println("Déplacement interdit. Veuillez entrer une destination valide.");
+                        choixPiece = false;
+                    } else {
+                        plateau.deplacementPiece(xactu, yactu, xnew, ynew);
+                    }
+                }
+            } while (!choixPiece);
+
+            joueurActuel = joueurActuel.equals("BLANC") ? "NOIR" : "BLANC";
+
+            if(Plateau.FinDuJeu(plateau,joueurActuel))
+            {
+                System.out.println("Fin de jeu ! Les " + (joueurActuel.equals("BLANC") ? "Noirs" : "Blancs") + " gagnent !");
+                partieEnCours = false;
+                continue;
             }
         }
 
         scanner.close();
+        System.out.println("Merci d'avoir joué !");
     }
 
-    private static boolean placerDame(int[] solution, int colonne, int taille, Set<String> solutionsTrouvees) {
-        if (colonne == taille) {
-            // Générer une représentation unique de la solution
-            String representation = genererRepresentation(solution);
-            if (!solutionsTrouvees.contains(representation)) {
-                solutionsTrouvees.add(representation); // Ajouter la solution unique
-                afficherSolution(solution);
-            }
-            return true;
-        }
-
-        boolean auMoinsUneSolution = false;
-
-        for (int ligne = 0; ligne < taille; ligne++) {
-            if (estValide(solution, colonne, ligne)) {
-                solution[colonne] = ligne;
-                auMoinsUneSolution |= placerDame(solution, colonne + 1, taille, solutionsTrouvees);
-            }
-        }
-
-        return auMoinsUneSolution;
-    }
-
-    private static boolean estValide(int[] solution, int colonne, int ligne) {
-        for (int i = 0; i < colonne; i++) {
-            int autreLigne = solution[i];
-            if (autreLigne == ligne || Math.abs(autreLigne - ligne) == Math.abs(i - colonne)) {
-                return false; // Même ligne ou diagonale
-            }
-        }
-        return true;
-    }
-
-    private static void afficherSolution(int[] solution) {
-        System.out.println("=== Solution trouvée ===");
-        for (int ligne = 0; ligne < solution.length; ligne++) {
-            for (int colonne = 0; colonne < solution.length; colonne++) {
-                if (solution[colonne] == ligne) {
-                    // Alternance entre dames noires et blanches pour plus de réalisme
-                    if ((ligne + colonne) % 2 == 0) {
-                        System.out.print("N "); // Dame noire
-                    } else {
-                        System.out.print("B "); // Dame blanche
-                    }
-                } else {
-                    if ((ligne + colonne) % 2 == 0) {
-                        System.out.print(". "); // Case noire
-                    } else {
-                        System.out.print("  "); // Case blanche
-                    }
-                }
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    private static String genererRepresentation(int[] solution) {
-        StringBuilder sb = new StringBuilder();
-        for (int pos : solution) {
-            sb.append(pos).append("-");
-        }
-        return sb.toString();
-    }
 }

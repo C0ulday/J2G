@@ -71,7 +71,7 @@ public class Fou extends Piece implements regle_Piece {
                 }
     
                 // Récupérer la pièce sur la case
-                regle_Piece piece = plateau.getPiece(xnew, ynew);
+                Piece piece = plateau.getPiece(xnew, ynew);
                 if (piece.getCouleur() == "NULL")  // si la case est vide
                 {
                     // Case vide, ajoutée aux mouvements possibles
@@ -100,10 +100,13 @@ public class Fou extends Piece implements regle_Piece {
             
             // Récupérer la pièce à la position (x, y)
             Piece piece = plateau.getPiece(x,y);
-            if (!piece.getCouleur().equals(this.getCouleur()) || piece == null)  // si la case est vide
+            if (piece != null && !piece.getCouleur().equals(this.getCouleur()))  // si la case est vide
             {
-                // Case vide, ajoutée aux mouvements possibles
-                casesPrenables.add(coord);
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
             }
         }
 
@@ -114,9 +117,20 @@ public class Fou extends Piece implements regle_Piece {
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour le Fou en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour la Fou en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }
     }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Fou en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
 }

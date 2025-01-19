@@ -38,7 +38,7 @@ public class Tour extends Piece implements regle_Piece{
     @Override
     public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = new ArrayList<>();
-    
+        
         // Directions de déplacement de la tour dans les coordonnées X et Y
         int[][] directions = {
             {-1, 0}, // Haut
@@ -46,12 +46,13 @@ public class Tour extends Piece implements regle_Piece{
             {0, -1}, // Gauche
             {0, 1}   // Droite
         };
-    
+
         for (int[] direction : directions) {
-            boolean valide = true; // La pièce peut se déplacer tant que cette variable est vraie
+            
+            boolean valide = true; // La piece peut se déplacer tant que cette variable est vraie
             int Y = direction[0];
             int X = direction[1];
-    
+            
             int xnew = xactu;
             int ynew = yactu;
     
@@ -63,27 +64,26 @@ public class Tour extends Piece implements regle_Piece{
                 // Vérifier si la case est hors limites
                 if (!plateau.estDansLesLimites(xnew, ynew)) {
                     valide = false; // Arrêt si hors des limites
-                    break; // Sortir de la boucle sans créer de coordonnée
+                    break; // sortir de la boucle sans créer de pièce
                 }
     
                 // Récupérer la pièce sur la case
-                regle_Piece piece = plateau.getPiece(xnew, ynew);
-                if (piece == null) { 
+                Piece piece = plateau.getPiece(xnew, ynew);
+                if (piece.getCouleur() == "NULL")  // si la case est vide
+                {
                     // Case vide, ajoutée aux mouvements possibles
                     coords.add(new coordonnee(xnew, ynew));
-                } else if (!piece.getCouleur().equals(this.getCouleur())) {
+                } 
+                else
+                {
                     // Case occupée par une pièce adverse, ajoutée et arrêt dans cette direction
                     coords.add(new coordonnee(xnew, ynew));
                     valide = false; // La direction est bloquée après la capture
-                } else {
-                    // La case est occupée par une pièce alliée
-                    valide = false; // La direction est bloquée
                 }
             }
-        }
+        }  
         return coords;
     }
-    
     
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
@@ -98,8 +98,11 @@ public class Tour extends Piece implements regle_Piece{
             Piece piece = plateau.getPiece(x,y);
             if (!piece.getCouleur().equals(this.getCouleur()) || piece == null)  // si la case est vide
             {
-                // Case vide, ajoutée aux mouvements possibles
-                casesPrenables.add(coord);
+                //s'il n'y a pas Echec après le mouvement, on ajoute le mouvement
+                if (!plateau.verifEchec(plateau,piece,x,y,xactu,yactu)) 
+                {
+                    casesPrenables.add(coord);                   
+                }
             }
         }
 
@@ -109,6 +112,16 @@ public class Tour extends Piece implements regle_Piece{
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
+    
+        System.out.println("Coordonnées possibles pour la Tour en ["+xactu+","+yactu+"] :");
+        for (coordonnee coord : coords) {
+            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
+        }
+    }
+
+    @Override
+    public void afficherCoordsPrenable(int xactu, int yactu) {
+        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
     
         System.out.println("Coordonnées possibles pour la Tour en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {

@@ -1,5 +1,5 @@
 
-public abstract class Piece implements regle_Piece{
+public class Piece{
     private String name;
     private String couleur;
     private int positionXinit;
@@ -19,46 +19,48 @@ public abstract class Piece implements regle_Piece{
 
     }
 
-    @Override
-    public int getPositionX() {
-        return this.positionX;
-    }
-
-    @Override
-    public int getPositionY() {
-        return this.positionY;
-    }
-
     public int getPositionXinit() {
+
         return this.positionXinit;
+    }
+    
+    public void setPositionXinit(int x) {
+
+        this.positionXinit = x;
     }
 
     public int getPositionYinit() {
         return this.positionYinit;
     }
 
-    @Override
-    public String getCouleur() {
-        return this.couleur;
+    public void setPositionYinit(int x) {
+
+        this.positionXinit = x;
     }
 
-    @Override
-    public String getName() {
-        return this.name;
+    public int getPositionX() {
+        return this.positionX;
     }
 
-    @Override
+    public int getPositionY() {
+        return this.positionY;
+    }
+
     public void setPosition(int x, int y) {
         this.positionX = x;
         this.positionY = y;
     }
 
-
-
-
+    public String getName() {
+        return this.name;
+    }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCouleur() {
+        return this.couleur;
     }
 
     public void setCouleur(String couleur) {
