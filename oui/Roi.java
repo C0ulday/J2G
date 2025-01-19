@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.util.List;
+
+//TODO : Retirer les cases avec Echec
 
 public class Roi extends Piece implements regle_Piece{
     int xactu, xinit;
@@ -20,31 +23,38 @@ public class Roi extends Piece implements regle_Piece{
      * @param y l'ordonnee d'arrive = les chiffres
      * @return resultat du test
      */
-
      @Override
      public ArrayList<coordonnee> casesPossibles(int xactu, int yactu) {
          ArrayList<coordonnee> coords = new ArrayList<>();
-         
-         // Directions de déplacement du roi
          int[][] directions = {
-             {1, 1},   // Bas Droite
-             {1, 0},   // Droite
-             {1, -1},  // Haut Droite
-             {0, -1},  // Haut
-             {-1, -1}, // Haut Gauche
-             {-1, 0},  // Gauche
-             {-1, 1},  // Bas Gauche
-             {0, 1}    // Bas
+             {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}
          };
+     
+         // Récupère les coordonnées de tous les rois adverses
+         List<regle_Piece> roisAdverses = trouverRoisAdverses();
      
          for (int[] direction : directions) {
              int xnew = xactu + direction[0];
              int ynew = yactu + direction[1];
      
-             // Vérifie si la case est dans les limites du plateau
-             if (plateau.estDansLesLimites(xnew, ynew)) 
-             {
-                coords.add(new coordonnee(xnew, ynew));               
+             // Vérifie que la case est dans les limites du plateau
+             if (!plateau.estDansLesLimites(xnew, ynew)) continue;
+     
+             // Vérifie si la case est adjacente à l'un des rois adverses
+             boolean adjacenteARoi = false;
+             for (regle_Piece roiAdverse : roisAdverses) {
+                 if (Math.abs(xnew - roiAdverse.getPositionX()) <= 1 && 
+                     Math.abs(ynew - roiAdverse.getPositionY()) <= 1) {
+                     adjacenteARoi = true;
+                     break;
+                 }
+             }
+             if (adjacenteARoi) continue;
+     
+             // Vérifie si la case est vide ou contient une pièce adverse
+             regle_Piece piece = plateau.getPiece(xnew, ynew);
+             if (piece == null || !piece.getCouleur().equals(this.getCouleur())) {
+                 coords.add(new coordonnee(xnew, ynew));
              }
          }
      
@@ -52,6 +62,7 @@ public class Roi extends Piece implements regle_Piece{
      }
      
 
+    
     @Override
     public ArrayList<coordonnee> casesPrenable(int xactu, int yactu) {
         ArrayList<coordonnee> casesPrenables = new ArrayList<>();
@@ -62,18 +73,11 @@ public class Roi extends Piece implements regle_Piece{
             int y = coord.getY();
             
             // Récupérer la pièce à la position (x, y)
-            Piece piece = plateau.getPiece(x,y);
+            regle_Piece piece = plateau.getPiece(x,y);
             
             if (piece != null && !piece.getCouleur().equals(this.getCouleur())) {
                 // Si la pièce est d'une couleur différente, elle est prenable
-                
-                // Vérifie si la case est vide ou contient une pièce ennemie
-                // Simule le déplacement et vérifie si le Roi est toujours en sécurité
-                if (deplacementSecurise(this, x, y)) 
-                {
-                    casesPrenables.add(coord);
-                }
-                
+                casesPrenables.add(coord);
             }
         }
 
@@ -82,42 +86,39 @@ public class Roi extends Piece implements regle_Piece{
 
     public boolean deplacementSecurise(Piece roi, int xnew, int ynew) {
         ArrayList<Piece> pieces = plateau.getPlateauPiece();
-        
-        for (Piece piece : pieces) 
-        {
-            // Vérifie si la pièce est adverse
-            if (!piece.getCouleur().equals(roi.getCouleur())) 
-            {
- 
-                if(piece.getName() == "ROI")
-                {
-                        // Vérifie si la case cible est adjacente à l'autre roi
-                        if (plateau.verifEchec(plateau,roi,roi.getPositionX(),roi.getPositionY(),xnew,ynew)) 
-                        {
-                            return false;                   
-                        }
-                }
-                // Vérifie si la pièce adverse peut attaquer la position cible
-                else if (piece instanceof regle_Piece) {
-                    ArrayList<coordonnee> casesAdverses = ((regle_Piece) piece).casesPossibles(piece.getPositionX(),piece.getPositionY());
     
-                    // Vérifie si la position cible est attaquée
+        for (Piece piece : pieces) {
+            // Vérifie si la pièce est adverse
+            if (!piece.getCouleur().equals(roi.getCouleur())) {
+                // Cas particulier pour un autre roi
+                if (piece.getName().equals("ROI")) {
+                    // Vérifie si la case cible est adjacente à l'autre roi
+                    if (Math.abs(piece.getPositionX() - xnew) <= 1 && Math.abs(piece.getPositionY() - ynew) <= 1) {
+                        return false; // La case est adjacente à l'autre roi
+                    }
+                    continue; // Ignore les cases possibles de l'autre roi
+                }
+    
+                // Vérifie si la pièce adverse peut attaquer la position cible
+                if (piece instanceof regle_Piece) {
+                    ArrayList<coordonnee> casesAdverses = ((regle_Piece) piece).casesPossibles(piece.getPositionX(), piece.getPositionY());
+    
                     for (coordonnee coordAdverse : casesAdverses) {
                         if (coordAdverse.getX() == xnew && coordAdverse.getY() == ynew) {
-                            return false; // Le déplacement met le roi en échec
+                            return false; // La case est attaquée
                         }
                     }
                 }
     
                 // Cas particulier pour les pions (les pions attaquent en diagonale)
                 if (piece.getName().equals("PION")) {
-                    int direction = piece.getCouleur().equals("BLANC") ? -1 : 1; // Sens d'attaque du pion
+                    int direction = piece.getCouleur().equals("BLANC") ? -1 : 1;
                     int pionX = piece.getPositionX();
                     int pionY = piece.getPositionY();
     
                     if ((pionX + direction == xnew && pionY + 1 == ynew) ||
                         (pionX + direction == xnew && pionY - 1 == ynew)) {
-                        return false; // Le pion attaque la case cible
+                        return false; // La case est attaquée par un pion
                     }
                 }
             }
@@ -125,27 +126,34 @@ public class Roi extends Piece implements regle_Piece{
     
         return true; // Le déplacement est sécurisé
     }
-    
-    
-    
+   private List<regle_Piece> trouverRoisAdverses() {
+    List<regle_Piece> roisAdverses = new ArrayList<>();
+    List<regle_Piece> pieces = plateau.getPlateauPiece();
+
+    for (regle_Piece piece : pieces) {
+        if (piece.getName().equals("ROI") && !piece.getCouleur().equals(this.getCouleur())) {
+            roisAdverses.add(piece); // Ajoute le roi adverse à la liste
+        }
+    }
+
+    return roisAdverses;
+}
+
+
     @Override
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour la Roi en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour le Roi :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }
     }
+    /*
+    public boolean Roque(int x, int y)
+    {
+        // TODO: créer la fonction roque si on a le temps
 
-    @Override
-    public void afficherCoordsPrenable(int xactu, int yactu) {
-        ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
-    
-        System.out.println("Coordonnées possibles pour la Roi en ["+xactu+","+yactu+"] :");
-        for (coordonnee coord : coords) {
-            System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
-        }
-    }
+        return true;
+    }*/
 }
-
