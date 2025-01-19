@@ -56,7 +56,7 @@ public class Menu{
     //Page de setting
     public JPanel createSettingsPage(JPanel mainPanel, CardLayout cardLayout){
         JPanel settingsPanel = new JPanel();
-        initPage(settingsPanel, "SETTINGS");
+        initPage(settingsPanel, "PARAMÈTRES");
         
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
@@ -123,7 +123,7 @@ public class Menu{
         });
 
         JButton btnBack = createStyledButton("Retour");
-        btnBack.addActionListener(e -> cardLayout.show(mainPanel, "Settings"));
+        btnBack.addActionListener(e -> cardLayout.show(mainPanel, "settings"));
 
         pieceOptions.add(btnAddPiece);
         pieceOptions.add(btnModifyPiece);
@@ -450,12 +450,11 @@ public class Menu{
         buttonPanel.setLayout(new GridLayout(4, 1));
 
         // Boutons avec style
-        JButton btnPlay = createStyledButton("JOUER");
         JButton btnPlayIA = createStyledButton("JOUER vs l'IA");
         JButton btnPlayOnline = createStyledButton("JOUER vs AMI");
         JButton btnSettings = createStyledButton("PARAMÈTRES");
 
-        btnPlay.addActionListener(e -> {
+        /*btnPlay.addActionListener(e -> {
             
             
             mainPanel.remove(gamePageinit); // Supprimer la page actuelle du jeu
@@ -464,7 +463,7 @@ public class Menu{
             cardLayout.show(mainPanel, "game"); // Afficher la page du jeu
          
            
-        });
+        });*/
 
         btnPlayIA.addActionListener(e -> {
             mainPanel.remove(gamePageinit);
@@ -477,7 +476,7 @@ public class Menu{
         btnSettings.addActionListener(e -> cardLayout.show(mainPanel,"settings"));
         btnPlayOnline.addActionListener(e -> cardLayout.show(mainPanel,"gameOnline"));
 
-        buttonPanel.add(btnPlay);
+       // buttonPanel.add(btnPlay);
         buttonPanel.add(btnPlayIA);
         buttonPanel.add(btnPlayOnline);
         buttonPanel.add(btnSettings);

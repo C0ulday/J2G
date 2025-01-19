@@ -240,6 +240,7 @@ public class ChessGame {
                 selectedPosition[1] = -1;
             }
         }
+        toggleTurn();
     }
 
     public void highlightMoves(int x, int y) {
