@@ -7,20 +7,23 @@ public class TestPlateau
         // Crée un Dame
         //Dame cavalierBlanc = new Dame(9, 7, 9, 7, "BLANC", plateau);
         
-        Roi roi = new Roi(0, 0, 0, 0, "BLANC", plateau);
+        //Roi roi = new Roi(0, 0, 0, 0, "BLANC", plateau);
         Tour tour = new Tour(7,1,7,1,"NOIR",plateau);
         Tour tour2 = new Tour(1,7,1,7,"NOIR",plateau);
         Fou fou = new Fou(3,3,3,3,"NOIR",plateau);
-        Pion pion = new Pion(2,2, 2, 2, "NOIR", plateau);
-        plateau.placerPiece(roi, 0, 0);
+        Pion pion = new Pion(0,2, 0, 2, "BLANC", plateau);
+        //Pion pion2 = new Pion(7,7, 7, 7, "BLANC", plateau);
+        //plateau.placerPiece(roi, 0, 0);
         plateau.placerPiece(tour, 7, 1);
         plateau.placerPiece(tour2, 1, 7);
         plateau.placerPiece(fou, 3,3);
-        plateau.placerPiece(pion, 2, 2);
-        //roi.afficherCoordsPossibles(4, 4);
-        roi.afficherCoordsPrenable(0,0);
-        //pion.afficherCoordsPossibles(5, 4);
-        //tour.afficherCoordsPossibles(0, 7);
+        plateau.placerPiece(pion, 0, 2);
+        //plateau.placerPiece(pion2, 7, 7);
+        //roi.afficherCoordsPrenable(4, 4);
+        //roi.afficherCoordsPrenable(0,0);
+        //fou.afficherCoordsPrenable(3, 3);
+        pion.afficherCoordsPrenable(0, 2);
+        //pion2.afficherCoordsPrenable(7, 7);
         //System.out.println("Coordonnées jouables initiales Dame  : " + roi.casesPrenable(4,4));
         //System.out.println("Coordonnées jouables initiales cava : " + Dame.casesPrenable(7,6));
 
@@ -28,8 +31,12 @@ public class TestPlateau
         // Vérifie si le roi est en échec
 
         //plateau.remplirPlateau();
-
+        pion.afficherCoordsPrenable(0,2);
         // Afficher le plateau
+        if(regleJeuEchec.Echec(plateau,"BLANC"))
+        {
+            System.out.println("\n Echec");
+        }
         if(regleJeuEchec.Pat(plateau,"BLANC"))
         {
             System.out.println("\n Pat");
@@ -39,10 +46,22 @@ public class TestPlateau
         {
             System.out.println("\n Mat");
         }
+        Piece piece = plateau.getPiece(0, 2);
+        System.out.println(piece.getName()+piece.getCouleur());
 
+        plateau.promouvoirPiece(plateau,0,2);
+        
+
+
+
+
+
+        piece = plateau.getPiece(0, 2);
+        System.out.println(piece.getName()+piece.getCouleur());
 
         plateau.afficherPlateau();
         System.out.println("\n");
+    
     }
 }
 

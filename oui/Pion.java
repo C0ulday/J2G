@@ -96,7 +96,7 @@ public class Pion extends Piece implements regle_Piece {
     public void afficherCoordsPossibles(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPossibles(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour la Pion en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour le Pion en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }
@@ -106,7 +106,7 @@ public class Pion extends Piece implements regle_Piece {
     public void afficherCoordsPrenable(int xactu, int yactu) {
         ArrayList<coordonnee> coords = casesPrenable(xactu, yactu);
     
-        System.out.println("Coordonnées possibles pour la Pion en ["+xactu+","+yactu+"] :");
+        System.out.println("Coordonnées possibles pour le Pion en ["+xactu+","+yactu+"] :");
         for (coordonnee coord : coords) {
             System.out.println("X : " + coord.getX() + ", Y : " + coord.getY());
         }

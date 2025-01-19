@@ -23,10 +23,21 @@ public class Piece{
 
         return this.positionXinit;
     }
+    
+    public void setPositionXinit(int x) {
+
+        this.positionXinit = x;
+    }
 
     public int getPositionYinit() {
         return this.positionYinit;
     }
+
+    public void setPositionYinit(int x) {
+
+        this.positionXinit = x;
+    }
+
     public int getPositionX() {
         return this.positionX;
     }

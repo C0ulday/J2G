@@ -1,12 +1,14 @@
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Scanner;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 
 public class Plateau {
-    private List<Piece> plateau;
-    private int SIZE;
+    public ArrayList<Piece> plateau;
+    public int SIZE;
 
-    private List<Piece> piecesNoires; // Liste des pièces du joueur noir
-    private List<Piece> piecesBlanches; // Liste des pièces du joueur blanc
+    public ArrayList<Piece> piecesNoires; // Liste des pièces du joueur noir
+    public ArrayList<Piece> piecesBlanches; // Liste des pièces du joueur blanc
 
     // Constructeur
     public Plateau(int SIZE) {
@@ -22,7 +24,7 @@ public class Plateau {
         piecesBlanches = new ArrayList<>();
     }
 
-    public void remplirPlateau() {
+    public void initPlateau() {
         // Ajouter les pièces noires
         for (Piece piece : piecesNoires) {
             if (estDansLesLimites(piece.getPositionXinit(), piece.getPositionYinit())) {
@@ -93,12 +95,11 @@ public class Plateau {
         }
         return null; // Retourne null si les coordonnées sont en dehors des limites
     }
-
     
     public boolean deplacementDansPlateau(int xactu, int yactu, int xnew, int ynew) {
         // Vérifie si les coordonnées cibles sont dans les limites
         if (!estDansLesLimites(xnew, ynew)) {
-            System.out.println("Déplacement interdit !");
+            //System.out.println("Déplacement interdit !");
             return false;
         }
     
@@ -242,5 +243,231 @@ public class Plateau {
     
         return echec;
     }
+
+    public void promotion(Plateau plateau,int x,int y) 
+    {
+
+
+        // On vérifie si la piéce peut être promu
+        Piece piece = plateau.getPiece(x, y);
+        if(!plateau.getPiece(x,y).getName().equals("PION") && (x == 0 || x == 7))
+        {
+            return;
+        }
+
+        // Options de promotion
+        ArrayList<String> Pieces = new ArrayList<>();
+        Pieces.add("DAME");
+        Pieces.add("CAVALIER");
+        Pieces.add("FOU");
+        Pieces.add("TOUR");
+
+        // interface pour choisir la piece
+        System.out.println("Choisissez votre nouvelle pièce :");
+        System.out.println("1 = DAME, 2 = CAVALIER, 3 = FOU, 4 = TOUR");
+
+        //choix de la piece
+        Scanner scanner = new Scanner(System.in);
+        int numPiece;
+
+        // Demander à l'utilisateur de faire un choix valide
+        do {
+            System.out.print("Entrez un numéro entre 1 et 4 : ");
+            numPiece = scanner.nextInt() - 1;
+        } while (numPiece < 0 || numPiece > 3);
+
+        // Déterminer le nom de la nouvelle pièce
+        String nomPiece = Pieces.get(numPiece);
+
+        // Ajouter la nouvelle pièce au plateau
+        
+        //chagement de la pièce
+        piece.setName(nomPiece);
+        piece.setPositionXinit(x);
+        piece.setPositionYinit(y);
+        if (piece instanceof regle_Piece)
+        {
+
+        }
+        System.out.println("La pièce a été promue en " + nomPiece + " !");
+        scanner.close();
+    }
+
+
+
+    public void promouvoirPiece(Plateau plateau, int x, int y) 
+    {
+        // Récupérer la pièce actuelle
+        Piece piece = plateau.getPiece(x, y);
+
+        // Vérifier qu'une pièce est présente
+        if (piece == null) {
+            System.out.println("Aucune pièce à promouvoir à cette position !");
+            return;
+        }
+
+        // Liste des types de promotion possibles
+        HashMap<Integer, Class<? extends Piece>> promotions = new HashMap<>();
+        promotions.put(1, Dame.class); // Option 1 : Dame
+        promotions.put(2, Tour.class); // Option 2 : Tour
+        promotions.put(3, Fou.class); // Option 3 : Fou
+        promotions.put(4, Cavalier.class); // Option 4 : Cavalier
+
+        // Afficher les options à l'utilisateur
+        System.out.println("Choisissez une promotion :");
+        for (int option : promotions.keySet()) {
+            System.out.println(option + ": " + promotions.get(option).getSimpleName());
+        }
+
+        // Lire le choix de l'utilisateur
+        Scanner scanner = new Scanner(System.in);
+        int choix = scanner.nextInt();
+        scanner.close();
+        // Vérifier si le choix est valide
+        if (!promotions.containsKey(choix)) {
+            System.out.println("Choix invalide !");
+            return;
+        }
+
+
+        // Obtenir la classe correspondante
+        Class<? extends Piece> nouvellePieceClasse = promotions.get(choix);
+
+        try {
+            // Obtenir le constructeur de la nouvelle classe
+            Constructor<? extends Piece> constructeur = nouvellePieceClasse.getConstructor(
+                int.class, int.class, int.class, int.class, String.class, Plateau.class
+            );
+
+            // Créer une instance de la nouvelle pièce
+            Piece nouvellePiece = constructeur.newInstance(
+                piece.getPositionXinit(),
+                piece.getPositionYinit(),
+                piece.getPositionX(),
+                piece.getPositionY(),
+                piece.getCouleur(),
+                plateau
+            );
+
+            // Remplacer l'ancienne pièce par la nouvelle sur le plateau
+            plateau.placerPiece(nouvellePiece, x, y);
+
+            System.out.println("La pièce a été promue en " + nouvellePiece.getName() + " !");
+            if (nouvellePiece instanceof regle_Piece) 
+                {
+                    ((regle_Piece)nouvellePiece).afficherCoordsPrenable(x, y);
+                }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Erreur lors de la promotion de la pièce : " + e.getMessage());
+        }
+
+    }
+
+    public static Plateau initJeu(int taillePlateau) {
+        Plateau plateau = new Plateau(taillePlateau);
+    
+        // Initialisation des pièces en fonction de la taille du plateau
+        switch (taillePlateau) {
+            case 8: // Plateau standard 8x8
+                ajouterPions(plateau, taillePlateau);
+                ajouterTours(plateau, taillePlateau);
+                ajouterCavaliers(plateau, taillePlateau);
+                ajouterFous(plateau, taillePlateau);
+                ajouterDames(plateau, taillePlateau);
+                ajouterRois(plateau, taillePlateau);
+                break;
+    
+            case 7: // Plateau 7x7 (sans les dames)
+                ajouterPions(plateau, taillePlateau);
+                ajouterTours(plateau, taillePlateau);
+                ajouterCavaliers(plateau, taillePlateau);
+                ajouterFous(plateau, taillePlateau);
+                ajouterRois(plateau, taillePlateau);
+                break;
+    
+            case 6: // Plateau 6x6 (sans les fous)
+                ajouterPions(plateau, taillePlateau);
+                ajouterTours(plateau, taillePlateau);
+                ajouterCavaliers(plateau, taillePlateau);
+                ajouterDames(plateau, taillePlateau);
+                ajouterRois(plateau, taillePlateau);
+                break;
+    
+            case 5: // Plateau 5x5 (sans les fous et sans les dames)
+                ajouterPions(plateau, taillePlateau);
+                ajouterTours(plateau, taillePlateau);
+                ajouterCavaliers(plateau, taillePlateau);
+                ajouterRois(plateau, taillePlateau);
+                break;
+    
+            case 4: // Plateau 4x4 (sans les cavaliers et les fous)
+                ajouterPions(plateau, taillePlateau);
+                ajouterTours(plateau, taillePlateau);
+                ajouterDames(plateau, taillePlateau);
+                ajouterRois(plateau, taillePlateau);
+                break;
+    
+            default:
+                System.out.println("Taille de plateau non prise en charge.");
+                break;
+        }
+    
+        // Remplir le plateau avec les pièces
+        plateau.initPlateau();
+        System.out.println("Jeu initialisé avec un plateau de taille " + taillePlateau + "x" + taillePlateau + ".");
+        return plateau;
+    }
+    
+    // Méthodes pour ajouter les pièces en fonction des tailles
+    public static void ajouterPions(Plateau plateau, int taille) {
+        int ligneBlancs = taille - 2;
+        int ligneNoirs = 1;
+        for (int i = 0; i < taille; i++) {
+            plateau.ajouterPieceBlanche(new Pion(ligneBlancs, i, ligneBlancs, i, "BLANC", plateau));
+            plateau.ajouterPieceNoire(new Pion(ligneNoirs, i, ligneNoirs, i, "NOIR", plateau));
+        }
+    }
+    
+    public static void ajouterTours(Plateau plateau, int taille) {
+        plateau.ajouterPieceBlanche(new Tour(taille - 1, 0, taille - 1, 0, "BLANC", plateau));
+        plateau.ajouterPieceBlanche(new Tour(taille - 1, taille - 1, taille - 1, taille - 1, "BLANC", plateau));
+        plateau.ajouterPieceNoire(new Tour(0, 0, 0, 0, "NOIR", plateau));
+        plateau.ajouterPieceNoire(new Tour(0, taille - 1, 0, taille - 1, "NOIR", plateau));
+    }
+    
+    public static void ajouterCavaliers(Plateau plateau, int taille) {
+        if (taille >= 5) {
+            plateau.ajouterPieceBlanche(new Cavalier(taille - 1, 1, taille - 1, 1, "BLANC", plateau));
+            plateau.ajouterPieceBlanche(new Cavalier(taille - 1, taille - 2, taille - 1, taille - 2, "BLANC", plateau));
+            plateau.ajouterPieceNoire(new Cavalier(0, 1, 0, 1, "NOIR", plateau));
+            plateau.ajouterPieceNoire(new Cavalier(0, taille - 2, 0, taille - 2, "NOIR", plateau));
+        }
+    }
+    
+    public static void ajouterFous(Plateau plateau, int taille) {
+        if (taille >= 6) {
+            plateau.ajouterPieceBlanche(new Fou(taille - 1, 2, taille - 1, 2, "BLANC", plateau));
+            plateau.ajouterPieceBlanche(new Fou(taille - 1, taille - 3, taille - 1, taille - 3, "BLANC", plateau));
+            plateau.ajouterPieceNoire(new Fou(0, 2, 0, 2, "NOIR", plateau));
+            plateau.ajouterPieceNoire(new Fou(0, taille - 3, 0, taille - 3, "NOIR", plateau));
+        }
+    }
+    
+    public static void ajouterDames(Plateau plateau, int taille) {
+        if (taille % 2 == 0) 
+        { // Vérifie si la taille est paire
+            plateau.ajouterPieceBlanche(new Dame(taille - 1, (taille/2) -1, taille - 1, (taille/2) -1, "BLANC", plateau));
+            plateau.ajouterPieceNoire(new Dame(0, (taille/2) -1, 0, (taille/2) -1, "NOIR", plateau));
+        }
+    }
+    
+    public static void ajouterRois(Plateau plateau, int taille) {
+        int colonneRoi = taille / 2;
+        plateau.ajouterPieceBlanche(new Roi(taille - 1, colonneRoi, taille - 1, colonneRoi, "BLANC", plateau));
+        plateau.ajouterPieceNoire(new Roi(0, colonneRoi, 0, colonneRoi, "NOIR", plateau));
+    }
+    
 
 }
