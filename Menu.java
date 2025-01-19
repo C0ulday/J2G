@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -54,23 +55,20 @@ public class Menu{
 
     //Page de setting
     public JPanel createSettingsPage(JPanel mainPanel, CardLayout cardLayout){
-        //Principal
         JPanel settingsPanel = new JPanel();
         initPage(settingsPanel, "SETTINGS");
         
-        // Panneau de boutons centré
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setOpaque(false); // Rendre transparent pour voir le fond
+        buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new GridLayout(3, 1, 100, 100));
 
-        // Boutons avec style
         JButton btnSize = createStyledButton("Taille Echéquier");
         JButton btnType = createStyledButton("Type échequier");
         JButton btnModification = createStyledButton("Modification");
         JButton btnBack = createStyledButton("Retour");
 
         btnSize.addActionListener(e -> cardLayout.show(mainPanel, "boardSize"));
-        btnModification.addActionListener(e -> cardLayout.show(mainPanel,"settings"));
+        btnModification.addActionListener(e -> cardLayout.show(mainPanel, "pieceConfig"));
         btnType.addActionListener(e -> cardLayout.show(mainPanel,"boardType"));
         btnBack.addActionListener(e -> cardLayout.show(mainPanel,"Accueil"));
 
@@ -88,11 +86,9 @@ public class Menu{
         settingsPanel.add(sup1, BorderLayout.EAST);
         settingsPanel.add(sup2, BorderLayout.WEST);
         settingsPanel.add(btnBack, BorderLayout.SOUTH);
-         
-
+        
         return settingsPanel;
     }
-
    
     //Page pour configurer les pieces ajouter
 
@@ -100,25 +96,30 @@ public class Menu{
         JPanel pieceConfigPanel = new JPanel(new BorderLayout());
         initPage(pieceConfigPanel, "Configuration des Pièces");
 
-        JPanel pieceOptions = new JPanel(new GridLayout(2, 1, 20, 20));
+        JPanel pieceOptions = new JPanel(new GridLayout(4, 1, 20, 20));
         pieceOptions.setOpaque(false);
 
         JButton btnAddPiece = createStyledButton("Ajouter une Nouvelle Pièce");
         btnAddPiece.addActionListener(e -> {
-            String pieceName = JOptionPane.showInputDialog("Nom de la pièce :");
-            if (pieceName != null && !pieceName.trim().isEmpty()) {
-                // Intégrer avec le backend pour ajouter la pièce
-                System.out.println("Nouvelle pièce ajoutée : " + pieceName);
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Sélectionner une image de pièce");
+            int result = fileChooser.showOpenDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                JOptionPane.showMessageDialog(null, "Image sélectionnée: " + selectedFile.getName());
             }
         });
 
         JButton btnModifyPiece = createStyledButton("Modifier une Pièce Existante");
         btnModifyPiece.addActionListener(e -> {
-            String pieceName = JOptionPane.showInputDialog("Nom de la pièce à modifier :");
-            if (pieceName != null && !pieceName.trim().isEmpty()) {
-                // Intégrer avec le backend pour modifier la pièce
-                System.out.println("Pièce modifiée : " + pieceName);
-            }
+            cardLayout.show(mainPanel, "pieceConfig");
+        });
+
+        JButton btnChooseColor = createStyledButton("Choisir la Couleur des Pièces");
+        String[] colors = {"Blanc", "Noir", "Rouge", "Bleu", "Vert"};
+        JComboBox<String> colorSelection = new JComboBox<>(colors);
+        btnChooseColor.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, colorSelection, "Sélectionner une couleur", JOptionPane.QUESTION_MESSAGE);
         });
 
         JButton btnBack = createStyledButton("Retour");
@@ -126,6 +127,7 @@ public class Menu{
 
         pieceOptions.add(btnAddPiece);
         pieceOptions.add(btnModifyPiece);
+        pieceOptions.add(btnChooseColor);
 
         pieceConfigPanel.add(pieceOptions, BorderLayout.CENTER);
         pieceConfigPanel.add(btnBack, BorderLayout.SOUTH);
