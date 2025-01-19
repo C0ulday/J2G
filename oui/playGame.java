@@ -9,7 +9,7 @@ public class playGame {
     public static void echecs() {
         // Taille standard du plateau d'échecs
         Scanner scanner = new Scanner(System.in);
-        int SIZE = 8;
+        int SIZE = -1;
         while(SIZE<4 || SIZE>8)
         {
             System.out.println("quel taille de plateau souhaité vous ? (8x8) à (4x4)");
